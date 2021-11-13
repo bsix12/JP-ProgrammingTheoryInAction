@@ -4,26 +4,26 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-	private Rigidbody playerRb;
+	private Rigidbody _playerRb;
 
-	private float moveForce = 15f; // will vary based on mass and result desired
-	private float turnSpeed = 30f;
+	private float _moveForce = 15f; // will vary based on mass and result desired
+	private float _turnSpeed = 60f;
 
 	private void Awake()
 	{
-		playerRb = GetComponent<Rigidbody>();  // caching during awake
+		_playerRb = GetComponent<Rigidbody>();  // caching during awake
 	}
 
     private void Update()
     {
         if (Input.GetKey(KeyCode.A))
         {
-			transform.Rotate(Time.deltaTime* turnSpeed * Vector3.down);
+			transform.Rotate(Time.deltaTime* _turnSpeed * Vector3.down);
         }
 		
 			if (Input.GetKey(KeyCode.D))
         {
-			transform.Rotate(Time.deltaTime* turnSpeed * Vector3.up);
+			transform.Rotate(Time.deltaTime* _turnSpeed * Vector3.up);
         }
     }
 
@@ -32,12 +32,12 @@ public class PlayerController : MonoBehaviour
 	{
 		if (Input.GetKey(KeyCode.W))
         {
-			playerRb.AddForce(moveForce * transform.forward);
+			_playerRb.AddForce(_moveForce * transform.forward);
         }
 
 		if (Input.GetKey(KeyCode.S))
         {
-			playerRb.AddForce(moveForce * -transform.forward);  // give back
+			_playerRb.AddForce(_moveForce * -transform.forward);  // give back
         }
 	}
 }
