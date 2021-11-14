@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 	private Rigidbody _playerRb;
 
 	private float _moveForce = 15f; // will vary based on mass and result desired
-	private float _turnSpeed = 60f;
+	private float _turnSpeed = 120f;
 
 	private void Awake()
 	{
