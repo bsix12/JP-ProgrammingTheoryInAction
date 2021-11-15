@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FoodDispenser : MonoBehaviour
+public class DispenserStation : MonoBehaviour
 {
     public GameObject stationMaterial;
     public Transform spawnLoc;

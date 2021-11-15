@@ -31,7 +31,7 @@ public class FoodInfo : MonoBehaviour
     void Update()
     {
         UpdateFoodTemperature();
-        MonitorFoodStatus();
+        MonitorCookedCondition();
         SetFoodColor();
     }
 
@@ -52,7 +52,7 @@ public class FoodInfo : MonoBehaviour
         }
     }
 
-    private void MonitorFoodStatus()
+    private void MonitorCookedCondition()
     {
     float _myIsRareTemperature = 120f;
     float _myIsMediumTemperature = 140f;

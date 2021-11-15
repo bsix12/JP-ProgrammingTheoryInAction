@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Food
   - Station
+  - CookStation
   layers:
   - Default
   - TransparentFX
