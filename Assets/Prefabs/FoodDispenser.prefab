@@ -98,7 +98,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Beef
+  m_text: <Name>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -641,7 +641,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a32019f08af91c48b165146ba1e9d8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stationMaterial: {fileID: 980640675852054662, guid: c140ec1078b5f2c4e85fa80d5d61d710, type: 3}
+  stationMaterial: {fileID: 0}
   spawnLoc: {fileID: 1188379265850578142}
 --- !u!1 &1188379265850578143
 GameObject:

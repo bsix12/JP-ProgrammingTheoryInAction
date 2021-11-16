@@ -11,6 +11,7 @@ public class Chicken : Food
         _myRenderer = GetComponent<Renderer>();
         myRawColor = new Color32(240, 200, 200, 255);
         myCookedColor = new Color32(250, 250, 200, 255);
+        
         myStartTemp = 60f;
         myIsCookedTemp = 120f;
         myIsBurnedTemp = 200f;
