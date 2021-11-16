@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 	private Rigidbody _playerRb;
 
 	private float _moveForce = 15f; // will vary based on mass and result desired
-	private float _turnSpeed = 120f;
+	private float _turnSpeed = 150f;
 
 	private void Awake()
 	{
@@ -16,20 +16,17 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.A))
-        {
-			transform.Rotate(Time.deltaTime* _turnSpeed * Vector3.down);
-        }
-		
-			if (Input.GetKey(KeyCode.D))
-        {
-			transform.Rotate(Time.deltaTime* _turnSpeed * Vector3.up);
-        }
+		RotatePlayer();
     }
 
 
 	private void FixedUpdate()
 	{
+		MovePlayer(); // move with physics in FixedUpdate
+	}
+
+	private void MovePlayer()
+    {
 		if (Input.GetKey(KeyCode.W))
         {
 			_playerRb.AddForce(_moveForce * transform.forward);
@@ -39,5 +36,19 @@ public class PlayerController : MonoBehaviour
         {
 			_playerRb.AddForce(_moveForce * -transform.forward);  // give back
         }
+    }
+
+	private void RotatePlayer()
+    {
+		if (Input.GetKey(KeyCode.A))
+		{
+			transform.Rotate(Time.deltaTime * _turnSpeed * Vector3.down);
+		}
+
+		if (Input.GetKey(KeyCode.D))
+		{
+			transform.Rotate(Time.deltaTime * _turnSpeed * Vector3.up);
+		}
 	}
 }
+

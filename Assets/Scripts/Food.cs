@@ -19,6 +19,9 @@ public class Food : MonoBehaviour
     protected Color32 myCurrentColor;
     protected Color32 isBurnedColor = new Color32(25, 25, 0, 255);
 
+    private float _roomTemperature = 72;
+    private static float _stationHeatingRate;
+   
     protected virtual void Update()
     {
         UpdateFoodTemperature();
@@ -27,14 +30,32 @@ public class Food : MonoBehaviour
 
     private void UpdateFoodTemperature()
     {
+        float _warmingRate = .1f;
+        float _coolingRate = .2f;
+        
         if (isCooking)
         {
-            _myTemp += Time.deltaTime * 10; // cooking at some heatRate
+            _myTemp += Time.deltaTime * _stationHeatingRate; // cooking at some heatRate
+            
         }
         else
         {
-            _myTemp -= Time.deltaTime * .1f; // cooling at some coolRate
+            if (_myTemp > _roomTemperature)
+            {
+                _myTemp -= Time.deltaTime * _coolingRate; // cooling at some coolRate
+            }
+            
+            if(_myTemp < _roomTemperature)
+            {
+                _myTemp += Time.deltaTime * _warmingRate;
+            }
         }
+    }
+
+    public static float GetHeatingRate(float stationHeatingRate)
+    {
+        _stationHeatingRate = stationHeatingRate;
+        return _stationHeatingRate;
     }
 
     protected virtual void MonitorCookedCondition()
@@ -71,7 +92,7 @@ public class Food : MonoBehaviour
     }
 
 
-    private void OnCollisionEnter(Collision other) // example: attaches to plate when dispensed
+    private void OnCollisionStay(Collision other) // example: attaches to plate when dispensed
     {
         if(other.gameObject.CompareTag("Player"))
         {
