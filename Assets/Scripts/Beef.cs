@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Beef : Food
+public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
 {
     public bool isCookedRare;
     public bool isCookedMedium;
@@ -14,27 +14,26 @@ public class Beef : Food
     private void Awake()
     {
         _myRenderer = GetComponent<Renderer>();
-        myRawColor = new Color32(225, 145, 145, 255);
-        
+         
         myStartTemp = 60f;
         myIsBurnedTemp = 200f;
         myTemp = myStartTemp;        
     }
 
-    protected override void Update()
+    protected override void Update()  // POLYMORPHISM - override method.  Each food type has unique color pallette
     {
-        SetFoodColor();
-        base.Update();
+        SetFoodColor();  // ABSTRACTION - method name indicates Update() action, details in separate method
+        base.Update();   // Run Update() of base class.
     }
 
-    protected override void MonitorCookedCondition()
+    protected override void MonitorCookedCondition()  // POLYMORPHISM - Beef has rare, medium, and well-done conditions
     {
         float _myIsRareTemp = 120f;
         float _myIsMediumTemp = 140f;
         float _myIsWellDoneTemp = 170f;
         
 
-        if (isCookedWellDone && myTemp >= myIsBurnedTemp)   // remains isBurned even if temperature drops below myIsBurnedTemperature
+        if (isCookedWellDone && myTemp >= myIsBurnedTemp)
         {
             isBurned = true;
             isCookedWellDone = false;
@@ -50,7 +49,7 @@ public class Beef : Food
             isCookedMedium = true;
             isCookedRare = false;
         }
-        else if (!isCooked && myTemp >= _myIsRareTemp)
+        else if (!isCooked && myTemp >= _myIsRareTemp) // anything below rare is considered not cooked (!isCooked)
         {
             isCookedRare = true;
             isCooked = true;
@@ -59,6 +58,9 @@ public class Beef : Food
 
     private void SetFoodColor()
     {
+        myRawColor = new Color32(225, 145, 145, 255);
+
+
         if (!isCooked)
         {
             _myRenderer.material.color = myRawColor;

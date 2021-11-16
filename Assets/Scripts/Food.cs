@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Food : MonoBehaviour
 {
-    [SerializeField] private float _myTemp; // backing field for myTemp
+    [SerializeField] private float _myTemp; // ENCAPSULATION - backing field for myTemp.  Treating the food temperature like a 'health bar' that is not directly accessed
     [SerializeField] protected bool isCooking;
     [SerializeField] protected bool isCooked;
     [SerializeField] protected bool isBurned;
     
-    protected float myTemp {get{ return _myTemp;} set{_myTemp = value;}} // accessible property
+    protected float myTemp {get{ return _myTemp;} set{_myTemp = value;}} // ENCAPSULATION - accessible property
     protected float myStartTemp;
     protected float myIsBurnedTemp;
     protected float myIsCookedTemp;
@@ -24,10 +24,10 @@ public class Food : MonoBehaviour
    
     protected virtual void Update()
     {
-        UpdateFoodTemperature();
-        MonitorCookedCondition();
+        UpdateFoodTemperature();    // ABSTRACTION - method name indicates Update() action, details in separate method
+        MonitorCookedCondition();   // ABSTRACTION - method name indicates Update() action, details in separate method
     }
-
+    
     private void UpdateFoodTemperature()
     {
         float _warmingRate = .1f;
