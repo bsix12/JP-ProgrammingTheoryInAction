@@ -5,7 +5,7 @@ using UnityEngine;
 public class Carrot : Food  // INHERITANCE - Carrot inherits from the Food class
 {
     private Renderer _myRenderer;
-    public string iAm;
+    
     private void Awake()
     {
         _myRenderer = GetComponent<Renderer>();
@@ -42,6 +42,7 @@ public class Carrot : Food  // INHERITANCE - Carrot inherits from the Food class
         if (isBurned)
         {
             _myRenderer.material.color = isBurnedColor;
+            iAm = "Burned Carrots";
         }
     }
 }

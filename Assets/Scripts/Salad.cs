@@ -10,6 +10,7 @@ public class Salad : Food
         _myRenderer = GetComponent<Renderer>();
 
         myStartTemp = 57f;
+        myIsCookedTemp = myStartTemp;
         myIsBurnedTemp = 70f;  // wilted
         myTemp = myStartTemp;
     }
@@ -26,19 +27,25 @@ public class Salad : Food
         if (!isCooked)
         {
             _myRenderer.material.color = myRawColor;
+            iAm = "Salad";
+            Debug.Log(iAm);
         }
 
         if (isBurned)
         {
             _myRenderer.material.color = isBurnedColor;
+            iAm = "Ruined Salad";
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected override void OnTriggerEnter(Collider other) // POLYMORPHISM - override method
     {
         if (!isBurned && other.CompareTag("CookStation"))
         {
             isBurned = true;
         }
+        base.OnTriggerEnter(other);
     }
+
+    
 }

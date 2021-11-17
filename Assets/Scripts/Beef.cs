@@ -64,26 +64,31 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
         if (!isCooked)
         {
             _myRenderer.material.color = myRawColor;
+            iAm = "Raw Beef";
         }
 
         if (isCookedRare)
         {
             _myRenderer.material.color = new Color32(245, 125, 100, 255);
+            iAm = "Beef: Rare";
         }
 
         if (isCookedMedium)
         {
             _myRenderer.material.color = new Color32(175, 100, 50, 255);
+            iAm = "Beef: Medium";
         }
 
         if (isCookedWellDone)
         {
             _myRenderer.material.color = new Color32(125, 75, 25, 255);
+            iAm = "Beef: Well-Done";
         }
 
         if (isBurned)
         {
             _myRenderer.material.color = isBurnedColor;
+            iAm = "Burned Beef";
         }
     }
 }

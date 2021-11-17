@@ -1378,6 +1378,67 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &721938085
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 721938087}
+  - component: {fileID: 721938086}
+  m_Layer: 0
+  m_Name: OrderManager
+  m_TagString: Manager
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &721938086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 721938085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36affec7691437f47a8c9911aed72110, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rawCarrotsOrdered: 0
+  _steamedCarrotsOrdered: 0
+  _rawBroccoliOrdered: 0
+  _steamedBroccoliOrdered: 0
+  _saladsOrdered: 0
+  _chickenOrdered: 0
+  _rareBeefOrdered: 0
+  _mediumBeefOrdered: 0
+  _wellDoneBeefOrdered: 0
+  _rawCarrotsDelivered: 0
+  _steamedCarrotsDelivered: 0
+  _rawBroccoliDelivered: 0
+  _steamedBroccoliDelivered: 0
+  _saladsDelivered: 0
+  _chickenDelivered: 0
+  _rareBeefDelivered: 0
+  _mediumBeefDelivered: 0
+  _wellDoneBeefDelivered: 0
+--- !u!4 &721938087
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 721938085}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &729621465
 Mesh:
   m_ObjectHideFlags: 0
@@ -2215,9 +2276,8 @@ GameObject:
   - component: {fileID: 1170942434}
   - component: {fileID: 1170942433}
   - component: {fileID: 1170942432}
-  - component: {fileID: 1170942436}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: OrderBoard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2299,27 +2359,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1170942436
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1170942431}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36affec7691437f47a8c9911aed72110, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _rawCarrotsWanted: 0
-  _steamedCarrotsWanted: 0
-  _rawBroccoliWanted: 0
-  _steamedBroccoliWanted: 0
-  _saladsWanted: 0
-  _chickenWanted: 0
-  _rareBeefWanted: 0
-  _mediumBeefWanted: 0
-  _wellDoneBeefWanted: 0
 --- !u!1 &1201492887
 GameObject:
   m_ObjectHideFlags: 0

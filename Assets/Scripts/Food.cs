@@ -14,6 +14,8 @@ public class Food : MonoBehaviour
     protected float myIsBurnedTemp;
     protected float myIsCookedTemp;
 
+    protected string iAm;
+
     protected Color32 myRawColor;
     protected Color32 myCookedColor;
     protected Color32 myCurrentColor;
@@ -70,11 +72,11 @@ public class Food : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Customer"))
         {
-           // other.GetComponent<ServeFood>()
+            OrderManager.Instance._foodDelivered.Add(iAm);
         }
     }
 

@@ -30,16 +30,19 @@ public class Chicken : Food  // INHERITANCE - Chicken inherits from the Food cla
         if (!isCooked)
         {
             _myRenderer.material.color = myRawColor;
+            iAm = "Raw Chicken";
         }
 
         if (isCooked)
         {
             _myRenderer.material.color = myCookedColor;
+            iAm = "Cooked Chicken";
         }
 
         if (isBurned)
         {
             _myRenderer.material.color = isBurnedColor;
+            iAm = "Burned Chicken";
         }
     }
 }
