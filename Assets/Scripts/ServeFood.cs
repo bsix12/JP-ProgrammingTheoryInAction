@@ -19,6 +19,7 @@ public class ServeFood : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             OrderManager.Instance.Invoke("ExamineFoodDelivered", 2f);
+            OrderManager.Instance.Invoke("PostToResultsBoard", 4f);
         }
     }
 
