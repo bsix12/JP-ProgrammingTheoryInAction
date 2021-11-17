@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
 		MovePlayer(); // move with physics in FixedUpdate
 	}
 
+
+	/*
 	private void MovePlayer()
     {
 		if (Input.GetKey(KeyCode.W))
@@ -36,10 +38,43 @@ public class PlayerController : MonoBehaviour
         {
 			_playerRb.AddForce(_moveForce * -transform.forward);  // give back
         }
-    }
+
+		if (Input.GetKey(KeyCode.D))
+		{
+			_playerRb.AddForce(_moveForce * transform.right);
+		}
+
+		if (Input.GetKey(KeyCode.A))
+		{
+			_playerRb.AddForce(_moveForce * -transform.right);  // give back
+		}
+	}
 
 	private void RotatePlayer()
     {
+		float horizontal = Input.GetAxis("Mouse X");
+		transform.Rotate(horizontal * _turnSpeed * Time.deltaTime * Vector3.up, Space.World);
+	}
+
+	*/
+
+	private void MovePlayer()
+	{
+		if (Input.GetKey(KeyCode.W))
+		{
+			_playerRb.AddForce(_moveForce * transform.forward);
+		}
+
+		if (Input.GetKey(KeyCode.S))
+		{
+			_playerRb.AddForce(_moveForce * -transform.forward);  // give back
+		}
+	}
+
+
+			private void RotatePlayer()
+	{
+
 		if (Input.GetKey(KeyCode.A))
 		{
 			transform.Rotate(Time.deltaTime * _turnSpeed * Vector3.down);
