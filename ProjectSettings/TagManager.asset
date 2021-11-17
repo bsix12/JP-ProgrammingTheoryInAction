@@ -5,8 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Food
-  - Station
   - CookStation
+  - Customer
   layers:
   - Default
   - TransparentFX

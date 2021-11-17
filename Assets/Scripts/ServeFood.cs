@@ -13,7 +13,7 @@ public class ServeFood : MonoBehaviour
         if (other.CompareTag("Food"))
         {
             _otherRb = other.GetComponent<Rigidbody>();
-            MoveFoodToPlate(); 
+            MoveFoodToPlate();
         }
     }
 

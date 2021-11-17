@@ -72,7 +72,10 @@ public class Food : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-
+        if (other.gameObject.CompareTag("Customer"))
+        {
+           // other.GetComponent<ServeFood>()
+        }
     }
 
     private void OnTriggerStay(Collider other)
