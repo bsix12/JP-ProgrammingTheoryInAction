@@ -16,7 +16,8 @@ public class OrderManager : MonoBehaviour
 
     private List<string> _menuMains = new List<string>();
     private List<string> _menuSides = new List<string>();
-    private List<string> _foodOrdered = new List<string>();
+    private List<string> _quantityOfEachFoodOrdered = new List<string>();
+    private List<string> _onlyFoodOrdered = new List<string>();
     private List<string> _resultsToPost = new List<string>();
 
     [SerializeField] private int _chickenOrdered;
@@ -64,10 +65,22 @@ public class OrderManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && isReadyForNewOrder)
         {
             ResetStoredListsAndInts();
+            ResetCustomerArea();
+            orderText.text = "";
             GetNewOrder();
             isReadyForNewOrder = false;
             isDoneServing = false;
         }
+    }
+
+    void ResetCustomerArea()
+    {
+        GameObject _customerPlate = GameObject.FindGameObjectWithTag("CustomerPlate");
+
+        foreach (Transform child in _customerPlate.transform)
+            Destroy(child.gameObject);
+
+        resultsText.text = "";
     }
 
     void ResetStoredListsAndInts()
@@ -76,10 +89,11 @@ public class OrderManager : MonoBehaviour
         // new orders were added to previous orders and never got cleared
         // took awhile to realize these lists are generated from stored data
         // needed to reset all the input data to generate lists based only on current data
-
-        _foodOrdered.Clear();   
+        _quantityOfEachFoodOrdered.Clear();
+        _onlyFoodOrdered.Clear();
         _resultsToPost.Clear();
-
+        
+        
         _chickenOrdered = 0;
         _beefRareOrdered = 0;
         _beefMediumOrdered = 0;
@@ -116,73 +130,102 @@ public class OrderManager : MonoBehaviour
         for (int i = 0; i < sides; i++)
         {
             sideSelectedIndex = Random.Range(0, _menuSides.Count);
-            _foodOrdered.Add(_menuSides[sideSelectedIndex]);
+            _quantityOfEachFoodOrdered.Add(_menuSides[sideSelectedIndex]);
         }
 
         for (int i = 0; i < mains; i++)
         {
             mainSelectedIndex = Random.Range(0, _menuMains.Count);
-            _foodOrdered.Add(_menuMains[mainSelectedIndex]);
+            _quantityOfEachFoodOrdered.Add(_menuMains[mainSelectedIndex]);
         }
 
-        for (int i = 0; i < _foodOrdered.Count; i++)
+        for (int i = 0; i < _quantityOfEachFoodOrdered.Count; i++)
         {
-            if (_foodOrdered[i] == "Chicken")
+            if (_quantityOfEachFoodOrdered[i] == "Chicken")
             {
                 _chickenOrdered += 1;
             }
 
-            if (_foodOrdered[i] == "Beef: Rare")
+            if (_quantityOfEachFoodOrdered[i] == "Beef: Rare")
             {
                 _beefRareOrdered += 1;
             }
 
-            if (_foodOrdered[i] == "Beef: Medium")
+            if (_quantityOfEachFoodOrdered[i] == "Beef: Medium")
             {
                 _beefMediumOrdered += 1;
             }
 
-            if (_foodOrdered[i] == "Beef: Well-Done")
+            if (_quantityOfEachFoodOrdered[i] == "Beef: Well-Done")
             {
                 _beefWellDoneOrdered += 1;
             }
 
-            if (_foodOrdered[i] == "Steamed Carrots")
+            if (_quantityOfEachFoodOrdered[i] == "Steamed Carrots")
             {
                 _carrotsSteamedOrdered += 1;
             }
 
-            if (_foodOrdered[i] == "Steamed Broccoli")
+            if (_quantityOfEachFoodOrdered[i] == "Steamed Broccoli")
             {
                 _broccoliSteamedOrdered += 1;
             }
 
-            if (_foodOrdered[i] == "Garden Salad")
+            if (_quantityOfEachFoodOrdered[i] == "Garden Salad")
             {
                 _saladsOrdered += 1;
             }
         }
-        PostToOrderBoard();
+        SummarizeOnlyFoodOrdered();
     }
 
-    void PostToOrderBoard()
+    void SummarizeOnlyFoodOrdered()
     {
-       {
-            orderText.text =
-                "<b><u>Main Dishes</b></u>\n" +
-                _chickenOrdered + " - Chicken\n" +
-                _beefRareOrdered + " - Beef: Rare\n" +
-                _beefMediumOrdered + " - Beef: Medium\n" +
-                _beefWellDoneOrdered + " - Beef: Well-Done\n" +
-                "\n" +
-                "\n" +
-                "<b><u>Sides</b></u>\n" +
-                _carrotsSteamedOrdered + " - Steamed Carrots\n" +
-                _broccoliSteamedOrdered + " - Steamed Broccoli\n" +
-                _saladsOrdered + " - Garden Salad\n";
+        _onlyFoodOrdered.Add("<b><u>Main Dishes</b></u>\n");
 
+        if (_chickenOrdered > 0)
+        {
+            _onlyFoodOrdered.Add(_chickenOrdered + " - Chicken\n");
         }
+
+        if (_beefRareOrdered > 0)
+        {
+            _onlyFoodOrdered.Add(_beefRareOrdered + " - Beef: Rare\n");
+        }
+
+        if (_beefMediumOrdered > 0)
+        {
+            _onlyFoodOrdered.Add(_beefMediumOrdered + " - Beef: Medium\n");
+        }
+
+        if (_beefWellDoneOrdered > 0)
+        {
+            _onlyFoodOrdered.Add(_beefWellDoneOrdered + " - Beef: Well-Done\n\n");
+        }
+
+        _onlyFoodOrdered.Add("<b><u>Sides</b></u>\n");
+
+        if (_carrotsSteamedOrdered > 0)
+        {
+            _onlyFoodOrdered.Add(_carrotsSteamedOrdered + " - Steamed Carrots\n");
+        }
+
+        if (_broccoliSteamedOrdered > 0)
+        {
+            _onlyFoodOrdered.Add(_broccoliSteamedOrdered + " - Steamed Broccoli\n");
+        }
+
+        if (_saladsOrdered > 0)
+        {
+            _onlyFoodOrdered.Add(_saladsOrdered + " - Garden Salad\n");
+        }
+
+        for (int i = 0; i < _onlyFoodOrdered.Count; i++)
+        {
+            orderText.text += _onlyFoodOrdered[i] + "\n";
+        }    
     }
+
     public void CountFoodDelivered()
     {
         for (int i = 0; i < foodDelivered.Count; i++)
@@ -268,6 +311,7 @@ public class OrderManager : MonoBehaviour
             }
         }
     }
+
     public void PostToResultsBoard()
     {
         int _deltaSteamedCarrots =  _carrotsSteamedDelivered - _carrotsSteamedOrdered;

@@ -16,6 +16,9 @@ public class ServeFood : MonoBehaviour
             _otherRb = other.GetComponent<Rigidbody>();
             MoveFoodToPlate();
         }
+
+        // review and post results, allow new order to be generated
+        // isDoneServing to prevent player triggering duplicate report
         if (other.CompareTag("Player") && OrderManager.Instance.isDoneServing == false)
         {
             OrderManager.Instance.Invoke("CountFoodDelivered", 1f);
@@ -27,6 +30,7 @@ public class ServeFood : MonoBehaviour
 
     void MoveFoodToPlate()
     {
+        // remove player movement transfering with food
         OnPlatePosition();
         _otherRb.transform.position = transform.position + _offset;
         _otherRb.velocity = Vector3.zero;
@@ -35,6 +39,7 @@ public class ServeFood : MonoBehaviour
 
     void OnPlatePosition()
     {
+        // generate random locations on customer plate to deposit food
         _offset.x = Random.Range(-_offsetDistance, _offsetDistance);
         _offset.y = 0f;
         _offset.z = Random.Range(-_offsetDistance, _offsetDistance);

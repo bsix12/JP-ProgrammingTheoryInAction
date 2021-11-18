@@ -6,9 +6,10 @@ TagManager:
   tags:
   - Food
   - CookStation
-  - Customer
   - Manager
   - OnHeat
+  - CustomerPlate
+  - ServeToCustomer
   layers:
   - Default
   - TransparentFX

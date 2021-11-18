@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 60114352}
   m_Layer: 0
   m_Name: ServeFoodLoc
-  m_TagString: Customer
+  m_TagString: ServeToCustomer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -332,7 +332,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Order
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -359,8 +359,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.5
-  m_fontSizeBase: 0.5
+  m_fontSize: 0.3
+  m_fontSizeBase: 0.3
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2135,7 +2135,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1170942431}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 2, z: -15.5}
+  m_LocalPosition: {x: -0, y: 1.5, z: -15.5}
   m_LocalScale: {x: 0.1, y: 2, z: 5}
   m_Children:
   - {fileID: 135922014}
@@ -2737,8 +2737,8 @@ GameObject:
   - component: {fileID: 1464181767}
   - component: {fileID: 1464181766}
   m_Layer: 0
-  m_Name: Plate
-  m_TagString: Untagged
+  m_Name: CustomerPlate
+  m_TagString: CustomerPlate
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4601,14 +4601,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1726198514}
-  m_LocalRotation: {x: 0, y: -0, z: 0, w: 1}
-  m_LocalPosition: {x: 9, y: 1, z: -14.5}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.70710677}
+  m_LocalPosition: {x: 2.5, y: 1, z: -15.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1768825598}
   m_Father: {fileID: 0}
   m_RootOrder: 11
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &1731868849
 GameObject:
   m_ObjectHideFlags: 0
@@ -6610,6 +6610,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 190357659}
+    - target: {fileID: 3874623387211580487, guid: d4bb2a4cc782de9459bede8f5a884016, type: 3}
+      propertyPath: m_Center.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3874623387211580491, guid: d4bb2a4cc782de9459bede8f5a884016, type: 3}
       propertyPath: m_Mesh
       value: 

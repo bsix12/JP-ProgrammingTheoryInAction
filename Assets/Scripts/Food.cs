@@ -35,18 +35,19 @@ public class Food : MonoBehaviour
     private void UpdateFoodTemperature()
     {
         float _warmingRate = .1f;
-        float _coolingRate = .2f;
+        float _coolingRate = .2f; // implemented but no use yet.  will support 'food served cold' customer comments
         
         if (isCooking)
         {
-            _myTemp += Time.deltaTime * _stationHeatingRate; // cooking at some heatRate
+            _myTemp += Time.deltaTime * _stationHeatingRate;
             
         }
         else
         {
+            // when not cooking, food is cooling or warming toward room temperature
             if (_myTemp > _roomTemperature)
             {
-                _myTemp -= Time.deltaTime * _coolingRate; // cooling at some coolRate
+                _myTemp -= Time.deltaTime * _coolingRate;
             }
             
             if(_myTemp < _roomTemperature)
@@ -76,13 +77,14 @@ public class Food : MonoBehaviour
 
     protected virtual void OnTriggerEnter(Collider other)
     {
+        // provide OnHeat indicator when food touching cook surface
         if (other.gameObject.CompareTag("CookStation"))
         {
             Instantiate(onHeatPrefab, transform);
         }
 
-
-        if (other.gameObject.CompareTag("Customer"))
+        // tally up the food delivered, each food objects adds itself (iAm) to list
+        if (other.gameObject.CompareTag("ServeToCustomer"))
         {
             OrderManager.Instance.foodDelivered.Add(iAm);
         }
@@ -99,6 +101,7 @@ public class Food : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        // remove OnHeat idicators from food when exiting cook area
         if (other.gameObject.CompareTag("CookStation"))
         {
             isCooking = false;
@@ -108,17 +111,20 @@ public class Food : MonoBehaviour
     }
 
 
-    private void OnCollisionStay(Collision other) // example: attaches to plate when dispensed
-    {
-        if(other.gameObject.CompareTag("Player"))
+    private void OnCollisionStay(Collision other) 
+    {   
+        // attaches to player when dispensed
+        // attaches to customer plate when served
+        // food as children allows for destroy all children to clear
+        if(other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("CustomerPlate"))
         {
             transform.parent = other.transform;
-        }
-        
+        }        
     }
 
-    private void OnCollisionExit(Collision other) // example: stays on floor if falls off plate
+    private void OnCollisionExit(Collision other)
     {
+        // remains on floor if falls off plate/player
         transform.parent = null;
     }
 
