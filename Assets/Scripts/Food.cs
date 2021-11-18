@@ -76,7 +76,7 @@ public class Food : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Customer"))
         {
-            OrderManager.Instance._foodDelivered.Add(iAm);
+            OrderManager.Instance.foodDelivered.Add(iAm);
         }
     }
 

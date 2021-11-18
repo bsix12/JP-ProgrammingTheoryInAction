@@ -6,60 +6,57 @@ using TMPro;
 public class OrderManager : MonoBehaviour
 {
     public static OrderManager Instance;
-
-    [SerializeField] private int _rawCarrotsOrdered;
-    [SerializeField] private int _steamedCarrotsOrdered;
-    [SerializeField] private int _rawBroccoliOrdered;
-    [SerializeField] private int _steamedBroccoliOrdered;
-    [SerializeField] private int _saladsOrdered;
-
-    [SerializeField] private int _chickenOrdered;
-    [SerializeField] private int _rareBeefOrdered;
-    [SerializeField] private int _mediumBeefOrdered;
-    [SerializeField] private int _wellDoneBeefOrdered;
-
+    
     public TextMeshPro orderText;
     public TextMeshPro resultsText;
+    public List<string> foodDelivered = new List<string>();
 
-    public int _rawCarrotsDelivered;
-    public int _steamedCarrotsDelivered;
-    public int _burnedCarrotsDelivered;
-    public int _rawBroccoliDelivered;
-    public int _steamedBroccoliDelivered;
-    public int _burnedBroccoliDelivered;
-    public int _saladsDelivered;
-    public int _ruinedSaladsDelivered;
-
-    public int _rawChickenDelivered;
-    public int _cookedChickenDelivered;
-    public int _burnedChickenDelivered;
-    public int _rawBeefDelivered;
-    public int _rareBeefDelivered;
-    public int _mediumBeefDelivered;
-    public int _wellDoneBeefDelivered;
-    public int _burnedBeefDelivered;
-
-    public List<string> _foodDelivered = new List<string>();
-
+    private List<string> _menuMains = new List<string>();
+    private List<string> _menuSides = new List<string>();
     private List<string> _foodOrdered = new List<string>();
-    private List<string> _foodChoicesMeat = new List<string>();
-    private List<string> _foodChoicesVeg = new List<string>();
     private List<string> _resultsToPost = new List<string>();
+
+    [SerializeField] private int _chickenOrdered;
+    [SerializeField] private int _beefRareOrdered;
+    [SerializeField] private int _beefMediumOrdered;
+    [SerializeField] private int _beefWellDoneOrdered;
+    [SerializeField] private int _carrotsRawOrdered;
+    [SerializeField] private int _carrotsSteamedOrdered;
+    [SerializeField] private int _broccoliRawOrdered;
+    [SerializeField] private int _broccoliSteamedOrdered;
+    [SerializeField] private int _saladsOrdered;
+
+    [SerializeField] private int _chickenRawDelivered;
+    [SerializeField] private int _chickenCookedDelivered;
+    [SerializeField] private int _chickenBurnedDelivered;
+    [SerializeField] private int _beefRawDelivered;
+    [SerializeField] private int _beefRareDelivered;
+    [SerializeField] private int _beefMediumDelivered;
+    [SerializeField] private int _beefWellDoneDelivered;
+    [SerializeField] private int _beefBurnedDelivered;
+    [SerializeField] private int _carrotsRawDelivered;
+    [SerializeField] private int _carrotsSteamedDelivered;
+    [SerializeField] private int _carrotsBurnedDelivered;
+    [SerializeField] private int _broccoliRawDelivered;
+    [SerializeField] private int _broccoliSteamedDelivered;
+    [SerializeField] private int _broccoliBurnedDelivered;
+    [SerializeField] private int _saladsDelivered;
+    [SerializeField] private int _saladsRuinedDelivered;
 
     private void Start()
     {
         Instance = this;
 
-        _foodChoicesVeg.Add("Raw Carrots");
-        _foodChoicesVeg.Add("Steamed Carrots");
-        _foodChoicesVeg.Add("Raw Broccoli");
-        _foodChoicesVeg.Add("Steamed Broccoli");
-        _foodChoicesVeg.Add("Garden Salad");
+        _menuSides.Add("Raw Carrots");
+        _menuSides.Add("Steamed Carrots");
+        _menuSides.Add("Raw Broccoli");
+        _menuSides.Add("Steamed Broccoli");
+        _menuSides.Add("Garden Salad");
 
-        _foodChoicesMeat.Add("Chicken");
-        _foodChoicesMeat.Add("Beef: Rare");
-        _foodChoicesMeat.Add("Beef: Medium");
-        _foodChoicesMeat.Add("Beef: Well-Done");
+        _menuMains.Add("Chicken");
+        _menuMains.Add("Beef: Rare");
+        _menuMains.Add("Beef: Medium");
+        _menuMains.Add("Beef: Well-Done");
     }
 
     private void Update()
@@ -79,36 +76,36 @@ public class OrderManager : MonoBehaviour
 
         for (int i = 0; i < sides; i++)
         {
-            sideSelectedIndex = Random.Range(0, _foodChoicesVeg.Count);
-            _foodOrdered.Add(_foodChoicesVeg[sideSelectedIndex]);
+            sideSelectedIndex = Random.Range(0, _menuSides.Count);
+            _foodOrdered.Add(_menuSides[sideSelectedIndex]);
         }
 
         for (int i = 0; i < mains; i++)
         {
-            mainSelectedIndex = Random.Range(0, _foodChoicesMeat.Count);
-            _foodOrdered.Add(_foodChoicesMeat[mainSelectedIndex]);
+            mainSelectedIndex = Random.Range(0, _menuMains.Count);
+            _foodOrdered.Add(_menuMains[mainSelectedIndex]);
         }
 
         for (int i = 0; i < _foodOrdered.Count; i++)
         {
             if (_foodOrdered[i] == "Raw Carrots")
             {
-                _rawCarrotsOrdered += 1;
+                _carrotsRawOrdered += 1;
             }
 
             if (_foodOrdered[i] == "Steamed Carrots")
             {
-                _steamedCarrotsOrdered += 1;
+                _carrotsSteamedOrdered += 1;
             }
 
             if (_foodOrdered[i] == "Raw Broccoli")
             {
-                _rawBroccoliOrdered += 1;
+                _broccoliRawOrdered += 1;
             }
 
             if (_foodOrdered[i] == "Steamed Broccoli")
             {
-                _steamedBroccoliOrdered += 1;
+                _broccoliSteamedOrdered += 1;
             }
 
             if (_foodOrdered[i] == "Salad")
@@ -123,17 +120,17 @@ public class OrderManager : MonoBehaviour
 
             if (_foodOrdered[i] == "Beef: Rare")
             {
-                _rareBeefOrdered += 1;
+                _beefRareOrdered += 1;
             }
 
             if (_foodOrdered[i] == "Beef: Medium")
             {
-                _mediumBeefOrdered += 1;
+                _beefMediumOrdered += 1;
             }
 
             if (_foodOrdered[i] == "Beef: Well-Done")
             {
-                _wellDoneBeefOrdered += 1;
+                _beefWellDoneOrdered += 1;
             }
         }
         PostToOrderBoard();
@@ -145,110 +142,117 @@ public class OrderManager : MonoBehaviour
             orderText.text =
                 "<b><u>Main Dishes</b></u>\n" +
                 _chickenOrdered + " - Chicken\n" +
-                _rareBeefOrdered + " - Beef: Rare\n" +
-                _mediumBeefOrdered + " - Beef: Medium\n" +
-                _wellDoneBeefOrdered + " - Beef: Well-Done\n" +
+                _beefRareOrdered + " - Beef: Rare\n" +
+                _beefMediumOrdered + " - Beef: Medium\n" +
+                _beefWellDoneOrdered + " - Beef: Well-Done\n" +
                 "\n" +
                 "\n" +
                 "<b><u>Sides</b></u>\n" +
-                _rawCarrotsOrdered + " - Raw Carrots\n" +
-                _steamedCarrotsOrdered + " - Steamed Carrots\n" +
-                _rawBroccoliOrdered + " - Raw Broccoli\n" +
-                _steamedBroccoliOrdered + " - Steamed Broccoli\n" +
+                _carrotsRawOrdered + " - Raw Carrots\n" +
+                _carrotsSteamedOrdered + " - Steamed Carrots\n" +
+                _broccoliRawOrdered + " - Raw Broccoli\n" +
+                _broccoliSteamedOrdered + " - Steamed Broccoli\n" +
                 _saladsOrdered + " - Garden Salad\n";
 
         }
     }
-    public void ExamineFoodDelivered()
+    public void CountFoodDelivered()
     {
-        for (int i = 0; i < _foodDelivered.Count; i++)
+        for (int i = 0; i < foodDelivered.Count; i++)
         {
-            if (_foodDelivered[i] == "Raw Carrots")
+            if (foodDelivered[i] == "Raw Carrots")
             {
-                _rawCarrotsDelivered += 1;
+                _carrotsRawDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Steamed Carrots")
+            if (foodDelivered[i] == "Steamed Carrots")
             {
-                _steamedCarrotsDelivered += 1;
+                _carrotsSteamedDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Burned Carrots")
+            if (foodDelivered[i] == "Burned Carrots")
             {
-                _burnedCarrotsDelivered += 1;
+                _carrotsBurnedDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Raw Broccoli")
+            if (foodDelivered[i] == "Raw Broccoli")
             {
-                _rawBroccoliDelivered += 1;
+                _broccoliRawDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Steamed Broccoli")
+            if (foodDelivered[i] == "Steamed Broccoli")
             {
-                _steamedBroccoliDelivered += 1;
+                _broccoliSteamedDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Burned Broccoli")
+            if (foodDelivered[i] == "Burned Broccoli")
             {
-                _burnedBroccoliDelivered += 1;
+                _broccoliBurnedDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Salad")
+            if (foodDelivered[i] == "Salad")
             {
                 _saladsDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Ruined Salad")
+            if (foodDelivered[i] == "Ruined Salad")
             {
-                _ruinedSaladsDelivered += 1;
+                _saladsRuinedDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Raw Chicken")
+            if (foodDelivered[i] == "Raw Chicken")
             {
-                _rawChickenDelivered += 1;
+                _chickenRawDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Cooked Chicken")
+            if (foodDelivered[i] == "Cooked Chicken")
             {
-                _cookedChickenDelivered += 1;
+                _chickenCookedDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Burned Chicken")
+            if (foodDelivered[i] == "Burned Chicken")
             {
-                _burnedChickenDelivered += 1;
+                _chickenBurnedDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Raw Beef")
+            if (foodDelivered[i] == "Raw Beef")
             {
-                _rawBeefDelivered += 1;
+                _beefRawDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Beef: Rare")
+            if (foodDelivered[i] == "Beef: Rare")
             {
-                _rareBeefDelivered += 1;
+                _beefRareDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Beef: Medium")
+            if (foodDelivered[i] == "Beef: Medium")
             {
-                _mediumBeefDelivered += 1;
+                _beefMediumDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Beef: Well-Done")
+            if (foodDelivered[i] == "Beef: Well-Done")
             {
-                _wellDoneBeefDelivered += 1;
+                _beefWellDoneDelivered += 1;
             }
 
-            if (_foodDelivered[i] == "Burned Beef")
+            if (foodDelivered[i] == "Burned Beef")
             {
-                _burnedBeefDelivered += 1;
+                _beefBurnedDelivered += 1;
             }
 
         }
     }
     public void PostToResultsBoard()
     {
-        int _deltaRawCarrots = _rawCarrotsDelivered - _rawCarrotsOrdered;
-        int _deltaSteamedCarrots = _steamedCarrotsOrdered - _steamedCarrotsDelivered;
+        int _deltaRawCarrots = _carrotsRawDelivered - _carrotsRawOrdered;
+        int _deltaSteamedCarrots =  _carrotsSteamedDelivered - _carrotsSteamedOrdered;
+        int _deltaRawBroccoli = _broccoliRawDelivered - _broccoliRawOrdered;
+        int _deltaSteamedBroccoli = _broccoliSteamedDelivered - _broccoliSteamedOrdered;
+        int _deltaSalads = _saladsDelivered - _saladsOrdered;
+        int _deltaChicken = _chickenCookedDelivered - _chickenOrdered;
+        int _deltaBeefRare = _beefRareDelivered - _beefRareOrdered;
+        int _deltaBeefMedium = _beefMediumDelivered - _beefMediumOrdered;
+        int _deltaBeefWellDone = _beefWellDoneDelivered - _beefWellDoneOrdered;
 
         _resultsToPost.Add("<b><u>Customer Comments</b></u>\n\n");
 
@@ -269,7 +273,7 @@ public class OrderManager : MonoBehaviour
         {
             _resultsToPost.Add(Mathf.Abs(_deltaRawCarrots) + " orders of raw carrots were missing!\n");
         }
-        if (_burnedCarrotsDelivered != 0)
+        if (_carrotsBurnedDelivered != 0)
         {
             _resultsToPost.Add("These carrots are burned!  This is disgraceful!\n");
         }
