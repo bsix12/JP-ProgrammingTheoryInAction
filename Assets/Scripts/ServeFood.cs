@@ -16,10 +16,12 @@ public class ServeFood : MonoBehaviour
             _otherRb = other.GetComponent<Rigidbody>();
             MoveFoodToPlate();
         }
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && OrderManager.Instance.isDoneServing == false)
         {
             OrderManager.Instance.Invoke("CountFoodDelivered", 1f);
             OrderManager.Instance.Invoke("PostToResultsBoard", 2f);
+            OrderManager.Instance.isDoneServing = true;
+            OrderManager.Instance.isReadyForNewOrder = true;
         }
     }
 

@@ -2482,34 +2482,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36affec7691437f47a8c9911aed72110, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rawCarrotsOrdered: 0
-  _steamedCarrotsOrdered: 0
-  _rawBroccoliOrdered: 0
-  _steamedBroccoliOrdered: 0
-  _saladsOrdered: 0
-  _chickenOrdered: 0
-  _rareBeefOrdered: 0
-  _mediumBeefOrdered: 0
-  _wellDoneBeefOrdered: 0
+  isReadyForNewOrder: 0
+  isDoneServing: 0
   orderText: {fileID: 135922015}
   resultsText: {fileID: 1218884293}
-  _rawCarrotsDelivered: 0
-  _steamedCarrotsDelivered: 0
-  _burnedCarrotsDelivered: 0
-  _rawBroccoliDelivered: 0
-  _steamedBroccoliDelivered: 0
-  _burnedBroccoliDelivered: 0
-  _saladsDelivered: 0
-  _ruinedSaladsDelivered: 0
-  _rawChickenDelivered: 0
-  _cookedChickenDelivered: 0
-  _burnedChickenDelivered: 0
-  _rawBeefDelivered: 0
-  _rareBeefDelivered: 0
-  _mediumBeefDelivered: 0
-  _wellDoneBeefDelivered: 0
-  _burnedBeefDelivered: 0
-  _foodDelivered: []
+  foodDelivered: []
+  _chickenOrdered: 0
+  _beefRareOrdered: 0
+  _beefMediumOrdered: 0
+  _beefWellDoneOrdered: 0
+  _carrotsSteamedOrdered: 0
+  _broccoliSteamedOrdered: 0
+  _saladsOrdered: 0
+  _chickenRawDelivered: 0
+  _chickenCookedDelivered: 0
+  _chickenBurnedDelivered: 0
+  _beefRawDelivered: 0
+  _beefRareDelivered: 0
+  _beefMediumDelivered: 0
+  _beefWellDoneDelivered: 0
+  _beefBurnedDelivered: 0
+  _carrotsRawDelivered: 0
+  _carrotsSteamedDelivered: 0
+  _carrotsBurnedDelivered: 0
+  _broccoliRawDelivered: 0
+  _broccoliSteamedDelivered: 0
+  _broccoliBurnedDelivered: 0
+  _saladsGoodDelivered: 0
+  _saladsRuinedDelivered: 0
 --- !u!1 &1201492887
 GameObject:
   m_ObjectHideFlags: 0
@@ -2670,8 +2670,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.5
-  m_fontSizeBase: 0.5
+  m_fontSize: 0.4
+  m_fontSizeBase: 0.4
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4766,7 +4766,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1726198514}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: -0, z: 0, w: 1}
   m_LocalPosition: {x: 9, y: 1, z: -14.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
