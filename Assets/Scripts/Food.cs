@@ -23,7 +23,9 @@ public class Food : MonoBehaviour
 
     private float _roomTemperature = 72;
     private static float _stationHeatingRate;
-   
+
+    public GameObject onHeatPrefab;
+ 
     protected virtual void Update()
     {
         UpdateFoodTemperature();    // ABSTRACTION - method name indicates Update() action, details in separate method
@@ -74,6 +76,12 @@ public class Food : MonoBehaviour
 
     protected virtual void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.CompareTag("CookStation"))
+        {
+            Instantiate(onHeatPrefab, transform);
+        }
+
+
         if (other.gameObject.CompareTag("Customer"))
         {
             OrderManager.Instance.foodDelivered.Add(iAm);
@@ -85,6 +93,7 @@ public class Food : MonoBehaviour
         if (other.gameObject.CompareTag("CookStation"))
         {
             isCooking = true;
+            
         }
     }
 
@@ -93,7 +102,9 @@ public class Food : MonoBehaviour
         if (other.gameObject.CompareTag("CookStation"))
         {
             isCooking = false;
-        }
+            foreach (Transform child in transform)
+                Destroy(child.gameObject);
+        } 
     }
 
 

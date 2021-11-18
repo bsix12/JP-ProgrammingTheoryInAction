@@ -12,7 +12,7 @@ public class OrderManager : MonoBehaviour
 
     public TextMeshPro orderText;
     public TextMeshPro resultsText;
-    public List<string> foodDelivered = new List<string>();
+    [System.NonSerialized] public List<string> foodDelivered = new List<string>();
 
     private List<string> _menuMains = new List<string>();
     private List<string> _menuSides = new List<string>();
@@ -56,22 +56,59 @@ public class OrderManager : MonoBehaviour
 
         _menuSides.Add("Steamed Carrots");
         _menuSides.Add("Steamed Broccoli");
-        _menuSides.Add("Garden Salad");
+        _menuSides.Add("Garden Salad");               
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space) && isReadyForNewOrder)
         {
+            ResetStoredListsAndInts();
             GetNewOrder();
             isReadyForNewOrder = false;
             isDoneServing = false;
         }
     }
 
+    void ResetStoredListsAndInts()
+    {
+        // note to future self: doing .Clear() only on lists appeared to not work
+        // new orders were added to previous orders and never got cleared
+        // took awhile to realize these lists are generated from stored data
+        // needed to reset all the input data to generate lists based only on current data
+
+        _foodOrdered.Clear();   
+        _resultsToPost.Clear();
+
+        _chickenOrdered = 0;
+        _beefRareOrdered = 0;
+        _beefMediumOrdered = 0;
+        _beefWellDoneOrdered = 0;
+        _carrotsSteamedOrdered = 0;
+        _broccoliSteamedOrdered = 0;
+        _saladsOrdered = 0;
+
+        _chickenRawDelivered = 0;
+        _chickenCookedDelivered = 0;
+        _chickenBurnedDelivered = 0;
+        _beefRawDelivered = 0;
+        _beefRareDelivered = 0;
+        _beefMediumDelivered = 0;
+        _beefWellDoneDelivered = 0;
+        _beefBurnedDelivered = 0;
+        _carrotsRawDelivered = 0;
+        _carrotsSteamedDelivered = 0;
+        _carrotsBurnedDelivered = 0;
+        _broccoliRawDelivered = 0;
+        _broccoliSteamedDelivered = 0;
+        _broccoliBurnedDelivered = 0;
+        _saladsGoodDelivered = 0;
+        _saladsRuinedDelivered = 0;
+    }
+
     void GetNewOrder()
     {
-        int sides = 6; // placeholder
+        int sides = 5; // placeholder
         int mains = 4; // placeholder
         int sideSelectedIndex;
         int mainSelectedIndex;
@@ -120,7 +157,7 @@ public class OrderManager : MonoBehaviour
                 _broccoliSteamedOrdered += 1;
             }
 
-            if (_foodOrdered[i] == "Salad")
+            if (_foodOrdered[i] == "Garden Salad")
             {
                 _saladsOrdered += 1;
             }

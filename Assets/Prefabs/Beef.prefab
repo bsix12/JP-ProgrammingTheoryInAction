@@ -125,13 +125,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 467ade9c9b9a85e41ba90acfc427642a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myTemp: 0
+  _myTemp: 0
   isCooking: 0
   isCooked: 0
   isBurned: 0
-  myRawColor:
-    serializedVersion: 2
-    rgba: 0
-  myCurrentColor:
-    serializedVersion: 2
-    rgba: 0
+  onHeatPrefab: {fileID: 7401089964433329055, guid: 4e58f3cccf47e9840adee7ec56a3eec3, type: 3}
+  isCookedRare: 0
+  isCookedMedium: 0
+  isCookedWellDone: 0

@@ -28,7 +28,6 @@ public class Salad : Food
         {
             _myRenderer.material.color = myRawColor;
             iAm = "Salad";
-            Debug.Log(iAm);
         }
 
         if (isBurned)

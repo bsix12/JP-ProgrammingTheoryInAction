@@ -125,3 +125,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c188c6f94a758c499405f7f18052ea0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _myTemp: 0
+  isCooking: 0
+  isCooked: 0
+  isBurned: 0
+  onHeatPrefab: {fileID: 7401089964433329055, guid: 4e58f3cccf47e9840adee7ec56a3eec3, type: 3}
