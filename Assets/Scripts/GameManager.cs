@@ -3,23 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class OrderManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    public static OrderManager Instance;
+    public static GameManager Instance;
 
     public bool isReadyForNewOrder;
     public bool isDoneServing;
 
     public TextMeshPro orderText;
-    public TextMeshPro resultsText;
+    public TextMeshPro reportCardText;
+    public TextMeshProUGUI scoreText;
     [System.NonSerialized] public List<string> foodDelivered = new List<string>();
 
     private List<string> _menuMains = new List<string>();
     private List<string> _menuSides = new List<string>();
     private List<string> _quantityOfEachFoodOrdered = new List<string>();
     private List<string> _onlyFoodOrdered = new List<string>();
-    private List<string> _resultsToPost = new List<string>();
+    private List<string> _reportCardToPost = new List<string>();
 
+    private int _score;
     [SerializeField] private int _chickenOrdered;
     [SerializeField] private int _beefRareOrdered;
     [SerializeField] private int _beefMediumOrdered;
@@ -73,6 +75,11 @@ public class OrderManager : MonoBehaviour
         }
     }
 
+    public void UpdateScore(int scoreToAdd)
+    {
+        _score += scoreToAdd;
+
+    }
     void ResetCustomerArea()
     {
         GameObject _customerPlate = GameObject.FindGameObjectWithTag("CustomerPlate");
@@ -80,7 +87,7 @@ public class OrderManager : MonoBehaviour
         foreach (Transform child in _customerPlate.transform)
             Destroy(child.gameObject);
 
-        resultsText.text = "";
+        reportCardText.text = "";
     }
 
     void ResetStoredListsAndInts()
@@ -91,7 +98,7 @@ public class OrderManager : MonoBehaviour
         // needed to reset all the input data to generate lists based only on current data
         _quantityOfEachFoodOrdered.Clear();
         _onlyFoodOrdered.Clear();
-        _resultsToPost.Clear();
+        _reportCardToPost.Clear();
         
         
         _chickenOrdered = 0;
@@ -232,12 +239,12 @@ public class OrderManager : MonoBehaviour
         {
             if (foodDelivered[i] == "Raw Chicken")
             {
-                _chickenRawDelivered += 1;
+                _chickenRawDelivered += 1;                
             }
-
+                
             if (foodDelivered[i] == "Cooked Chicken")
             {
-                _chickenCookedDelivered += 1;
+                   _chickenCookedDelivered += 1;
             }
 
             if (foodDelivered[i] == "Burned Chicken")
@@ -312,7 +319,7 @@ public class OrderManager : MonoBehaviour
         }
     }
 
-    public void PostToResultsBoard()
+    public void PostToKitchenReportCard()
     {
         int _deltaSteamedCarrots =  _carrotsSteamedDelivered - _carrotsSteamedOrdered;
         int _deltaSteamedBroccoli = _broccoliSteamedDelivered - _broccoliSteamedOrdered;
@@ -331,90 +338,90 @@ public class OrderManager : MonoBehaviour
         int _totalBeefDelivered = _beefRawDelivered + _beefRareDelivered + _beefMediumDelivered + _beefWellDoneDelivered + _beefBurnedDelivered;
 
 
-        _resultsToPost.Add("<b><u>Kitchen Report Card</b></u>\n\n");
+        _reportCardToPost.Add("<b><u>Kitchen Report Card</b></u>\n\n");
         
         if(_carrotsSteamedOrdered > 0 && _carrotsSteamedDelivered == _carrotsSteamedOrdered)
         {
             //+score
-            _resultsToPost.Add("Steamed Carrots - Pass\n");
+            _reportCardToPost.Add("Steamed Carrots - Pass\n");
         }
 
         if(_carrotsSteamedOrdered > 0 && _carrotsSteamedDelivered != _carrotsSteamedOrdered)
         {
             //-score
-            _resultsToPost.Add("Steamed Carrots - Fail\n");
+            _reportCardToPost.Add("Steamed Carrots - Fail\n");
         }
 
         if(_broccoliSteamedOrdered > 0 && _broccoliSteamedDelivered == _broccoliSteamedOrdered)
         {
             //+score
-            _resultsToPost.Add("Steamed Broccoli - Pass\n");
+            _reportCardToPost.Add("Steamed Broccoli - Pass\n");
         }
 
         if(_broccoliSteamedOrdered > 0 && _broccoliSteamedDelivered != _broccoliSteamedOrdered)
         {
             //-score
-            _resultsToPost.Add("Steamed Broccoli - Fail\n");
+            _reportCardToPost.Add("Steamed Broccoli - Fail\n");
         }
 
         if (_saladsOrdered > 0 && _saladsGoodDelivered == _saladsOrdered)
         {
             //+score
-            _resultsToPost.Add("Salads - Pass\n");
+            _reportCardToPost.Add("Salads - Pass\n");
         }
 
         if (_saladsOrdered > 0 && _saladsGoodDelivered != _saladsOrdered)
         {
             //-score
-            _resultsToPost.Add("Salads - Fail\n");
+            _reportCardToPost.Add("Salads - Fail\n");
         }
 
         if (_chickenOrdered > 0 && _chickenCookedDelivered == _chickenOrdered)
         {
             //+score
-            _resultsToPost.Add("Chicken - Pass\n");
+            _reportCardToPost.Add("Chicken - Pass\n");
         }
 
         if (_chickenOrdered > 0 && _chickenCookedDelivered != _chickenOrdered)
         {
             //-score
-            _resultsToPost.Add("Chicken - Fail\n");
+            _reportCardToPost.Add("Chicken - Fail\n");
         }
 
         if (_beefRareOrdered > 0 && _beefRareDelivered == _beefRareOrdered)
         {
             //+score
-            _resultsToPost.Add("Beef: Rare - Pass\n");
+            _reportCardToPost.Add("Beef: Rare - Pass\n");
         }
 
         if (_beefRareOrdered > 0 && _beefRareDelivered != _beefRareOrdered)
         {
             //-score
-            _resultsToPost.Add("Beef: Rare - Fail\n");
+            _reportCardToPost.Add("Beef: Rare - Fail\n");
         }
 
         if (_beefMediumOrdered > 0 && _beefMediumDelivered == _beefMediumOrdered)
         {
             //+score
-            _resultsToPost.Add("Beef: Medium - Pass\n");
+            _reportCardToPost.Add("Beef: Medium - Pass\n");
         }
 
         if (_beefMediumOrdered > 0 && _beefMediumDelivered != _beefMediumOrdered)
         {
             //-score
-            _resultsToPost.Add("Beef: Medium - Fail\n");
+            _reportCardToPost.Add("Beef: Medium - Fail\n");
         }
 
         if (_beefWellDoneOrdered > 0 && _beefWellDoneDelivered == _beefWellDoneOrdered)
         {
             //+score
-            _resultsToPost.Add("Beef: Well-Done - Pass\n");
+            _reportCardToPost.Add("Beef: Well-Done - Pass\n");
         }
 
         if (_beefWellDoneOrdered > 0 && _beefWellDoneDelivered != _beefWellDoneOrdered)
         {
             //-score
-            _resultsToPost.Add("Beef: Well-Done - Fail\n");
+            _reportCardToPost.Add("Beef: Well-Done - Fail\n");
         }
 
 
@@ -464,9 +471,9 @@ public class OrderManager : MonoBehaviour
                     _resultsToPost.Add("These carrots are burned!  This is disgraceful!\n");
                 }
           */
-        for (int i = 0; i < _resultsToPost.Count; i++)
+        for (int i = 0; i < _reportCardToPost.Count; i++)
         {
-            resultsText.text += _resultsToPost[i]+"\n";  
+            reportCardText.text += _reportCardToPost[i]+"\n";  
         }
 
     }

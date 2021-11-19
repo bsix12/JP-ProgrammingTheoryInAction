@@ -19,12 +19,12 @@ public class ServeFood : MonoBehaviour
 
         // review and post results, allow new order to be generated
         // isDoneServing to prevent player triggering duplicate report
-        if (other.CompareTag("Player") && OrderManager.Instance.isDoneServing == false)
+        if (other.CompareTag("Player") && GameManager.Instance.isDoneServing == false)
         {
-            OrderManager.Instance.Invoke("CountFoodDelivered", 1f);
-            OrderManager.Instance.Invoke("PostToResultsBoard", 2f);
-            OrderManager.Instance.isDoneServing = true;
-            OrderManager.Instance.isReadyForNewOrder = true;
+            GameManager.Instance.Invoke("CountFoodDelivered", 1f);
+            GameManager.Instance.Invoke("PostToKitchenReportCard", 2f);
+            GameManager.Instance.isDoneServing = true;
+            GameManager.Instance.isReadyForNewOrder = true;
         }
     }
 

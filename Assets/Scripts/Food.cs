@@ -5,6 +5,7 @@ using UnityEngine;
 public class Food : MonoBehaviour
 {
     [SerializeField] private float _myTemp; // ENCAPSULATION - backing field for myTemp.  Treating the food temperature like a 'health bar' that is not directly accessed
+    
     [SerializeField] protected bool isCooking;
     [SerializeField] protected bool isCooked;
     [SerializeField] protected bool isBurned;
@@ -15,7 +16,7 @@ public class Food : MonoBehaviour
     protected float myIsCookedTemp;
 
     protected string iAm;
-
+    
     protected Color32 myRawColor;
     protected Color32 myCookedColor;
     protected Color32 myCurrentColor;
@@ -24,6 +25,7 @@ public class Food : MonoBehaviour
     private float _roomTemperature = 72;
     private static float _stationHeatingRate;
 
+    public int basePointValue;
     public GameObject onHeatPrefab;
  
     protected virtual void Update()
@@ -86,7 +88,7 @@ public class Food : MonoBehaviour
         // tally up the food delivered, each food objects adds itself (iAm) to list
         if (other.gameObject.CompareTag("ServeToCustomer"))
         {
-            OrderManager.Instance.foodDelivered.Add(iAm);
+            GameManager.Instance.foodDelivered.Add(iAm);
         }
     }
 

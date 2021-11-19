@@ -129,6 +129,7 @@ MonoBehaviour:
   isCooking: 0
   isCooked: 0
   isBurned: 0
+  basePointValue: 20
   onHeatPrefab: {fileID: 6787215316302648940, guid: 55e2878145cbe784db5e2aa51f095a94, type: 3}
   isCookedRare: 0
   isCookedMedium: 0
