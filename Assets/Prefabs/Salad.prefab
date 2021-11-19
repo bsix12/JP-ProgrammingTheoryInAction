@@ -129,4 +129,4 @@ MonoBehaviour:
   isCooking: 0
   isCooked: 0
   isBurned: 0
-  onHeatPrefab: {fileID: 7401089964433329055, guid: 4e58f3cccf47e9840adee7ec56a3eec3, type: 3}
+  onHeatPrefab: {fileID: 6787215316302648940, guid: 55e2878145cbe784db5e2aa51f095a94, type: 3}
