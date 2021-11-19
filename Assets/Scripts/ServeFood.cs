@@ -23,6 +23,7 @@ public class ServeFood : MonoBehaviour
         {
             GameManager.Instance.Invoke("CountFoodDelivered", 1f);
             GameManager.Instance.Invoke("PostToKitchenReportCard", 2f);
+            GameManager.Instance.Invoke("CalculateScore", 1f);
             GameManager.Instance.isDoneServing = true;
             GameManager.Instance.isReadyForNewOrder = true;
         }

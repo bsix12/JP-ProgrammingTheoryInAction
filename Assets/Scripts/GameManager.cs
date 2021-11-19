@@ -99,6 +99,7 @@ public class GameManager : MonoBehaviour
         _quantityOfEachFoodOrdered.Clear();
         _onlyFoodOrdered.Clear();
         _reportCardToPost.Clear();
+        foodDelivered.Clear();
         
         
         _chickenOrdered = 0;
@@ -235,16 +236,18 @@ public class GameManager : MonoBehaviour
 
     public void CountFoodDelivered()
     {
+        Debug.Log("should be 0 method call after reset: " + _chickenCookedDelivered);
         for (int i = 0; i < foodDelivered.Count; i++)
         {
             if (foodDelivered[i] == "Raw Chicken")
             {
-                _chickenRawDelivered += 1;                
+                _chickenRawDelivered += 1;            
             }
                 
             if (foodDelivered[i] == "Cooked Chicken")
             {
                    _chickenCookedDelivered += 1;
+                Debug.Log("Should increase by 1 for each chicken: " + _chickenCookedDelivered);
             }
 
             if (foodDelivered[i] == "Burned Chicken")
@@ -475,6 +478,37 @@ public class GameManager : MonoBehaviour
         {
             reportCardText.text += _reportCardToPost[i]+"\n";  
         }
+        Debug.Log(_totalChickenDelivered);
+        Debug.Log(_deltaChicken);
 
+
+        _deltaChicken = 0;
+        _totalChickenDelivered = 0;
+
+        Debug.Log(_totalChickenDelivered);
+        Debug.Log(_deltaChicken);
+    }
+
+    void CalculateScore()
+    {
+        for (int i = 0; i < _chickenCookedDelivered; i++)
+        {
+            if (i+1 <= _chickenOrdered)
+            {
+                _score += 20;               // score for each item delivered that matches order
+                scoreText.text = "Score: " + _score.ToString();
+            }
+            if (i+1 > _chickenOrdered)
+            {
+                _score += -20;              // penalty for delivering extra
+                scoreText.text = "Score: " + _score.ToString();
+            } 
+        }
+
+       if (_chickenOrdered - _chickenCookedDelivered > 0)
+        {
+            _score += (_chickenOrdered - _chickenCookedDelivered) * -20;   // penalty for missing item on order
+            scoreText.text = "Score: " + _score.ToString();
+        } 
     }
 }
