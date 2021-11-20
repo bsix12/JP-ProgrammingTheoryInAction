@@ -25,7 +25,6 @@ public class Food : MonoBehaviour
     private float _roomTemperature = 72;
     private static float _stationHeatingRate;
 
-    public int basePointValue;
     public GameObject onHeatPrefab;
  
     protected virtual void Update()

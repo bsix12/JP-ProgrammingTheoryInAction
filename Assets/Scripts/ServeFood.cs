@@ -5,7 +5,7 @@ using UnityEngine;
 public class ServeFood : MonoBehaviour
 {
     private Rigidbody _otherRb;
-    private GameObject _player;
+    //private GameObject _player;
     private float _offsetDistance = .5f;
     private Vector3 _offset;
 

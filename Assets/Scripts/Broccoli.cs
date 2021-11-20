@@ -36,13 +36,13 @@ public class Broccoli : Food  // INHERITANCE - Broccoli inherits from the Food c
         if (isCooked)
         {
             _myRenderer.material.color = myCookedColor;
-            iAm = "Steamed Brocolli";
+            iAm = "Steamed Broccoli";
         }
 
         if (isBurned)
         {
             _myRenderer.material.color = isBurnedColor;
-            iAm = "Burned Brocolli";
+            iAm = "Burned Broccoli";
         }
     }
 }
