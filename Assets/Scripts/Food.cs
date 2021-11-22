@@ -22,11 +22,12 @@ public class Food : MonoBehaviour
     protected Color32 myCurrentColor;
     protected Color32 isBurnedColor = new Color32(25, 25, 0, 255);
 
+    public AudioClip cookConditionIndicator; // rings each time food is cooked or next stage of isCooked
+    public GameObject onHeatPrefab;
+
     private float _roomTemperature = 72;
     private static float _stationHeatingRate;
 
-    public GameObject onHeatPrefab;
- 
     protected virtual void Update()
     {
         UpdateFoodTemperature();    // ABSTRACTION - method name indicates Update() action, details in separate method

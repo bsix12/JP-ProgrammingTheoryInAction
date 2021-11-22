@@ -24,13 +24,13 @@ public class Salad : Food
     {
         myRawColor = new Color32(150, 210, 115, 225);
 
-        if (!isCooked)
+        if (!isCooked && iAm != "Salad")
         {
             _myRenderer.material.color = myRawColor;
             iAm = "Salad";
         }
 
-        if (isBurned)
+        if (isBurned && iAm != "Ruined Salad")
         {
             _myRenderer.material.color = isBurnedColor;
             iAm = "Ruined Salad";

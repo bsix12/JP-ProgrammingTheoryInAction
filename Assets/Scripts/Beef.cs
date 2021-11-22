@@ -9,11 +9,13 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
     public bool isCookedWellDone;
 
     private Renderer _myRenderer;
+    private AudioSource _myAudioSource;
     
 
     private void Awake()
     {
         _myRenderer = GetComponent<Renderer>();
+        _myAudioSource = GetComponent<AudioSource>();
          
         myStartTemp = 60f;
         myIsBurnedTemp = 200f;

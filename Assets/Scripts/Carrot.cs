@@ -5,10 +5,12 @@ using UnityEngine;
 public class Carrot : Food  // INHERITANCE - Carrot inherits from the Food class
 {
     private Renderer _myRenderer;
-    
+    private AudioSource _myAudioSource;
+
     private void Awake()
     {
         _myRenderer = GetComponent<Renderer>();
+        _myAudioSource = GetComponent<AudioSource>();
 
         myStartTemp = 57f;
         myIsCookedTemp = 110f;
@@ -27,19 +29,20 @@ public class Carrot : Food  // INHERITANCE - Carrot inherits from the Food class
         myRawColor = new Color32(237, 145, 33, 225);
         myCookedColor = new Color32(255, 126, 0, 255); 
 
-        if (!isCooked)
+        if (!isCooked && iAm != "Raw Carrots")
         {
             _myRenderer.material.color = myRawColor;
             iAm = "Raw Carrots";
         }
 
-        if (isCooked)
+        if (isCooked && iAm != "Steamed Carrots" && !isBurned)
         {
             _myRenderer.material.color = myCookedColor;
+            _myAudioSource.PlayOneShot(cookConditionIndicator, .1f);
             iAm = "Steamed Carrots";
         }
 
-        if (isBurned)
+        if (isBurned && iAm != "Burned Carrots")
         {
             _myRenderer.material.color = isBurnedColor;
             iAm = "Burned Carrots";

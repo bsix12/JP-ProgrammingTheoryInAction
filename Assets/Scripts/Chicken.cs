@@ -5,10 +5,12 @@ using UnityEngine;
 public class Chicken : Food  // INHERITANCE - Chicken inherits from the Food class
 {
     private Renderer _myRenderer;
+    private AudioSource _myAudioSource;
 
     private void Awake()
     {
         _myRenderer = GetComponent<Renderer>();
+        _myAudioSource = GetComponent<AudioSource>();
 
         myStartTemp = 60f;
         myIsCookedTemp = 120f;
@@ -27,19 +29,21 @@ public class Chicken : Food  // INHERITANCE - Chicken inherits from the Food cla
         myRawColor = new Color32(240, 200, 200, 255);
         myCookedColor = new Color32(250, 250, 200, 255);
 
-        if (!isCooked)
+        if (!isCooked && iAm != "Raw Chicken")
         {
             _myRenderer.material.color = myRawColor;
             iAm = "Raw Chicken";
         }
 
-        if (isCooked)
+        if (isCooked && iAm != "Cooked Chicken" && !isBurned)
         {
             _myRenderer.material.color = myCookedColor;
+            _myAudioSource.PlayOneShot(cookConditionIndicator, .1f);
             iAm = "Cooked Chicken";
+            
         }
 
-        if (isBurned)
+        if (isBurned && iAm != "Burned Chicken")
         {
             _myRenderer.material.color = isBurnedColor;
             iAm = "Burned Chicken";
