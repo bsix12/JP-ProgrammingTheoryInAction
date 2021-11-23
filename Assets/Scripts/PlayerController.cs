@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 	private Rigidbody _playerRb;
+	public Transform _plateCenter;
 
 	private float _moveForce = 15f; // will vary based on mass and result desired
 	private float _turnSpeed = 150f;
@@ -71,9 +72,7 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-
-
-			private void RotatePlayer()
+	private void RotatePlayer()
 	{
 
 		if (Input.GetKey(KeyCode.A))
@@ -86,5 +85,7 @@ public class PlayerController : MonoBehaviour
 			transform.Rotate(Time.deltaTime * _turnSpeed * Vector3.up);
 		}
 	}
+
+
 }
 
