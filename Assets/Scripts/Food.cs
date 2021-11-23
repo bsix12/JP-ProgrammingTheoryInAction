@@ -15,7 +15,8 @@ public class Food : MonoBehaviour
     protected float myIsBurnedTemp;
     protected float myIsCookedTemp;
 
-    protected string iAm;
+    //protected string iAm;
+    public string iAm;
     
     protected Color32 myRawColor;
     protected Color32 myCookedColor;
@@ -23,7 +24,8 @@ public class Food : MonoBehaviour
     protected Color32 isBurnedColor = new Color32(25, 25, 0, 255);
 
     public AudioClip cookConditionIndicator; // rings each time food is cooked or next stage of isCooked
-    public GameObject onHeatPrefab;
+    public GameObject indicatorGrillPrefab;
+    public GameObject indicatorSteamerPrefab;
 
     private float _roomTemperature = 72;
     private static float _stationHeatingRate;
@@ -80,9 +82,14 @@ public class Food : MonoBehaviour
     protected virtual void OnTriggerEnter(Collider other)
     {
         // provide OnHeat indicator when food touching cook surface
-        if (other.gameObject.CompareTag("CookStation"))
+        if (other.gameObject.CompareTag("Grill"))
         {
-            Instantiate(onHeatPrefab, transform);
+            Instantiate(indicatorGrillPrefab, transform);
+        }
+
+        if (other.gameObject.CompareTag("Steamer"))
+        {
+            Instantiate(indicatorSteamerPrefab, transform);
         }
 
         // tally up the food delivered, each food objects adds itself (iAm) to list
@@ -94,17 +101,17 @@ public class Food : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.CompareTag("CookStation"))
+        if (other.gameObject.CompareTag("Grill") || other.gameObject.CompareTag("Steamer"))
         {
             isCooking = true;
             
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    protected virtual void OnTriggerExit(Collider other)
     {
         // remove OnHeat idicators from food when exiting cook area
-        if (other.gameObject.CompareTag("CookStation"))
+        if (other.gameObject.CompareTag("Grill") || other.gameObject.CompareTag("Steamer"))
         {
             isCooking = false;
             foreach (Transform child in transform)

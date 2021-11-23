@@ -13,7 +13,8 @@ public class GameManager : MonoBehaviour
     public TextMeshPro orderText;
     public TextMeshPro reportCardText;
     public TextMeshProUGUI scoreText;
-    [System.NonSerialized] public List<string> foodDelivered = new List<string>();
+    //[System.NonSerialized]
+    public List<string> foodDelivered = new List<string>();
 
     private List<string> _menuMains = new List<string>();
     private List<string> _menuSides = new List<string>();
@@ -69,6 +70,7 @@ public class GameManager : MonoBehaviour
             ResetStoredListsAndInts();
             ResetCustomerArea();
             orderText.text = "";
+            
             GetNewOrder();
             isReadyForNewOrder = false;
             isDoneServing = false;
@@ -80,6 +82,7 @@ public class GameManager : MonoBehaviour
         _score += scoreToAdd;
 
     }
+
     void ResetCustomerArea()
     {
         GameObject _customerPlate = GameObject.FindGameObjectWithTag("CustomerPlate");
@@ -100,7 +103,6 @@ public class GameManager : MonoBehaviour
         _onlyFoodOrdered.Clear();
         _reportCardToPost.Clear();
         foodDelivered.Clear();
-
 
         _chickenOrdered = 0;
         _beefRareOrdered = 0;
@@ -234,8 +236,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void CountFoodDelivered()
+    public void AfterFoodIsServed()
     {
+        Debug.Log("after food is served has been called");
+        Invoke("CountFoodDelivered", 1f);
+        Invoke("PostToKitchenReportCard", 2f);
+        Invoke("CalculateScore", 1f);
+        isDoneServing = true;
+        isReadyForNewOrder = true;
+    }
+    
+
+    private void CountFoodDelivered()
+    {
+        Debug.Log("Count food delivered has been called");
         for (int i = 0; i < foodDelivered.Count; i++)
         {
             if (foodDelivered[i] == "Raw Chicken")
@@ -320,10 +334,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void PostToKitchenReportCard()
+    private void PostToKitchenReportCard()
     {
-
-
+        Debug.Log("post to kitchen report card has been called");
         _reportCardToPost.Add("<b><u>Kitchen Report Card</b></u>\n\n");
 
         if (_carrotsSteamedOrdered > 0 && _carrotsSteamedDelivered == _carrotsSteamedOrdered)
@@ -402,79 +415,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void CustomerComments()
-    { 
-        /*
-        int _deltaSteamedCarrots =  _carrotsSteamedDelivered - _carrotsSteamedOrdered;
-        int _deltaSteamedBroccoli = _broccoliSteamedDelivered - _broccoliSteamedOrdered;
-        int _deltaSalads = _saladsGoodDelivered - _saladsOrdered;
-        int _deltaChicken = _chickenCookedDelivered - _chickenOrdered;
-        int _deltaBeefRare = _beefRareDelivered - _beefRareOrdered;
-        int _deltaBeefMedium = _beefMediumDelivered - _beefMediumOrdered;
-        int _deltaBeefWellDone = _beefWellDoneDelivered - _beefWellDoneOrdered;
 
-        int _totalBeefOrdered = _beefRareOrdered + _beefMediumOrdered + _beefWellDoneOrdered;
-
-        int _totalCarrotsDelivered = _carrotsRawDelivered + _carrotsSteamedDelivered + _carrotsBurnedDelivered;
-        int _totalBroccoliDelivered = _broccoliRawDelivered + _broccoliSteamedDelivered + _broccoliBurnedDelivered;
-        int _totalSaladsDelivered = _saladsGoodDelivered + _saladsRuinedDelivered;
-        int _totalChickenDelivered = _chickenCookedDelivered + _chickenBurnedDelivered;
-        int _totalBeefDelivered = _beefRawDelivered + _beefRareDelivered + _beefMediumDelivered + _beefWellDoneDelivered + _beefBurnedDelivered;
-               
-        if (_totalBeefOrdered + _chickenOrdered > 0 && _beefRawDelivered + _chickenRawDelivered > 0)
-        {
-            _resultsToPost.Add("You actually served us raw meat!\n");
-        }
-
-        if (_totalBeefOrdered + _chickenOrdered > 0 && _beefBurnedDelivered + _chickenBurnedDelivered > 0)
-        {
-            _resultsToPost.Add("The meat on my plate was burned to a crisp!\n");
-        }
-
-        if (_carrotsSteamedOrdered + _broccoliSteamedOrdered > 0 && _carrotsBurnedDelivered + _broccoliBurnedDelivered > 0)
-        {
-            _resultsToPost.Add("Vegetables were burned, and not just a little!\n");
-        }
-
-        if (_saladsRuinedDelivered > 0)
-        {
-            _resultsToPost.Add("How hard is a Garden Salad!, this one was ruined\n");
-        }
-        
-        if (_deltaRawCarrots == 1)
-        {
-            _resultsToPost.Add ("Received 1 extra order of raw carrots\n");
-        }
-        
-        if (_deltaRawCarrots == -1)
-        {
-            _resultsToPost.Add("1 order of raw carrots is missing!\n");
-        }
-
-        if (_deltaRawCarrots > 1)
-        {
-            _resultsToPost.Add("Received " + _deltaRawCarrots + " extra orders of raw carrots\n");
-        }
-        
-        if (_deltaRawCarrots < -1)
-        {
-            _resultsToPost.Add(Mathf.Abs(_deltaRawCarrots) + " orders of raw carrots were missing!\n");
-        }
-
-        if (_carrotsBurnedDelivered != 0)
-        {
-            _resultsToPost.Add("These carrots are burned!  This is disgraceful!\n");
-        }
-        */
-    }
-
-    void CalculateScore()
+    private void CalculateScore()
     {
-        CalculateScoreForBeefDelivered();
-        CalculateScoreForChickenDelivered();
-        CalculateScoreForCarrotsDelivered();
-        CalculateScoreForBroccoliDelivered();
-        CalculateScoreForSaladsDelivered();
+        Debug.Log("calculate score has been called");
+        //CalculateScoreForBeefDelivered();       //
+        CalculateScoreForChickenDelivered();    // 
+        //CalculateScoreForCarrotsDelivered();    // ABSTRACTION - method names indicate actions, details in separate methods
+        //CalculateScoreForBroccoliDelivered();   // 
+        //CalculateScoreForSaladsDelivered();     // 
     }
 
 
@@ -541,13 +490,12 @@ public class GameManager : MonoBehaviour
             _receivedAllCorrectBonus = true;
         }
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///
         ///  NEED TO SOLVE in CheckBeefPartials()
         ///   - correct total edible portions with none correct
         ///   - correct total edible portions with at least one correct
         ///
-        ///    
         /// if( ordered A+B+C == deliveredEdible A+B+C ) // this ensures only reviewing cases where the correct number of portions were delivered.  examine mix of what was delivered.
         /// {
         ///     if( ordered A > 0 && delivered A > 0) 
@@ -570,9 +518,12 @@ public class GameManager : MonoBehaviour
         ///     
         ///     // no portions were correct, good try  
         /// }   
-
-        CheckBeefPartials(_allPortionsOrdered, _largeOrder, _receivedAllCorrectBonus);
-
+        ///
+        
+        CheckBeefPartials(_allPortionsOrdered, _largeOrder, _receivedAllCorrectBonus); // ABSTRACTION.  Details in separate method.
+        
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
         if (_allPortionsOrdered > _allPortionsDeliveredAnyCondition)
         {
             _score += (_allPortionsOrdered - _allPortionsDeliveredAnyCondition) * _missingPortionPenalty; // penalty for each missing portion
@@ -587,7 +538,6 @@ public class GameManager : MonoBehaviour
         _score += _beefBurnedDelivered * _ruinedPortionPenalty; // penalty for every burned portion delivered
         
         scoreText.text = "Score: " + _score.ToString();
-        Debug.Log(_receivedAllCorrectBonus);
     }
 
 
@@ -841,5 +791,71 @@ public class GameManager : MonoBehaviour
 
         _score += _saladsRuinedDelivered * _ruinedPortionPenalty; // penalty for every ruined portion delivered
         scoreText.text = "Score: " + _score.ToString();
+    }
+
+    void CustomerComments()
+    {
+        /*
+        int _deltaSteamedCarrots =  _carrotsSteamedDelivered - _carrotsSteamedOrdered;
+        int _deltaSteamedBroccoli = _broccoliSteamedDelivered - _broccoliSteamedOrdered;
+        int _deltaSalads = _saladsGoodDelivered - _saladsOrdered;
+        int _deltaChicken = _chickenCookedDelivered - _chickenOrdered;
+        int _deltaBeefRare = _beefRareDelivered - _beefRareOrdered;
+        int _deltaBeefMedium = _beefMediumDelivered - _beefMediumOrdered;
+        int _deltaBeefWellDone = _beefWellDoneDelivered - _beefWellDoneOrdered;
+
+        int _totalBeefOrdered = _beefRareOrdered + _beefMediumOrdered + _beefWellDoneOrdered;
+
+        int _totalCarrotsDelivered = _carrotsRawDelivered + _carrotsSteamedDelivered + _carrotsBurnedDelivered;
+        int _totalBroccoliDelivered = _broccoliRawDelivered + _broccoliSteamedDelivered + _broccoliBurnedDelivered;
+        int _totalSaladsDelivered = _saladsGoodDelivered + _saladsRuinedDelivered;
+        int _totalChickenDelivered = _chickenCookedDelivered + _chickenBurnedDelivered;
+        int _totalBeefDelivered = _beefRawDelivered + _beefRareDelivered + _beefMediumDelivered + _beefWellDoneDelivered + _beefBurnedDelivered;
+               
+        if (_totalBeefOrdered + _chickenOrdered > 0 && _beefRawDelivered + _chickenRawDelivered > 0)
+        {
+            _resultsToPost.Add("You actually served us raw meat!\n");
+        }
+
+        if (_totalBeefOrdered + _chickenOrdered > 0 && _beefBurnedDelivered + _chickenBurnedDelivered > 0)
+        {
+            _resultsToPost.Add("The meat on my plate was burned to a crisp!\n");
+        }
+
+        if (_carrotsSteamedOrdered + _broccoliSteamedOrdered > 0 && _carrotsBurnedDelivered + _broccoliBurnedDelivered > 0)
+        {
+            _resultsToPost.Add("Vegetables were burned, and not just a little!\n");
+        }
+
+        if (_saladsRuinedDelivered > 0)
+        {
+            _resultsToPost.Add("How hard is a Garden Salad!, this one was ruined\n");
+        }
+        
+        if (_deltaRawCarrots == 1)
+        {
+            _resultsToPost.Add ("Received 1 extra order of raw carrots\n");
+        }
+        
+        if (_deltaRawCarrots == -1)
+        {
+            _resultsToPost.Add("1 order of raw carrots is missing!\n");
+        }
+
+        if (_deltaRawCarrots > 1)
+        {
+            _resultsToPost.Add("Received " + _deltaRawCarrots + " extra orders of raw carrots\n");
+        }
+        
+        if (_deltaRawCarrots < -1)
+        {
+            _resultsToPost.Add(Mathf.Abs(_deltaRawCarrots) + " orders of raw carrots were missing!\n");
+        }
+
+        if (_carrotsBurnedDelivered != 0)
+        {
+            _resultsToPost.Add("These carrots are burned!  This is disgraceful!\n");
+        }
+        */
     }
 }

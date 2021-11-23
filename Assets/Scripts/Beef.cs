@@ -63,34 +63,57 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
         myRawColor = new Color32(225, 145, 145, 255);
 
 
-        if (!isCooked)
+        if (!isCooked && iAm != "Raw Beef")
         {
             _myRenderer.material.color = myRawColor;
             iAm = "Raw Beef";
         }
 
-        if (isCookedRare)
+        if (isCookedRare && iAm != "Beef: Rare" && !isCookedMedium && !isCookedWellDone && !isBurned)
         {
             _myRenderer.material.color = new Color32(245, 125, 100, 255);
+            _myAudioSource.PlayOneShot(cookConditionIndicator, .5f);
             iAm = "Beef: Rare";
         }
 
-        if (isCookedMedium)
+        if (isCookedMedium && iAm != "Beef: Medium" && !isCookedRare && !isCookedWellDone && !isBurned)
         {
             _myRenderer.material.color = new Color32(175, 100, 50, 255);
+            _myAudioSource.PlayOneShot(cookConditionIndicator, .5f);
             iAm = "Beef: Medium";
         }
 
-        if (isCookedWellDone)
+        if (isCookedWellDone && iAm != "Beef: Well-Done" && !isCookedRare && !isCookedMedium && !isBurned)
         {
             _myRenderer.material.color = new Color32(125, 75, 25, 255);
+            _myAudioSource.PlayOneShot(cookConditionIndicator, .5f);
             iAm = "Beef: Well-Done";
         }
 
-        if (isBurned)
+        if (isBurned && iAm != "Burned Beef")
         {
             _myRenderer.material.color = isBurnedColor;
             iAm = "Burned Beef";
         }
+    }
+
+    protected override void OnTriggerEnter(Collider other) // POLYMORPHISM - override method.  
+    {
+        if (other.gameObject.CompareTag("Grill"))
+        {
+            _myAudioSource.Play(); // Apply 'sizzleSound' for meats only && on grill only
+        }
+
+        base.OnTriggerEnter(other);
+    }
+
+    protected override void OnTriggerExit(Collider other) // POLYMORPHISM - override method.
+    {
+        if (other.gameObject.CompareTag("Grill"))
+        {
+            _myAudioSource.Stop(); // Apply 'sizzleSound' for meats only && on grill only
+        }
+        
+        base.OnTriggerExit(other);        
     }
 }

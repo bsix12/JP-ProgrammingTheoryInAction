@@ -20,11 +20,13 @@ public class ServeFood : MonoBehaviour
         // isDoneServing to prevent player triggering duplicate report
         if (other.CompareTag("Player") && GameManager.Instance.isDoneServing == false)
         {
-            GameManager.Instance.Invoke("CountFoodDelivered", 1f);
-            GameManager.Instance.Invoke("PostToKitchenReportCard", 2f);
-            GameManager.Instance.Invoke("CalculateScore", 1f);
-            GameManager.Instance.isDoneServing = true;
-            GameManager.Instance.isReadyForNewOrder = true;
+            //GameManager.Instance.Invoke("CountFoodDelivered", 1f);
+            //GameManager.Instance.Invoke("PostToKitchenReportCard", 2f);
+            //GameManager.Instance.Invoke("CalculateScore", 1f);
+            //GameManager.Instance.isDoneServing = true;
+            //GameManager.Instance.isReadyForNewOrder = true;
+
+            GameManager.Instance.AfterFoodIsServed(); // ABSTRACTION
         }
     }
 

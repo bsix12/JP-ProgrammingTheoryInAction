@@ -10,6 +10,8 @@ TagManager:
   - OnHeat
   - CustomerPlate
   - ServeToCustomer
+  - Grill
+  - Steamer
   layers:
   - Default
   - TransparentFX

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CookStation : MonoBehaviour
 {
-    [SerializeField] private float myHeatingRate = 10f;
+    [SerializeField] private float myHeatingRate = 8f;
 
     private void OnTriggerEnter(Collider other)
     {
