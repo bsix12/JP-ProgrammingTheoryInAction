@@ -238,7 +238,7 @@ public class GameManager : MonoBehaviour
 
     public void AfterFoodIsServed()
     {
-        Debug.Log("after food is served has been called");
+        //Debug.Log("after food is served has been called");
         Invoke("CountFoodDelivered", 1f);
         Invoke("PostToKitchenReportCard", 2f);
         Invoke("CalculateScore", 1f);
@@ -249,7 +249,7 @@ public class GameManager : MonoBehaviour
 
     private void CountFoodDelivered()
     {
-        Debug.Log("Count food delivered has been called");
+        //Debug.Log("Count food delivered has been called");
         for (int i = 0; i < foodDelivered.Count; i++)
         {
             if (foodDelivered[i] == "Raw Chicken")
@@ -336,7 +336,7 @@ public class GameManager : MonoBehaviour
 
     private void PostToKitchenReportCard()
     {
-        Debug.Log("post to kitchen report card has been called");
+        //Debug.Log("post to kitchen report card has been called");
         _reportCardToPost.Add("<b><u>Kitchen Report Card</b></u>\n\n");
 
         if (_carrotsSteamedOrdered > 0 && _carrotsSteamedDelivered == _carrotsSteamedOrdered)
@@ -418,12 +418,12 @@ public class GameManager : MonoBehaviour
 
     private void CalculateScore()
     {
-        Debug.Log("calculate score has been called");
-        //CalculateScoreForBeefDelivered();       //
+        //Debug.Log("calculate score has been called");
+        CalculateScoreForBeefDelivered();       //
         CalculateScoreForChickenDelivered();    // 
-        //CalculateScoreForCarrotsDelivered();    // ABSTRACTION - method names indicate actions, details in separate methods
-        //CalculateScoreForBroccoliDelivered();   // 
-        //CalculateScoreForSaladsDelivered();     // 
+        CalculateScoreForCarrotsDelivered();    // ABSTRACTION - method names indicate actions, details in separate methods
+        CalculateScoreForBroccoliDelivered();   // 
+        CalculateScoreForSaladsDelivered();     // 
     }
 
 

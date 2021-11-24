@@ -628,8 +628,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.25, y: 1, z: 0.25}
-  m_Center: {x: 1, y: 0.5, z: -1}
+  m_Size: {x: 0.25, y: 7.520008, z: 0.25}
+  m_Center: {x: 1, y: 3.760004, z: -1}
 --- !u!114 &1188379265531367074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -644,6 +644,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stationMaterial: {fileID: 0}
   spawnLoc: {fileID: 1188379265850578142}
+  audioSource: {fileID: 0}
+  dispenserSound: {fileID: 0}
 --- !u!1 &1188379265850578143
 GameObject:
   m_ObjectHideFlags: 0
