@@ -7,7 +7,48 @@ public class ServeFood : MonoBehaviour
     private Rigidbody _otherRb;
     private float _offsetDistance = .5f;
     private Vector3 _offset;
+    private bool _inServiceArea;
+    private List<GameObject> _itemsToServe; 
 
+    private void Start()
+    {
+        _itemsToServe = GameObject.FindGameObjectWithTag("CollectFoodTrigger").GetComponent<CollectFood>().itemsToServe;
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            _inServiceArea = true;            
+        }
+
+    }
+
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            _inServiceArea = false;
+        }
+
+    }
+
+    private void Update()
+    {
+        if (_inServiceArea && GameManager.Instance.isDoneServing == false && Input.GetKeyDown(KeyCode.Space))
+        {
+            for (int i = 0; i < _itemsToServe.Count; i++)
+            {
+                _otherRb = _itemsToServe[i].GetComponent<Rigidbody>();
+                MoveFoodToPlate(_otherRb);                
+            }
+            GameManager.Instance.AfterFoodIsServed();
+        }
+    }
+
+    /*
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Food"))
@@ -23,8 +64,9 @@ public class ServeFood : MonoBehaviour
              GameManager.Instance.AfterFoodIsServed();
         }
     }
+    */
 
-    void MoveFoodToPlate()
+    void MoveFoodToPlate(Rigidbody _otherRb)
     {
         // remove player movement transfering with food
         OnPlatePosition();

@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isReadyForNewOrder)
+        if (Input.GetKeyDown(KeyCode.Space) && isReadyForNewOrder)  // this is clearing out my lists on the same space bar as i submit them
         {
             ResetStoredListsAndInts();
             ResetCustomerArea();
@@ -419,11 +419,11 @@ public class GameManager : MonoBehaviour
     private void CalculateScore()
     {
         //Debug.Log("calculate score has been called");
-        CalculateScoreForBeefDelivered();       //
+        //CalculateScoreForBeefDelivered();       //
         CalculateScoreForChickenDelivered();    // 
-        CalculateScoreForCarrotsDelivered();    // ABSTRACTION - method names indicate actions, details in separate methods
-        CalculateScoreForBroccoliDelivered();   // 
-        CalculateScoreForSaladsDelivered();     // 
+        //CalculateScoreForCarrotsDelivered();    // ABSTRACTION - method names indicate actions, details in separate methods
+        //CalculateScoreForBroccoliDelivered();   // 
+        //CalculateScoreForSaladsDelivered();     // 
     }
 
 

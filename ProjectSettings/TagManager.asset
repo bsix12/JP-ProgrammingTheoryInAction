@@ -12,6 +12,7 @@ TagManager:
   - ServeToCustomer
   - Grill
   - Steamer
+  - CollectFoodTrigger
   layers:
   - Default
   - TransparentFX

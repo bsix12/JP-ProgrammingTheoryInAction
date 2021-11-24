@@ -93,7 +93,7 @@ public class Food : MonoBehaviour
         }
 
         // tally up the food delivered, each food objects adds itself (iAm) to list
-        if (other.gameObject.CompareTag("ServeToCustomer"))
+        if (other.gameObject.CompareTag("CollectFoodTrigger"))
         {
             GameManager.Instance.foodDelivered.Add(iAm);
         }

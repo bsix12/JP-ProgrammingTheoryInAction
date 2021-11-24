@@ -9,12 +9,31 @@ public class DispenserStation : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip dispenserSound;
 
+    private bool _canDispense;
+
+
+    private void Update()
+    {
+        if (_canDispense && Input.GetKeyDown(KeyCode.Space))
+        {
+            Instantiate(stationMaterial, spawnLoc);
+            audioSource.PlayOneShot(dispenserSound, .3f);
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            Instantiate(stationMaterial, spawnLoc);
-            audioSource.PlayOneShot(dispenserSound, .3f); 
+            _canDispense = true;
         }        
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            _canDispense = false;
+        }
     }
 }
