@@ -5,11 +5,10 @@ using UnityEngine;
 public class StickToBase : MonoBehaviour
 {
     public Transform baseTransform;
-    private Vector3 _offset = new Vector3(0, .1f, 0);
 
     // Update is called once per frame
     void Update()
     {
-        transform.position = baseTransform.position + _offset;    
+        transform.position = baseTransform.position;    
     }
 }

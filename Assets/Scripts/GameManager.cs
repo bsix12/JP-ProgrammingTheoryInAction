@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 
     public bool isReadyForNewOrder;
     public bool isDoneServing;
+    public bool inServiceArea; // manages if spacebar delivers food to table or allows for a new order 
 
     public TextMeshPro orderText;
     public TextMeshPro reportCardText;
@@ -65,15 +66,15 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isReadyForNewOrder)  // this is clearing out my lists on the same space bar as i submit them
+        if (Input.GetKeyDown(KeyCode.Space) && isReadyForNewOrder && !inServiceArea)  
         {
             ResetStoredListsAndInts();
             ResetCustomerArea();
             orderText.text = "";
             
             GetNewOrder();
-            isReadyForNewOrder = false;
-            isDoneServing = false;
+            isReadyForNewOrder = false; // prevent Update() actions including GetNewOrder until delivery against current order has been served 
+            isDoneServing = false; // toggle - allows the now NewOrder to be delivered to table
         }
     }
 
@@ -419,11 +420,11 @@ public class GameManager : MonoBehaviour
     private void CalculateScore()
     {
         //Debug.Log("calculate score has been called");
-        //CalculateScoreForBeefDelivered();       //
+        CalculateScoreForBeefDelivered();       //
         CalculateScoreForChickenDelivered();    // 
-        //CalculateScoreForCarrotsDelivered();    // ABSTRACTION - method names indicate actions, details in separate methods
-        //CalculateScoreForBroccoliDelivered();   // 
-        //CalculateScoreForSaladsDelivered();     // 
+        CalculateScoreForCarrotsDelivered();    // ABSTRACTION - method names indicate actions, details in separate methods
+        CalculateScoreForBroccoliDelivered();   // 
+        CalculateScoreForSaladsDelivered();     // 
     }
 
 

@@ -119,16 +119,25 @@ public class Food : MonoBehaviour
         } 
     }
 
-
-    private void OnCollisionStay(Collision other) 
+    // Note to future self - learned that parent objects should have the Rigidbody and Collision scripts
+    // Colliders on child objects effectively extend the parent with regard to physics.
+    // In this project, this is why the Player GameObject has the rididbody and OnCollision methods instead of the TopPlate GameObject
+    // This is why dispensed Food lands on the TopPlate surface/mesh collider even though there is no Rigidbody and script is on the parent/Player
+    // Adding Rigidbody to the TopPlate will actually make the physics not work properly
+    // Also, the collision is detected on the parent...so in this case we need to take extra steps to have the TopPlate child object become the new parent of objects in collision
+    private void OnCollisionEnter(Collision other) 
     {   
         // attaches to player when dispensed
         // attaches to customer plate when served
         // food as children allows for destroy all children to clear
-        if(other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("CustomerPlate"))
+        if(other.gameObject.CompareTag("Player"))// || other.gameObject.CompareTag("CustomerPlate")) <--working to replace serve to plate and destroy food.  GetChild(2) causes problems as well
         {
-            transform.parent = other.transform;
-        }        
+            transform.parent = other.transform.GetChild(2); // this assigns the 3rd child (index 2; starts with zero) of 'other' as the new parent
+                                                            // this seems like an potential failure point where code will break if the hierarchy gets changed
+                                                            // maybe a Debug.Log message can be added to indicate which GameObject was assigned as new parent
+                                                            // a getChildWithTag type of option might be more robust; I don't see this option
+                                                            // maybe logic equivalent to if(other.transform.GetChild(2).gameObject.Tag != "TopPlate) {Debug.Log("message here")}
+        }
     }
 
     private void OnCollisionExit(Collision other)
