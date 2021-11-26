@@ -15,7 +15,8 @@ public class GameManager : MonoBehaviour
     public TextMeshPro reportCardText;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI maxScorePossibleText;
-    
+    public TextMeshProUGUI orderTextUI;
+
     public List<string> foodDelivered = new List<string>();
     public List<GameObject> itemsToServe = new List<GameObject>();
 
@@ -84,6 +85,7 @@ public class GameManager : MonoBehaviour
 
             GetNewOrder();
             SummarizeOnlyFoodOrdered();
+            PublishNewOrder();
             CalculateMaximumScorePossible();
             isReadyForNewOrder = false; // prevent Update() actions including GetNewOrder until delivery against current order has been served 
             isDoneServing = false; // toggle - allows the now NewOrder to be delivered to table
@@ -204,7 +206,7 @@ public class GameManager : MonoBehaviour
     }
 
     private void SummarizeOnlyFoodOrdered()
-    {
+    {        
         _onlyFoodOrdered.Add("<b><u>Main Dishes</b></u>\n");
 
         if (_chickenOrdered > 0)
@@ -224,10 +226,10 @@ public class GameManager : MonoBehaviour
 
         if (_beefWellDoneOrdered > 0)
         {
-            _onlyFoodOrdered.Add(_beefWellDoneOrdered + " - Beef: Well-Done\n\n");
+            _onlyFoodOrdered.Add(_beefWellDoneOrdered + " - Beef: Well-Done\n");
         }
 
-        _onlyFoodOrdered.Add("<b><u>Sides</b></u>\n");
+        _onlyFoodOrdered.Add("\n<b><u>Sides</b></u>\n");
 
         if (_carrotsSteamedOrdered > 0)
         {
@@ -243,10 +245,15 @@ public class GameManager : MonoBehaviour
         {
             _onlyFoodOrdered.Add(_saladsOrdered + " - Garden Salad\n");
         }
+    }
 
+    private void PublishNewOrder() 
+    { 
+        
         for (int i = 0; i < _onlyFoodOrdered.Count; i++)
         {
             orderText.text += _onlyFoodOrdered[i] + "\n";
+            orderTextUI.text += _onlyFoodOrdered[i] + "\n";
         }
     }
 
@@ -263,7 +270,7 @@ public class GameManager : MonoBehaviour
         _score = 0;
         CalculateScore();
         _maxScorePossible = _score;
-        maxScorePossibleText.text = "Order value: " + _maxScorePossible.ToString();
+        maxScorePossibleText.text = _maxScorePossible.ToString() + " points possible";
 
         _chickenCookedDelivered = 0;
         _beefRareDelivered = 0;
