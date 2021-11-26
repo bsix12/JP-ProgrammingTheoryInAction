@@ -7,7 +7,7 @@ public class StickToBase : MonoBehaviour
     public Transform baseTransform;
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         transform.position = baseTransform.position;    
     }

@@ -4,14 +4,13 @@ using UnityEngine;
 
 public class CollectFood : MonoBehaviour
 {
-    public List<GameObject> itemsToServe = new List<GameObject>();
+    //public List<GameObject> itemsToServe = new List<GameObject>();
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Food"))
         {
-            itemsToServe.Add(other.gameObject);
+            GameManager.Instance.itemsToServe.Add(other.gameObject);
         }
-
     }
 }

@@ -4,19 +4,42 @@ using UnityEngine;
 
 public class ServeFood : MonoBehaviour
 {
+    public Transform playerTransform;
+    
     private Rigidbody _otherRb;
     private Transform _otherFoodTransform;
-    private float _offsetDistance = .5f;
-    private Vector3 _offset;
     private Vector3 _moveFoodVector;
-    private List<GameObject> _itemsToServe;
-    public Transform _playerTransform;
-
-    private void Start()
+    
+    
+    private void Update()
     {
-        _itemsToServe = GameObject.FindGameObjectWithTag("CollectFoodTrigger").GetComponent<CollectFood>().itemsToServe;
+        ServeFoodToCustomer();
     }
 
+    private void ServeFoodToCustomer()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.inServiceArea && GameManager.Instance.isDoneServing == false)
+        {
+            for (int i = 0; i < GameManager.Instance.itemsToServe.Count; i++)
+            {
+                _otherRb = GameManager.Instance.itemsToServe[i].GetComponent<Rigidbody>();
+                _otherFoodTransform = GameManager.Instance.itemsToServe[i].GetComponent<Transform>();
+
+                _otherRb.velocity = Vector3.zero;
+                _otherRb.angularVelocity = Vector3.zero;
+                MoveFoodToPlate(_otherFoodTransform);
+            }
+            GameManager.Instance.AfterFoodIsServedActions();
+        }
+    }
+
+    private void MoveFoodToPlate(Transform _otherFoodTransform)
+    {
+        // add vector3 math here to calculate new positions to move food
+        // top center of TopPlate to top center of CustomerPlate is the vector...then apply this to each food item in _itemsToServe
+        _moveFoodVector = transform.position - playerTransform.position;
+        _otherFoodTransform.position += _moveFoodVector;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -24,9 +47,7 @@ public class ServeFood : MonoBehaviour
         {
             GameManager.Instance.inServiceArea = true;            
         }
-
     }
-
 
     private void OnTriggerExit(Collider other)
     {
@@ -34,33 +55,7 @@ public class ServeFood : MonoBehaviour
         {
             GameManager.Instance.inServiceArea = false;
         }
-
     }
-
-    private void Update()
-    {
-        if (GameManager.Instance.inServiceArea && GameManager.Instance.isDoneServing == false && Input.GetKeyDown(KeyCode.Space))
-        {
-            for (int i = 0; i < _itemsToServe.Count; i++)
-            {
-                // _otherRb = _itemsToServe[i].GetComponent<Rigidbody>();
-                // MoveFoodToPlate(_otherRb);
-                _otherFoodTransform = _itemsToServe[i].GetComponent<Transform>();
-                MoveFoodToPlate(_otherFoodTransform);
-            }
-            GameManager.Instance.AfterFoodIsServed();
-        }
-    }
-
-    private void MoveFoodToPlate(Transform _otherFoodTransform)
-    {
-
-        // add vector3 math here to calculate new positions to move food
-        // top center of TopPlate to top center of CustomerPlate is the vector...then apply this to each food item in _itemsToServe
-        _moveFoodVector = transform.position - _playerTransform.position;
-        _otherFoodTransform.position += _moveFoodVector;
-    }
-
 
     /*
     private void OnTriggerEnter(Collider other)                             // this was first pass - food transfered to table automatically
@@ -80,7 +75,6 @@ public class ServeFood : MonoBehaviour
     }
     */
 
-
     /*
     void MoveFoodToPlate(Rigidbody _otherRb)                                // this was second pass - key press transfers food.  problem was if large
     {                                                                       // quantity of food transferred at once, they collide into eachoter at new
@@ -98,6 +92,5 @@ public class ServeFood : MonoBehaviour
         _offset.y = 0f;
         _offset.z = Random.Range(-_offsetDistance, _offsetDistance);
     }
-
     */
 }
