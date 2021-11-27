@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,11 +12,16 @@ public class GameManager : MonoBehaviour
     public bool isDoneServing;
     public bool inServiceArea; // manages if spacebar delivers food to table or allows for a new order 
 
-    public TextMeshPro orderText;
-    public TextMeshPro reportCardText;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI maxScorePossibleText;
     public TextMeshProUGUI orderTextUI;
+    public TextMeshProUGUI timeElapsedTable1Text;
+    public TextMeshProUGUI credits;
+    public TextMeshProUGUI notes;
+    public Image creditsNotesBackground;
+    public Button notesButton;
+    public TextMeshPro orderText;
+    public TextMeshPro reportCardText;
 
     public List<string> foodDelivered = new List<string>();
     public List<GameObject> itemsToServe = new List<GameObject>();
@@ -25,6 +31,11 @@ public class GameManager : MonoBehaviour
     private List<string> _quantityOfEachFoodOrdered = new List<string>();
     private List<string> _onlyFoodOrdered = new List<string>();
     private List<string> _reportCardToPost = new List<string>();
+
+    private float _timeElapsedTable1;
+    private bool _timerOnTable1;
+    private bool _creditsActive = false;
+    private bool _notesActive = false;
 
     [SerializeField] private int _score;
     [SerializeField] private int _holdScore;
@@ -53,7 +64,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _broccoliBurnedDelivered;
     [SerializeField] private int _saladsGoodDelivered;
     [SerializeField] private int _saladsRuinedDelivered;
-
+    
     private void Start()
     {
         Instance = this;
@@ -66,12 +77,13 @@ public class GameManager : MonoBehaviour
 
         _menuSides.Add("Steamed Carrots");
         _menuSides.Add("Steamed Broccoli");
-        _menuSides.Add("Garden Salad");
+        //_menuSides.Add("Garden Salad");
     }
 
     private void Update()
     {
         NewOrderReset();
+        OrderTimer();
     }
 
     private void NewOrderReset()
@@ -87,6 +99,9 @@ public class GameManager : MonoBehaviour
             SummarizeOnlyFoodOrdered();
             PublishNewOrder();
             CalculateMaximumScorePossible();
+
+            _timeElapsedTable1 = 0;
+            _timerOnTable1 = true;
             isReadyForNewOrder = false; // prevent Update() actions including GetNewOrder until delivery against current order has been served 
             isDoneServing = false; // toggle - allows the now NewOrder to be delivered to table
         }
@@ -144,16 +159,32 @@ public class GameManager : MonoBehaviour
     private void ResetOrderAndReportText()
     {
         orderText.text = "";
+        orderTextUI.text = "";
         reportCardText.text = "";
     }
 
     private void GetNewOrder()
     {
-        int sides = 5; // placeholder
-        int mains = 4; // placeholder
+        int minMains = 2;
+        int maxMains = 8;
+        int sides = 0;
+        int salads = 0;
         int sideSelectedIndex;
         int mainSelectedIndex;
 
+        int mains = Random.Range(minMains, maxMains);
+
+        if (mains <= 4)
+        {
+            sides = Random.Range(mains - 1, mains + 2);
+            salads = Random.Range(mains - 2, mains);
+        }
+        else if (mains > 4)
+        {
+            sides = Random.Range(mains - 2, mains + 4);
+            salads = Random.Range(mains - 4, mains);
+        }
+        
         for (int i = 0; i < sides; i++)
         {
             sideSelectedIndex = Random.Range(0, _menuSides.Count);
@@ -198,10 +229,13 @@ public class GameManager : MonoBehaviour
                 _broccoliSteamedOrdered += 1;
             }
 
+            _saladsOrdered = salads;
+            /*
             if (_quantityOfEachFoodOrdered[i] == "Garden Salad")
             {
                 _saladsOrdered += 1;
             }
+            */
         }        
     }
 
@@ -282,7 +316,16 @@ public class GameManager : MonoBehaviour
         
         _score = _holdScore;
         scoreText.text = "Score: " + _score.ToString();
+    }
 
+    private void OrderTimer()
+    {
+        if (_timerOnTable1)
+        {
+            _timeElapsedTable1 += Time.deltaTime;
+            string _roundTime = _timeElapsedTable1.ToString("#.0");
+            timeElapsedTable1Text.text = _roundTime;
+        }
     }
 
     public void AfterFoodIsServedActions()
@@ -296,6 +339,7 @@ public class GameManager : MonoBehaviour
 
         isDoneServing = true;
         isReadyForNewOrder = true;
+        _timerOnTable1 = false;
     }
     
     private void CountFoodDelivered()
@@ -901,5 +945,46 @@ public class GameManager : MonoBehaviour
             _resultsToPost.Add("These carrots are burned!  This is disgraceful!\n");
         }
         */
+    }
+
+    public void Credits()
+    {
+        if(_creditsActive == true)
+        {
+            credits.gameObject.SetActive(false);
+            creditsNotesBackground.gameObject.SetActive(false);
+            _creditsActive = false;
+            notesButton.gameObject.SetActive(false);
+            notes.gameObject.SetActive(false);
+            _notesActive = false;
+        }
+        
+        else if(_creditsActive == false) // needs to be 'else if' or does not work
+        {
+            creditsNotesBackground.gameObject.SetActive(true);
+            credits.gameObject.SetActive(true);
+            _creditsActive = true;
+            notesButton.gameObject.SetActive(true);
+        }
+    }
+
+    public void Notes()
+    {
+        if(_notesActive == true)
+        {
+            notes.gameObject.SetActive(false);            
+            _notesActive = false;
+        }
+
+        else if(_notesActive == false) // needs to be 'else if' of does not work
+        {
+            notes.gameObject.SetActive(true);            
+            _notesActive = true;
+        }
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }
