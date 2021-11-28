@@ -15,31 +15,36 @@ public class GameManager : MonoBehaviour
     public Button notesButton;
     public Image creditsNotesBackground;
     public Vector3 serveTableLocation;
-    public List<GameObject> itemsToServe = new List<GameObject>();
-    public List<string> onlyFoodOrdered = new List<string>();
-    public List<string> foodDelivered = new List<string>();
+    public List<GameObject> itemsToServeGameObjects = new List<GameObject>();
+    public List<string> onlyFoodOrderedNames = new List<string>();
+    public List<string> foodDeliveredNames = new List<string>();
 
     public int maxScorePossible;
-    public bool inServiceArea; // manages if spacebar delivers food to table or allows for a new order
-    public string isAtLocation; // reference to which table player is at
-    
-    private List<string> _menuMains = new List<string>();
-    private List<string> _menuSides = new List<string>();
-    private List<string> _quantityOfEachFoodOrdered = new List<string>();
-    private List<string> _reportCardToPost = new List<string>();
+    public bool isInServiceArea; // manages if spacebar delivers food to table or allows for a new order
+    public string atTableName; // reference to which table player is at
 
-    private bool _creditsActive = false;
-    private bool _notesActive = false;
+    public int chickenOrdered;
+    public int beefRareOrdered;
+    public int beefMediumOrdered;
+    public int beefWellDoneOrdered;
+    public int carrotsSteamedOrdered;
+    public int broccoliSteamedOrdered;
+    public int saladsOrdered;    
+
+    private List<string> _menuMainsNames = new List<string>();
+    private List<string> _menuSidesNames = new List<string>();
+    private List<string> _quantityOfEachFoodOrdered = new List<string>();
+    [SerializeField] private List<string> _reportCardToPost = new List<string>();
+
+    private bool _isActiveCredits = false;
+    private bool _isActiveNotes = false;
+
+    public bool isActiveTable1 = false;
+    public bool isActiveTable2 = false;
+    public bool isActiveTable3 = false;
 
     [SerializeField] private int _score;
-    [SerializeField] private int _holdScore;
-    [SerializeField] private int _chickenOrdered;
-    [SerializeField] private int _beefRareOrdered;
-    [SerializeField] private int _beefMediumOrdered;
-    [SerializeField] private int _beefWellDoneOrdered;
-    [SerializeField] private int _carrotsSteamedOrdered;
-    [SerializeField] private int _broccoliSteamedOrdered;
-    [SerializeField] private int _saladsOrdered;
+    [SerializeField] private int _holdTotalScore;
 
     [SerializeField] private int _chickenRawDelivered;
     [SerializeField] private int _chickenCookedDelivered;
@@ -62,13 +67,13 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
 
-        _menuMains.Add("Chicken");
-        _menuMains.Add("Beef: Rare");
-        _menuMains.Add("Beef: Medium");
-        _menuMains.Add("Beef: Well-Done");
+        _menuMainsNames.Add("Chicken");
+        _menuMainsNames.Add("Beef: Rare");
+        _menuMainsNames.Add("Beef: Medium");
+        _menuMainsNames.Add("Beef: Well-Done");
 
-        _menuSides.Add("Steamed Carrots");
-        _menuSides.Add("Steamed Broccoli");
+        _menuSidesNames.Add("Steamed Carrots");
+        _menuSidesNames.Add("Steamed Broccoli");
         //_menuSides.Add("Garden Salad");
     }
 
@@ -85,9 +90,9 @@ public class GameManager : MonoBehaviour
 
     private void ClearCustomerTable()
     {
-        for (int i = 0; i < itemsToServe.Count; i++)
+        for (int i = 0; i < itemsToServeGameObjects.Count; i++)
         {
-            Destroy(itemsToServe[i]);
+            Destroy(itemsToServeGameObjects[i]);
         }
     }
     
@@ -99,20 +104,20 @@ public class GameManager : MonoBehaviour
     {
         _quantityOfEachFoodOrdered.Clear();
         _reportCardToPost.Clear();
-        onlyFoodOrdered.Clear();
-        foodDelivered.Clear();
-        itemsToServe.Clear();
+        onlyFoodOrderedNames.Clear();
+        foodDeliveredNames.Clear();
+        itemsToServeGameObjects.Clear();
     }
 
     private void ResetStoredInts()
     {
-        _chickenOrdered = 0;
-        _beefRareOrdered = 0;
-        _beefMediumOrdered = 0;
-        _beefWellDoneOrdered = 0;
-        _carrotsSteamedOrdered = 0;
-        _broccoliSteamedOrdered = 0;
-        _saladsOrdered = 0;
+        chickenOrdered = 0;
+        beefRareOrdered = 0;
+        beefMediumOrdered = 0;
+        beefWellDoneOrdered = 0;
+        carrotsSteamedOrdered = 0;
+        broccoliSteamedOrdered = 0;
+        saladsOrdered = 0;
 
         _chickenRawDelivered = 0;
         _chickenCookedDelivered = 0;
@@ -161,109 +166,103 @@ public class GameManager : MonoBehaviour
         
         for (int i = 0; i < sides; i++)
         {
-            sideSelectedIndex = Random.Range(0, _menuSides.Count);
-            _quantityOfEachFoodOrdered.Add(_menuSides[sideSelectedIndex]);
+            sideSelectedIndex = Random.Range(0, _menuSidesNames.Count);
+            _quantityOfEachFoodOrdered.Add(_menuSidesNames[sideSelectedIndex]);
         }
 
         for (int i = 0; i < mains; i++)
         {
-            mainSelectedIndex = Random.Range(0, _menuMains.Count);
-            _quantityOfEachFoodOrdered.Add(_menuMains[mainSelectedIndex]);
+            mainSelectedIndex = Random.Range(0, _menuMainsNames.Count);
+            _quantityOfEachFoodOrdered.Add(_menuMainsNames[mainSelectedIndex]);
         }
 
         for (int i = 0; i < _quantityOfEachFoodOrdered.Count; i++)
         {
             if (_quantityOfEachFoodOrdered[i] == "Chicken")
             {
-                _chickenOrdered += 1;
+                chickenOrdered += 1;
             }
 
             if (_quantityOfEachFoodOrdered[i] == "Beef: Rare")
             {
-                _beefRareOrdered += 1;
+                beefRareOrdered += 1;
             }
 
             if (_quantityOfEachFoodOrdered[i] == "Beef: Medium")
             {
-                _beefMediumOrdered += 1;
+                beefMediumOrdered += 1;
             }
 
             if (_quantityOfEachFoodOrdered[i] == "Beef: Well-Done")
             {
-                _beefWellDoneOrdered += 1;
+                beefWellDoneOrdered += 1;
             }
 
             if (_quantityOfEachFoodOrdered[i] == "Steamed Carrots")
             {
-                _carrotsSteamedOrdered += 1;
+                carrotsSteamedOrdered += 1;
             }
 
             if (_quantityOfEachFoodOrdered[i] == "Steamed Broccoli")
             {
-                _broccoliSteamedOrdered += 1;
+                broccoliSteamedOrdered += 1;
             }
 
-            _saladsOrdered = salads;
-            /*
-            if (_quantityOfEachFoodOrdered[i] == "Garden Salad")
-            {
-                _saladsOrdered += 1;
-            }
-            */
+            saladsOrdered = salads; // salads are not randomly selected; base on quantity of Mains ordered
         }        
     }
 
     private void SummarizeOnlyFoodOrdered()
     {        
-        onlyFoodOrdered.Add("<b><u>Main Dishes</b></u>\n");
+        onlyFoodOrderedNames.Add("<b><u>Main Dishes</b></u>\n");
 
-        if (_chickenOrdered > 0)
+        if (chickenOrdered > 0)
         {
-            onlyFoodOrdered.Add(_chickenOrdered + " - Chicken\n");
+            onlyFoodOrderedNames.Add(chickenOrdered + " - Chicken\n");
         }
 
-        if (_beefRareOrdered > 0)
+        if (beefRareOrdered > 0)
         {
-            onlyFoodOrdered.Add(_beefRareOrdered + " - Beef: Rare\n");
+            onlyFoodOrderedNames.Add(beefRareOrdered + " - Beef: Rare\n");
         }
 
-        if (_beefMediumOrdered > 0)
+        if (beefMediumOrdered > 0)
         {
-            onlyFoodOrdered.Add(_beefMediumOrdered + " - Beef: Medium\n");
+            onlyFoodOrderedNames.Add(beefMediumOrdered + " - Beef: Medium\n");
         }
 
-        if (_beefWellDoneOrdered > 0)
+        if (beefWellDoneOrdered > 0)
         {
-            onlyFoodOrdered.Add(_beefWellDoneOrdered + " - Beef: Well-Done\n");
+            onlyFoodOrderedNames.Add(beefWellDoneOrdered + " - Beef: Well-Done\n");
         }
 
-        onlyFoodOrdered.Add("\n<b><u>Sides</b></u>\n");
+        onlyFoodOrderedNames.Add("\n<b><u>Sides</b></u>\n");
 
-        if (_carrotsSteamedOrdered > 0)
+        if (carrotsSteamedOrdered > 0)
         {
-            onlyFoodOrdered.Add(_carrotsSteamedOrdered + " - Steamed Carrots\n");
+            onlyFoodOrderedNames.Add(carrotsSteamedOrdered + " - Steamed Carrots\n");
         }
 
-        if (_broccoliSteamedOrdered > 0)
+        if (broccoliSteamedOrdered > 0)
         {
-            onlyFoodOrdered.Add(_broccoliSteamedOrdered + " - Steamed Broccoli\n");
+            onlyFoodOrderedNames.Add(broccoliSteamedOrdered + " - Steamed Broccoli\n");
         }
 
-        if (_saladsOrdered > 0)
+        if (saladsOrdered > 0)
         {
-            onlyFoodOrdered.Add(_saladsOrdered + " - Garden Salad\n");
+            onlyFoodOrderedNames.Add(saladsOrdered + " - Garden Salad\n");
         }
     }
 
     private void CalculateMaximumScorePossible()
     {
-        _chickenCookedDelivered = _chickenOrdered; // set input for perfect delivery
-        _beefRareDelivered = _beefRareOrdered;
-        _beefMediumDelivered = _beefMediumOrdered;
-        _beefWellDoneDelivered = _beefWellDoneOrdered;
-        _carrotsSteamedDelivered = _carrotsSteamedOrdered;
-        _broccoliSteamedDelivered = _broccoliSteamedOrdered;
-        _saladsGoodDelivered = _saladsOrdered;
+        _chickenCookedDelivered = chickenOrdered; // set input for perfect delivery
+        _beefRareDelivered = beefRareOrdered;
+        _beefMediumDelivered = beefMediumOrdered;
+        _beefWellDoneDelivered = beefWellDoneOrdered;
+        _carrotsSteamedDelivered = carrotsSteamedOrdered;
+        _broccoliSteamedDelivered = broccoliSteamedOrdered;
+        _saladsGoodDelivered = saladsOrdered;
 
         _score = 0; // reset score
         CalculateScore(); // call method to calculate score
@@ -277,7 +276,7 @@ public class GameManager : MonoBehaviour
         _broccoliSteamedDelivered = 0;
         _saladsGoodDelivered = 0;
         
-        _score = _holdScore; // reset score to the stored value
+        _score = _holdTotalScore; // reset score to the stored value
         scoreText.text = "Score: " + _score.ToString(); // update score on UI
     }
 
@@ -288,90 +287,90 @@ public class GameManager : MonoBehaviour
         PostToKitchenReportCard();
         CalculateScore();
         scoreText.text = "Score: " + _score.ToString();
-        _holdScore = _score;
+        _holdTotalScore = _score; // after delivery is scored, hold a copy of the total score
     }
     
     private void CountFoodDelivered()
     {
         //Debug.Log("Count food delivered has been called");
-        for (int i = 0; i < foodDelivered.Count; i++)
+        for (int i = 0; i < foodDeliveredNames.Count; i++)
         {
-            if (foodDelivered[i] == "Raw Chicken")
+            if (foodDeliveredNames[i] == "Raw Chicken")
             {
                 _chickenRawDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Cooked Chicken")
+            if (foodDeliveredNames[i] == "Cooked Chicken")
             {
                 _chickenCookedDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Burned Chicken")
+            if (foodDeliveredNames[i] == "Burned Chicken")
             {
                 _chickenBurnedDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Raw Beef")
+            if (foodDeliveredNames[i] == "Raw Beef")
             {
                 _beefRawDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Beef: Rare")
+            if (foodDeliveredNames[i] == "Beef: Rare")
             {
                 _beefRareDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Beef: Medium")
+            if (foodDeliveredNames[i] == "Beef: Medium")
             {
                 _beefMediumDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Beef: Well-Done")
+            if (foodDeliveredNames[i] == "Beef: Well-Done")
             {
                 _beefWellDoneDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Burned Beef")
+            if (foodDeliveredNames[i] == "Burned Beef")
             {
                 _beefBurnedDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Raw Carrots")
+            if (foodDeliveredNames[i] == "Raw Carrots")
             {
                 _carrotsRawDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Steamed Carrots")
+            if (foodDeliveredNames[i] == "Steamed Carrots")
             {
                 _carrotsSteamedDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Burned Carrots")
+            if (foodDeliveredNames[i] == "Burned Carrots")
             {
                 _carrotsBurnedDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Raw Broccoli")
+            if (foodDeliveredNames[i] == "Raw Broccoli")
             {
                 _broccoliRawDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Steamed Broccoli")
+            if (foodDeliveredNames[i] == "Steamed Broccoli")
             {
                 _broccoliSteamedDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Burned Broccoli")
+            if (foodDeliveredNames[i] == "Burned Broccoli")
             {
                 _broccoliBurnedDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Salad")
+            if (foodDeliveredNames[i] == "Salad")
             {
                 _saladsGoodDelivered += 1;
             }
 
-            if (foodDelivered[i] == "Ruined Salad")
+            if (foodDeliveredNames[i] == "Ruined Salad")
             {
                 _saladsRuinedDelivered += 1;
             }
@@ -383,72 +382,72 @@ public class GameManager : MonoBehaviour
         //Debug.Log("post to kitchen report card has been called");
         _reportCardToPost.Add("<b><u>Kitchen Report Card</b></u>\n\n");
 
-        if (_carrotsSteamedOrdered > 0 && _carrotsSteamedDelivered == _carrotsSteamedOrdered)
+        if (carrotsSteamedOrdered > 0 && _carrotsSteamedDelivered == carrotsSteamedOrdered)
         {
             _reportCardToPost.Add("Steamed Carrots - Pass\n");
         }
 
-        if (_carrotsSteamedOrdered > 0 && _carrotsSteamedDelivered != _carrotsSteamedOrdered)
+        if (carrotsSteamedOrdered > 0 && _carrotsSteamedDelivered != carrotsSteamedOrdered)
         {
             _reportCardToPost.Add("Steamed Carrots - Fail\n");
         }
 
-        if (_broccoliSteamedOrdered > 0 && _broccoliSteamedDelivered == _broccoliSteamedOrdered)
+        if (broccoliSteamedOrdered > 0 && _broccoliSteamedDelivered == broccoliSteamedOrdered)
         {
             _reportCardToPost.Add("Steamed Broccoli - Pass\n");
         }
 
-        if (_broccoliSteamedOrdered > 0 && _broccoliSteamedDelivered != _broccoliSteamedOrdered)
+        if (broccoliSteamedOrdered > 0 && _broccoliSteamedDelivered != broccoliSteamedOrdered)
         {
             _reportCardToPost.Add("Steamed Broccoli - Fail\n");
         }
 
-        if (_saladsOrdered > 0 && _saladsGoodDelivered == _saladsOrdered)
+        if (saladsOrdered > 0 && _saladsGoodDelivered == saladsOrdered)
         {
             _reportCardToPost.Add("Salads - Pass\n");
         }
 
-        if (_saladsOrdered > 0 && _saladsGoodDelivered != _saladsOrdered)
+        if (saladsOrdered > 0 && _saladsGoodDelivered != saladsOrdered)
         {
             _reportCardToPost.Add("Salads - Fail\n");
         }
 
-        if (_chickenOrdered > 0 && _chickenCookedDelivered == _chickenOrdered)
+        if (chickenOrdered > 0 && _chickenCookedDelivered == chickenOrdered)
         {
             _reportCardToPost.Add("Chicken - Pass\n");
         }
 
-        if (_chickenOrdered > 0 && _chickenCookedDelivered != _chickenOrdered)
+        if (chickenOrdered > 0 && _chickenCookedDelivered != chickenOrdered)
         {
             _reportCardToPost.Add("Chicken - Fail\n");
         }
 
-        if (_beefRareOrdered > 0 && _beefRareDelivered == _beefRareOrdered)
+        if (beefRareOrdered > 0 && _beefRareDelivered == beefRareOrdered)
         {
             _reportCardToPost.Add("Beef: Rare - Pass\n");
         }
 
-        if (_beefRareOrdered > 0 && _beefRareDelivered != _beefRareOrdered)
+        if (beefRareOrdered > 0 && _beefRareDelivered != beefRareOrdered)
         {
             _reportCardToPost.Add("Beef: Rare - Fail\n");
         }
 
-        if (_beefMediumOrdered > 0 && _beefMediumDelivered == _beefMediumOrdered)
+        if (beefMediumOrdered > 0 && _beefMediumDelivered == beefMediumOrdered)
         {
             _reportCardToPost.Add("Beef: Medium - Pass\n");
         }
 
-        if (_beefMediumOrdered > 0 && _beefMediumDelivered != _beefMediumOrdered)
+        if (beefMediumOrdered > 0 && _beefMediumDelivered != beefMediumOrdered)
         {
             _reportCardToPost.Add("Beef: Medium - Fail\n");
         }
 
-        if (_beefWellDoneOrdered > 0 && _beefWellDoneDelivered == _beefWellDoneOrdered)
+        if (beefWellDoneOrdered > 0 && _beefWellDoneDelivered == beefWellDoneOrdered)
         {
             _reportCardToPost.Add("Beef: Well-Done - Pass\n");
         }
 
-        if (_beefWellDoneOrdered > 0 && _beefWellDoneDelivered != _beefWellDoneOrdered)
+        if (beefWellDoneOrdered > 0 && _beefWellDoneDelivered != beefWellDoneOrdered)
         {
             _reportCardToPost.Add("Beef: Well-Done - Fail\n");
         }
@@ -473,7 +472,7 @@ public class GameManager : MonoBehaviour
     {
         int _allPortionsDeliveredAnyCondition = _beefRawDelivered + _beefRareDelivered + _beefMediumDelivered + _beefWellDoneDelivered + _beefBurnedDelivered;
 
-        int _allPortionsOrdered = _beefRareOrdered + _beefMediumOrdered + _beefWellDoneOrdered;
+        int _allPortionsOrdered = beefRareOrdered + beefMediumOrdered + beefWellDoneOrdered;
         int _perPortionCorrectScore = 100;
         int _largeOrder = 3;
         int _allPortionsCorrectBonus = 250;
@@ -486,39 +485,39 @@ public class GameManager : MonoBehaviour
         bool _receivedAllCorrectBonus = false;
 
         // points for each correct portion
-        if (_beefRareDelivered >= _beefRareOrdered) // no credit for extra portions
+        if (_beefRareDelivered >= beefRareOrdered) // no credit for extra portions
         {
-            _score += _beefRareOrdered * _perPortionCorrectScore;
+            _score += beefRareOrdered * _perPortionCorrectScore;
         }
 
-        if (_beefRareDelivered < _beefRareOrdered) // even if not all portions delivered, credit for those that are correct    
+        if (_beefRareDelivered < beefRareOrdered) // even if not all portions delivered, credit for those that are correct    
         {
             _score += _beefRareDelivered * _perPortionCorrectScore;
         }
 
-        if (_beefMediumDelivered >= _beefMediumOrdered) // no credit for extra portions
+        if (_beefMediumDelivered >= beefMediumOrdered) // no credit for extra portions
         {
-            _score += _beefMediumOrdered * _perPortionCorrectScore;
+            _score += beefMediumOrdered * _perPortionCorrectScore;
         }
 
-        if (_beefMediumDelivered < _beefMediumOrdered) // even if not all portions delivered, credit for those that are correct    
+        if (_beefMediumDelivered < beefMediumOrdered) // even if not all portions delivered, credit for those that are correct    
         {
             _score += _beefMediumDelivered * _perPortionCorrectScore;
         }
 
-        if (_beefWellDoneDelivered >= _beefWellDoneOrdered) // no credit for extra portions
+        if (_beefWellDoneDelivered >= beefWellDoneOrdered) // no credit for extra portions
         {
-            _score += _beefWellDoneOrdered * _perPortionCorrectScore;
+            _score += beefWellDoneOrdered * _perPortionCorrectScore;
         }
 
-        if (_beefWellDoneDelivered < _beefWellDoneOrdered) // even if not all portions delivered, credit for those that are correct    
+        if (_beefWellDoneDelivered < beefWellDoneOrdered) // even if not all portions delivered, credit for those that are correct    
         {
             _score += _beefWellDoneDelivered * _perPortionCorrectScore;
         }
 
-        if (_beefRareDelivered == _beefRareOrdered
-            && _beefMediumDelivered == _beefMediumOrdered
-            && _beefWellDoneDelivered == _beefWellDoneOrdered
+        if (_beefRareDelivered == beefRareOrdered
+            && _beefMediumDelivered == beefMediumOrdered
+            && _beefWellDoneDelivered == beefWellDoneOrdered
             && _allPortionsOrdered !=0) // bonus not available if no portions ordered
         {
             if (_allPortionsOrdered >= _largeOrder) // bonus for delivering correct number of good portions
@@ -591,7 +590,7 @@ public class GameManager : MonoBehaviour
 
         if (_allPortionsDeliveredEdible == _allPortionsOrdered && _allPortionsOrdered > 1 && !_receivedAllCorrectBonus)
         {
-            if (_beefRareOrdered > 0 && _beefRareDelivered > 0)
+            if (beefRareOrdered > 0 && _beefRareDelivered > 0)
             {
                 Debug.Log("correct number portions, partial correct, rare");
                 if (_allPortionsOrdered >= _largeOrder)
@@ -603,7 +602,7 @@ public class GameManager : MonoBehaviour
                 return;
             }
 
-            if (_beefMediumOrdered > 0 && _beefMediumDelivered > 0)
+            if (beefMediumOrdered > 0 && _beefMediumDelivered > 0)
             {
                 Debug.Log("correct number portions, partial correct, medium");
                 if (_allPortionsOrdered >= _largeOrder)
@@ -615,7 +614,7 @@ public class GameManager : MonoBehaviour
                 return;
             }
 
-            if (_beefWellDoneOrdered > 0 && _beefWellDoneDelivered > 0)
+            if (beefWellDoneOrdered > 0 && _beefWellDoneDelivered > 0)
             {
                 Debug.Log("correct number portions, partial correct, medium");
                 if (_allPortionsOrdered >= _largeOrder)
@@ -645,36 +644,36 @@ public class GameManager : MonoBehaviour
         int _ruinedPortionPenalty = -75;
 
         // points for each correct portion
-        if (_chickenCookedDelivered >= _chickenOrdered) // no credit for extra portions
+        if (_chickenCookedDelivered >= chickenOrdered) // no credit for extra portions
         {
-            _score += _chickenOrdered * _perPortionCorrectScore;
+            _score += chickenOrdered * _perPortionCorrectScore;
         }
 
-        if (_chickenCookedDelivered < _chickenOrdered) // even if not all portions delivered, credit for those that are correct    
+        if (_chickenCookedDelivered < chickenOrdered) // even if not all portions delivered, credit for those that are correct    
         {
             _score += _chickenCookedDelivered * _perPortionCorrectScore;
         }
 
-        if (_chickenCookedDelivered == _chickenOrdered && _chickenOrdered != 0) // bonus not available if no portions ordered
+        if (_chickenCookedDelivered == chickenOrdered && chickenOrdered != 0) // bonus not available if no portions ordered
         {
-            if(_chickenOrdered >= _largeOrder) // bonus for delivering correct number of good portions
+            if(chickenOrdered >= _largeOrder) // bonus for delivering correct number of good portions
             {
                 _score += _allPortionsCorrectBonusLarge; // large order bonus
             }
-            else if (_chickenOrdered > 1)
+            else if (chickenOrdered > 1)
             {
                 _score += _allPortionsCorrectBonus; // small order bonus
             }                            
         }
 
-        if (_chickenOrdered > _allPortionsDeliveredAnyCondition)
+        if (chickenOrdered > _allPortionsDeliveredAnyCondition)
         {
-            _score += (_chickenOrdered - _allPortionsDeliveredAnyCondition) * _missingPortionPenalty; // penalty for each missing portion
+            _score += (chickenOrdered - _allPortionsDeliveredAnyCondition) * _missingPortionPenalty; // penalty for each missing portion
         }
 
-        if (_chickenOrdered < _allPortionsDeliveredAnyCondition)
+        if (chickenOrdered < _allPortionsDeliveredAnyCondition)
         {
-            _score += (_allPortionsDeliveredAnyCondition - _chickenOrdered) * _extraPortionPenalty; // penalty for each extra portion
+            _score += (_allPortionsDeliveredAnyCondition - chickenOrdered) * _extraPortionPenalty; // penalty for each extra portion
         }
 
         _score += _chickenRawDelivered * _rawPortionPenalty; // penalty for every raw portion delivered
@@ -695,36 +694,36 @@ public class GameManager : MonoBehaviour
         int _ruinedPortionPenalty = -30;
 
         // points for each correct portion
-        if (_carrotsSteamedDelivered >= _carrotsSteamedOrdered) // no credit for extra portions
+        if (_carrotsSteamedDelivered >= carrotsSteamedOrdered) // no credit for extra portions
         {
-            _score += _carrotsSteamedOrdered * _perPortionCorrectScore;
+            _score += carrotsSteamedOrdered * _perPortionCorrectScore;
         }
 
-        if (_carrotsSteamedDelivered < _carrotsSteamedOrdered) // even if not all portions delivered, credit for those that are correct    
+        if (_carrotsSteamedDelivered < carrotsSteamedOrdered) // even if not all portions delivered, credit for those that are correct    
         {
             _score += _carrotsSteamedDelivered * _perPortionCorrectScore;
         }
 
-        if (_carrotsSteamedDelivered == _carrotsSteamedOrdered && _carrotsSteamedOrdered != 0)
+        if (_carrotsSteamedDelivered == carrotsSteamedOrdered && carrotsSteamedOrdered != 0)
         {
-            if (_carrotsSteamedOrdered >= _largeOrder) // bonus for delivering correct number of good portions
+            if (carrotsSteamedOrdered >= _largeOrder) // bonus for delivering correct number of good portions
             {
                 _score += _allPortionsCorrectBonusLarge; // large order bonus
             }
-            else if (_carrotsSteamedOrdered > 1)
+            else if (carrotsSteamedOrdered > 1)
             {
                 _score += _allPortionsCorrectBonus; // small order bonus
             }
         }
 
-        if (_carrotsSteamedOrdered > _allPortionsDeliveredAnyCondition)
+        if (carrotsSteamedOrdered > _allPortionsDeliveredAnyCondition)
         {
-            _score += (_carrotsSteamedOrdered - _allPortionsDeliveredAnyCondition) * _missingPortionPenalty; // penalty for each missing portion
+            _score += (carrotsSteamedOrdered - _allPortionsDeliveredAnyCondition) * _missingPortionPenalty; // penalty for each missing portion
         }
 
-        if (_carrotsSteamedOrdered < _allPortionsDeliveredAnyCondition)
+        if (carrotsSteamedOrdered < _allPortionsDeliveredAnyCondition)
         {
-            _score += (_allPortionsDeliveredAnyCondition - _carrotsSteamedOrdered) * _extraPortionPenalty; // penalty for each extra portion
+            _score += (_allPortionsDeliveredAnyCondition - carrotsSteamedOrdered) * _extraPortionPenalty; // penalty for each extra portion
         }
 
         _score += _carrotsRawDelivered * _rawPortionPenalty; // penalty for every raw portion delivered
@@ -745,36 +744,36 @@ public class GameManager : MonoBehaviour
         int _ruinedPortionPenalty = -30;
 
         // points for each correct portion
-        if (_broccoliSteamedDelivered >= _broccoliSteamedOrdered) // no credit for extra portions
+        if (_broccoliSteamedDelivered >= broccoliSteamedOrdered) // no credit for extra portions
         {
-            _score += _broccoliSteamedOrdered * _perPortionCorrectScore;
+            _score += broccoliSteamedOrdered * _perPortionCorrectScore;
         }
 
-        if (_broccoliSteamedDelivered < _broccoliSteamedOrdered) // even if not all portions delivered, credit for those that are correct    
+        if (_broccoliSteamedDelivered < broccoliSteamedOrdered) // even if not all portions delivered, credit for those that are correct    
         {
             _score += _broccoliSteamedDelivered * _perPortionCorrectScore;
         }
 
-        if (_broccoliSteamedDelivered == _broccoliSteamedOrdered && _broccoliSteamedOrdered != 0)
+        if (_broccoliSteamedDelivered == broccoliSteamedOrdered && broccoliSteamedOrdered != 0)
         {
-            if (_broccoliSteamedOrdered >= _largeOrder) // bonus for delivering correct number of good portions
+            if (broccoliSteamedOrdered >= _largeOrder) // bonus for delivering correct number of good portions
             {
                 _score += _allPortionsCorrectBonusLarge; // large order bonus
             }
-            else if (_broccoliSteamedOrdered > 1)
+            else if (broccoliSteamedOrdered > 1)
             {
                 _score += _allPortionsCorrectBonus; // small order bonus
             }
         }
 
-        if (_broccoliSteamedOrdered > _allPortionsDeliveredAnyCondition)
+        if (broccoliSteamedOrdered > _allPortionsDeliveredAnyCondition)
         {
-            _score += (_broccoliSteamedOrdered - _allPortionsDeliveredAnyCondition) * _missingPortionPenalty; // penalty for each missing portion
+            _score += (broccoliSteamedOrdered - _allPortionsDeliveredAnyCondition) * _missingPortionPenalty; // penalty for each missing portion
         }
 
-        if (_broccoliSteamedOrdered < _allPortionsDeliveredAnyCondition)
+        if (broccoliSteamedOrdered < _allPortionsDeliveredAnyCondition)
         {
-            _score += (_allPortionsDeliveredAnyCondition - _broccoliSteamedOrdered) * _extraPortionPenalty; // penalty for each extra portion
+            _score += (_allPortionsDeliveredAnyCondition - broccoliSteamedOrdered) * _extraPortionPenalty; // penalty for each extra portion
         }
 
         _score += _broccoliRawDelivered * _rawPortionPenalty; // penalty for every raw portion delivered
@@ -794,36 +793,36 @@ public class GameManager : MonoBehaviour
         int _ruinedPortionPenalty = -45;
 
         // points for each correct portion
-        if (_saladsGoodDelivered >= _saladsOrdered) // no credit for extra portions
+        if (_saladsGoodDelivered >= saladsOrdered) // no credit for extra portions
         {
-            _score += _saladsOrdered * _perPortionCorrectScore;
+            _score += saladsOrdered * _perPortionCorrectScore;
         }
 
-        if (_saladsGoodDelivered < _saladsOrdered) // even if not all portions delivered, credit for those that are correct    
+        if (_saladsGoodDelivered < saladsOrdered) // even if not all portions delivered, credit for those that are correct    
         {
             _score += _saladsGoodDelivered * _perPortionCorrectScore;
         }
 
-        if (_saladsGoodDelivered == _saladsOrdered && _saladsOrdered != 0)
+        if (_saladsGoodDelivered == saladsOrdered && saladsOrdered != 0)
         {
-            if (_saladsOrdered >= _largeOrder) // bonus for delivering correct number of good portions
+            if (saladsOrdered >= _largeOrder) // bonus for delivering correct number of good portions
             {
                 _score += _allPortionsCorrectBonusLarge; // large order bonus
             }
-            else if (_saladsOrdered > 1)
+            else if (saladsOrdered > 1)
             {
                 _score += _allPortionsCorrectBonus; // small order bonus
             }
         }
 
-        if (_saladsOrdered > _allPortionsDeliveredAnyCondition)
+        if (saladsOrdered > _allPortionsDeliveredAnyCondition)
         {
-            _score += (_saladsOrdered - _allPortionsDeliveredAnyCondition) * _missingPortionPenalty; // penalty for each missing portion
+            _score += (saladsOrdered - _allPortionsDeliveredAnyCondition) * _missingPortionPenalty; // penalty for each missing portion
         }
 
-        if (_saladsOrdered < _allPortionsDeliveredAnyCondition)
+        if (saladsOrdered < _allPortionsDeliveredAnyCondition)
         {
-            _score += (_allPortionsDeliveredAnyCondition - _saladsOrdered) * _extraPortionPenalty; // penalty for each extra portion
+            _score += (_allPortionsDeliveredAnyCondition - saladsOrdered) * _extraPortionPenalty; // penalty for each extra portion
         }
 
         _score += _saladsRuinedDelivered * _ruinedPortionPenalty; // penalty for every ruined portion delivered
@@ -896,39 +895,45 @@ public class GameManager : MonoBehaviour
         */
     }
 
+    public void OpenDiningRoom()
+    {
+        isActiveTable1 = true;
+        OrderManager.Instance.GenerateNextOrderDelay();
+    }
+
     public void Credits()
     {
-        if(_creditsActive == true)
+        if(_isActiveCredits == true)
         {
             credits.gameObject.SetActive(false);
             creditsNotesBackground.gameObject.SetActive(false);
-            _creditsActive = false;
+            _isActiveCredits = false;
             notesButton.gameObject.SetActive(false);
             notes.gameObject.SetActive(false);
-            _notesActive = false;
+            _isActiveNotes = false;
         }
         
-        else if(_creditsActive == false) // needs to be 'else if' or does not work
+        else if(_isActiveCredits == false) // needs to be 'else if' or does not work
         {
             creditsNotesBackground.gameObject.SetActive(true);
             credits.gameObject.SetActive(true);
-            _creditsActive = true;
+            _isActiveCredits = true;
             notesButton.gameObject.SetActive(true);
         }
     }
 
     public void Notes()
     {
-        if(_notesActive == true)
+        if(_isActiveNotes == true)
         {
             notes.gameObject.SetActive(false);            
-            _notesActive = false;
+            _isActiveNotes = false;
         }
 
-        else if(_notesActive == false) // needs to be 'else if' of does not work
+        else if(_isActiveNotes == false) // needs to be 'else if' of does not work
         {
             notes.gameObject.SetActive(true);            
-            _notesActive = true;
+            _isActiveNotes = true;
         }
     }
 

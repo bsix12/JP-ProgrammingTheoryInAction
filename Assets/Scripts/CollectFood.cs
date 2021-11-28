@@ -10,7 +10,7 @@ public class CollectFood : MonoBehaviour
     {
         if (other.CompareTag("Food"))
         {
-            GameManager.Instance.itemsToServe.Add(other.gameObject);
+            GameManager.Instance.itemsToServeGameObjects.Add(other.gameObject);
         }
     }
 }

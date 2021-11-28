@@ -12,7 +12,7 @@ public class ServeFood : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.inServiceArea && !OrderManager.Instance.isDoneServingTable1)
+        if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && !OrderManager.Instance.isDoneServingTable1)
         {
             ServeFoodToTable();
         }
@@ -20,17 +20,17 @@ public class ServeFood : MonoBehaviour
 
     private void ServeFoodToTable()
     {
-        for (int i = 0; i < GameManager.Instance.itemsToServe.Count; i++)
+        for (int i = 0; i < GameManager.Instance.itemsToServeGameObjects.Count; i++)
         {
-            _itemToServeRb = GameManager.Instance.itemsToServe[i].GetComponent<Rigidbody>();
-            _itemToServeTransform = GameManager.Instance.itemsToServe[i].GetComponent<Transform>();
+            _itemToServeRb = GameManager.Instance.itemsToServeGameObjects[i].GetComponent<Rigidbody>();
+            _itemToServeTransform = GameManager.Instance.itemsToServeGameObjects[i].GetComponent<Transform>();
 
             _itemToServeRb.velocity = Vector3.zero;
             _itemToServeRb.angularVelocity = Vector3.zero;
             _transferFoodVector = GameManager.Instance.serveTableLocation - playerTransform.position;
             _itemToServeTransform.position += _transferFoodVector;
         }
-        GameManager.Instance.AfterFoodIsServedActions();
+        //GameManager.Instance.AfterFoodIsServedActions();
         OrderManager.Instance.AfterFoodIsServedActions();
     }
 
@@ -39,9 +39,9 @@ public class ServeFood : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            GameManager.Instance.inServiceArea = true;
+            GameManager.Instance.isInServiceArea = true;
             GameManager.Instance.serveTableLocation = transform.position;
-            GameManager.Instance.isAtLocation = _iAmTableNumber;
+            GameManager.Instance.atTableName = _iAmTableNumber;
         }
     }
 
@@ -49,7 +49,7 @@ public class ServeFood : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            GameManager.Instance.inServiceArea = false;
+            GameManager.Instance.isInServiceArea = false;
         }
     }
 }

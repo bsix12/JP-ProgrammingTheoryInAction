@@ -95,8 +95,8 @@ public class Food : MonoBehaviour
         // tally up the food delivered, each food objects adds itself (iAm) to list
         if (other.gameObject.CompareTag("CollectFoodTrigger"))
         {
-            GameManager.Instance.foodDelivered.Add(iAm);
-            GameManager.Instance.itemsToServe.Add(gameObject);
+            GameManager.Instance.foodDeliveredNames.Add(iAm);
+            GameManager.Instance.itemsToServeGameObjects.Add(gameObject);
         }
     }
 
@@ -110,6 +110,7 @@ public class Food : MonoBehaviour
 
     protected virtual void OnTriggerExit(Collider other)
     {
+        bool removedOne = false;
         // remove OnHeat idicators from food when exiting cook area
         if (other.gameObject.CompareTag("Grill") || other.gameObject.CompareTag("Steamer"))
         {
@@ -117,6 +118,19 @@ public class Food : MonoBehaviour
             foreach (Transform child in transform)
                 Destroy(child.gameObject);
         } 
+
+        if (other.gameObject.CompareTag("CollectFoodTrigger"))
+        {
+            for (int i = 0; i < GameManager.Instance.foodDeliveredNames.Count; i++)
+            {
+                if (GameManager.Instance.foodDeliveredNames[i] == iAm && !removedOne)
+                {
+                    GameManager.Instance.foodDeliveredNames.RemoveAt(i);
+                    GameManager.Instance.itemsToServeGameObjects.RemoveAt(i);
+                    removedOne = true;
+                }
+            }
+        }
     }
 
     // Note to future self - learned that parent objects should have the Rigidbody and Collision scripts
