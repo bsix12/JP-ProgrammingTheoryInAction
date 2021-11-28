@@ -96,6 +96,7 @@ public class Food : MonoBehaviour
         if (other.gameObject.CompareTag("CollectFoodTrigger"))
         {
             GameManager.Instance.foodDelivered.Add(iAm);
+            GameManager.Instance.itemsToServe.Add(gameObject);
         }
     }
 

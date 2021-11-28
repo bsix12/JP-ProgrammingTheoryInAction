@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public Button notesButton;
     public TextMeshPro orderText;
     public TextMeshPro reportCardText;
+    public Vector3 serveTableLocation;
 
     public List<string> foodDelivered = new List<string>();
     public List<GameObject> itemsToServe = new List<GameObject>();
