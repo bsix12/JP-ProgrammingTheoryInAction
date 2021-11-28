@@ -8,39 +8,31 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public bool isReadyForNewOrder;
-    public bool isDoneServing;
-    public bool inServiceArea; // manages if spacebar delivers food to table or allows for a new order 
-
     public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI maxScorePossibleText;
-    public TextMeshProUGUI orderTextUI;
-    public TextMeshProUGUI timeElapsedTable1Text;
     public TextMeshProUGUI credits;
     public TextMeshProUGUI notes;
-    public Image creditsNotesBackground;
-    public Button notesButton;
-    public TextMeshPro orderText;
     public TextMeshPro reportCardText;
+    public Button notesButton;
+    public Image creditsNotesBackground;
     public Vector3 serveTableLocation;
-
-    public List<string> foodDelivered = new List<string>();
     public List<GameObject> itemsToServe = new List<GameObject>();
+    public List<string> onlyFoodOrdered = new List<string>();
+    public List<string> foodDelivered = new List<string>();
 
+    public int maxScorePossible;
+    public bool inServiceArea; // manages if spacebar delivers food to table or allows for a new order
+    public string isAtLocation; // reference to which table player is at
+    
     private List<string> _menuMains = new List<string>();
     private List<string> _menuSides = new List<string>();
     private List<string> _quantityOfEachFoodOrdered = new List<string>();
-    private List<string> _onlyFoodOrdered = new List<string>();
     private List<string> _reportCardToPost = new List<string>();
 
-    private float _timeElapsedTable1;
-    private bool _timerOnTable1;
     private bool _creditsActive = false;
     private bool _notesActive = false;
 
     [SerializeField] private int _score;
     [SerializeField] private int _holdScore;
-    [SerializeField] private int _maxScorePossible;
     [SerializeField] private int _chickenOrdered;
     [SerializeField] private int _beefRareOrdered;
     [SerializeField] private int _beefMediumOrdered;
@@ -69,7 +61,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         Instance = this;
-        isReadyForNewOrder = true;
 
         _menuMains.Add("Chicken");
         _menuMains.Add("Beef: Rare");
@@ -81,31 +72,15 @@ public class GameManager : MonoBehaviour
         //_menuSides.Add("Garden Salad");
     }
 
-    private void Update()
+    public void GenerateNewOrder()
     {
-        NewOrderReset();
-        OrderTimer();
-    }
-
-    private void NewOrderReset()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) && isReadyForNewOrder && !inServiceArea)
-        {
-            ClearCustomerTable();
-            ResetStoredLists();
-            ResetStoredInts();
-            ResetOrderAndReportText();
-
-            GetNewOrder();
-            SummarizeOnlyFoodOrdered();
-            PublishNewOrder();
-            CalculateMaximumScorePossible();
-
-            _timeElapsedTable1 = 0;
-            _timerOnTable1 = true;
-            isReadyForNewOrder = false; // prevent Update() actions including GetNewOrder until delivery against current order has been served 
-            isDoneServing = false; // toggle - allows the now NewOrder to be delivered to table
-        }
+        ClearCustomerTable();
+        ResetStoredLists();
+        ResetStoredInts();
+        ResetOrderAndReportText();
+        PickMenuItemsAndQuantities();
+        SummarizeOnlyFoodOrdered();
+        CalculateMaximumScorePossible();           
     }
 
     private void ClearCustomerTable()
@@ -123,8 +98,8 @@ public class GameManager : MonoBehaviour
     private void ResetStoredLists()
     {
         _quantityOfEachFoodOrdered.Clear();
-        _onlyFoodOrdered.Clear();
         _reportCardToPost.Clear();
+        onlyFoodOrdered.Clear();
         foodDelivered.Clear();
         itemsToServe.Clear();
     }
@@ -159,12 +134,10 @@ public class GameManager : MonoBehaviour
 
     private void ResetOrderAndReportText()
     {
-        orderText.text = "";
-        orderTextUI.text = "";
         reportCardText.text = "";
     }
 
-    private void GetNewOrder()
+    public void PickMenuItemsAndQuantities()
     {
         int minMains = 2;
         int maxMains = 8;
@@ -242,59 +215,49 @@ public class GameManager : MonoBehaviour
 
     private void SummarizeOnlyFoodOrdered()
     {        
-        _onlyFoodOrdered.Add("<b><u>Main Dishes</b></u>\n");
+        onlyFoodOrdered.Add("<b><u>Main Dishes</b></u>\n");
 
         if (_chickenOrdered > 0)
         {
-            _onlyFoodOrdered.Add(_chickenOrdered + " - Chicken\n");
+            onlyFoodOrdered.Add(_chickenOrdered + " - Chicken\n");
         }
 
         if (_beefRareOrdered > 0)
         {
-            _onlyFoodOrdered.Add(_beefRareOrdered + " - Beef: Rare\n");
+            onlyFoodOrdered.Add(_beefRareOrdered + " - Beef: Rare\n");
         }
 
         if (_beefMediumOrdered > 0)
         {
-            _onlyFoodOrdered.Add(_beefMediumOrdered + " - Beef: Medium\n");
+            onlyFoodOrdered.Add(_beefMediumOrdered + " - Beef: Medium\n");
         }
 
         if (_beefWellDoneOrdered > 0)
         {
-            _onlyFoodOrdered.Add(_beefWellDoneOrdered + " - Beef: Well-Done\n");
+            onlyFoodOrdered.Add(_beefWellDoneOrdered + " - Beef: Well-Done\n");
         }
 
-        _onlyFoodOrdered.Add("\n<b><u>Sides</b></u>\n");
+        onlyFoodOrdered.Add("\n<b><u>Sides</b></u>\n");
 
         if (_carrotsSteamedOrdered > 0)
         {
-            _onlyFoodOrdered.Add(_carrotsSteamedOrdered + " - Steamed Carrots\n");
+            onlyFoodOrdered.Add(_carrotsSteamedOrdered + " - Steamed Carrots\n");
         }
 
         if (_broccoliSteamedOrdered > 0)
         {
-            _onlyFoodOrdered.Add(_broccoliSteamedOrdered + " - Steamed Broccoli\n");
+            onlyFoodOrdered.Add(_broccoliSteamedOrdered + " - Steamed Broccoli\n");
         }
 
         if (_saladsOrdered > 0)
         {
-            _onlyFoodOrdered.Add(_saladsOrdered + " - Garden Salad\n");
-        }
-    }
-
-    private void PublishNewOrder() 
-    { 
-        
-        for (int i = 0; i < _onlyFoodOrdered.Count; i++)
-        {
-            orderText.text += _onlyFoodOrdered[i] + "\n";
-            orderTextUI.text += _onlyFoodOrdered[i] + "\n";
+            onlyFoodOrdered.Add(_saladsOrdered + " - Garden Salad\n");
         }
     }
 
     private void CalculateMaximumScorePossible()
     {
-        _chickenCookedDelivered = _chickenOrdered;
+        _chickenCookedDelivered = _chickenOrdered; // set input for perfect delivery
         _beefRareDelivered = _beefRareOrdered;
         _beefMediumDelivered = _beefMediumOrdered;
         _beefWellDoneDelivered = _beefWellDoneOrdered;
@@ -302,12 +265,11 @@ public class GameManager : MonoBehaviour
         _broccoliSteamedDelivered = _broccoliSteamedOrdered;
         _saladsGoodDelivered = _saladsOrdered;
 
-        _score = 0;
-        CalculateScore();
-        _maxScorePossible = _score;
-        maxScorePossibleText.text = _maxScorePossible.ToString() + " points possible";
-
-        _chickenCookedDelivered = 0;
+        _score = 0; // reset score
+        CalculateScore(); // call method to calculate score
+        maxScorePossible = _score; // store the max score
+       
+        _chickenCookedDelivered = 0; // reset
         _beefRareDelivered = 0;
         _beefMediumDelivered = 0;
         _beefWellDoneDelivered = 0;
@@ -315,18 +277,8 @@ public class GameManager : MonoBehaviour
         _broccoliSteamedDelivered = 0;
         _saladsGoodDelivered = 0;
         
-        _score = _holdScore;
-        scoreText.text = "Score: " + _score.ToString();
-    }
-
-    private void OrderTimer()
-    {
-        if (_timerOnTable1)
-        {
-            _timeElapsedTable1 += Time.deltaTime;
-            string _roundTime = _timeElapsedTable1.ToString("#.0");
-            timeElapsedTable1Text.text = _roundTime;
-        }
+        _score = _holdScore; // reset score to the stored value
+        scoreText.text = "Score: " + _score.ToString(); // update score on UI
     }
 
     public void AfterFoodIsServedActions()
@@ -337,10 +289,6 @@ public class GameManager : MonoBehaviour
         CalculateScore();
         scoreText.text = "Score: " + _score.ToString();
         _holdScore = _score;
-
-        isDoneServing = true;
-        isReadyForNewOrder = true;
-        _timerOnTable1 = false;
     }
     
     private void CountFoodDelivered()

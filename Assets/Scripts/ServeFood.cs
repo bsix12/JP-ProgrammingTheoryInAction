@@ -5,15 +5,14 @@ using UnityEngine;
 public class ServeFood : MonoBehaviour
 {
     public Transform playerTransform;
-
     private Transform _itemToServeTransform;
     private Rigidbody _itemToServeRb;
     private Vector3 _transferFoodVector;
-
+    public string _iAmTableNumber;
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.inServiceArea && !GameManager.Instance.isDoneServing)
+        if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.inServiceArea && !OrderManager.Instance.isDoneServingTable1)
         {
             ServeFoodToTable();
         }
@@ -32,6 +31,7 @@ public class ServeFood : MonoBehaviour
             _itemToServeTransform.position += _transferFoodVector;
         }
         GameManager.Instance.AfterFoodIsServedActions();
+        OrderManager.Instance.AfterFoodIsServedActions();
     }
 
 
@@ -41,6 +41,7 @@ public class ServeFood : MonoBehaviour
         {
             GameManager.Instance.inServiceArea = true;
             GameManager.Instance.serveTableLocation = transform.position;
+            GameManager.Instance.isAtLocation = _iAmTableNumber;
         }
     }
 
