@@ -96,7 +96,7 @@ public class Food : MonoBehaviour
         if (other.gameObject.CompareTag("CollectFoodTrigger"))
         {
             GameManager.Instance.foodDeliveredNames.Add(iAm);
-            GameManager.Instance.itemsToServeGameObjects.Add(gameObject);
+            GameManager.Instance.readyToServeGameObjects.Add(gameObject);
         }
     }
 
@@ -126,7 +126,7 @@ public class Food : MonoBehaviour
                 if (GameManager.Instance.foodDeliveredNames[i] == iAm && !removedOne)
                 {
                     GameManager.Instance.foodDeliveredNames.RemoveAt(i);
-                    GameManager.Instance.itemsToServeGameObjects.RemoveAt(i);
+                    GameManager.Instance.readyToServeGameObjects.RemoveAt(i);
                     removedOne = true;
                 }
             }

@@ -15,9 +15,14 @@ public class GameManager : MonoBehaviour
     public Button notesButton;
     public Image creditsNotesBackground;
     public Vector3 serveTableLocation;
-    public List<GameObject> itemsToServeGameObjects = new List<GameObject>();
+    public List<GameObject> readyToServeGameObjects = new List<GameObject>();
+    public List<GameObject> onPlateGameObjectsTable1 = new List<GameObject>();
     public List<string> onlyFoodOrderedNames = new List<string>();
     public List<string> foodDeliveredNames = new List<string>();
+    public GameObject reservedTable1;
+    public GameObject reservedTable2;
+    public GameObject reservedTable3;
+
 
     public int maxScorePossible;
     public bool isInServiceArea; // manages if spacebar delivers food to table or allows for a new order
@@ -79,7 +84,6 @@ public class GameManager : MonoBehaviour
 
     public void GenerateNewOrder()
     {
-        ClearCustomerTable();
         ResetStoredLists();
         ResetStoredInts();
         ResetOrderAndReportText();
@@ -87,26 +91,20 @@ public class GameManager : MonoBehaviour
         SummarizeOnlyFoodOrdered();
         CalculateMaximumScorePossible();           
     }
-
-    private void ClearCustomerTable()
-    {
-        for (int i = 0; i < itemsToServeGameObjects.Count; i++)
-        {
-            Destroy(itemsToServeGameObjects[i]);
-        }
-    }
-    
+        
     // note to future self: doing .Clear() only on lists appeared to not work
     // new orders were added to previous orders and never got cleared
     // took awhile to realize these lists are generated from stored data
     // needed to reset all the input data to generate lists based only on current data
     private void ResetStoredLists()
     {
-        _quantityOfEachFoodOrdered.Clear();
-        _reportCardToPost.Clear();
-        onlyFoodOrderedNames.Clear();
-        foodDeliveredNames.Clear();
-        itemsToServeGameObjects.Clear();
+        onlyFoodOrderedNames.Clear();       // list of strings
+        _quantityOfEachFoodOrdered.Clear(); // list of ints
+        
+        foodDeliveredNames.Clear();         // list of strings
+        onPlateGameObjectsTable1.Clear();   // list of GameObjects
+        
+        _reportCardToPost.Clear();          // list of strings
     }
 
     private void ResetStoredInts()
@@ -137,7 +135,7 @@ public class GameManager : MonoBehaviour
         _saladsRuinedDelivered = 0;
     }
 
-    private void ResetOrderAndReportText()
+    private void ResetOrderAndReportText() // this will get moved to OrderManager when reports for each table are implemented
     {
         reportCardText.text = "";
     }
@@ -145,7 +143,7 @@ public class GameManager : MonoBehaviour
     public void PickMenuItemsAndQuantities()
     {
         int minMains = 2;
-        int maxMains = 8;
+        int maxMains = 8;   // the number of diners at each table is modeled for up to 8 people
         int sides = 0;
         int salads = 0;
         int sideSelectedIndex;
@@ -898,6 +896,7 @@ public class GameManager : MonoBehaviour
     public void OpenDiningRoom()
     {
         isActiveTable1 = true;
+        reservedTable1.gameObject.SetActive(false);
         OrderManager.Instance.GenerateNextOrderDelay();
     }
 

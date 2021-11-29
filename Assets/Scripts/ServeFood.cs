@@ -15,23 +15,36 @@ public class ServeFood : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && !OrderManager.Instance.isDoneServingTable1)
         {
             ServeFoodToTable();
+            OrderManager.Instance.dinersClearedTable1 = false;
         }
     }
 
     private void ServeFoodToTable()
     {
-        for (int i = 0; i < GameManager.Instance.itemsToServeGameObjects.Count; i++)
+        for (int i = 0; i < GameManager.Instance.readyToServeGameObjects.Count; i++)
         {
-            _itemToServeRb = GameManager.Instance.itemsToServeGameObjects[i].GetComponent<Rigidbody>();
-            _itemToServeTransform = GameManager.Instance.itemsToServeGameObjects[i].GetComponent<Transform>();
+            _itemToServeRb = GameManager.Instance.readyToServeGameObjects[i].GetComponent<Rigidbody>();
+            _itemToServeTransform = GameManager.Instance.readyToServeGameObjects[i].GetComponent<Transform>();
 
             _itemToServeRb.velocity = Vector3.zero;
             _itemToServeRb.angularVelocity = Vector3.zero;
             _transferFoodVector = GameManager.Instance.serveTableLocation - playerTransform.position;
             _itemToServeTransform.position += _transferFoodVector;
+            TransferObjectsReadyToServeListMoveToOnPlateList();
+            
         }
-        //GameManager.Instance.AfterFoodIsServedActions();
+        //Debug.Log("ServeFoodToTable Called");
         OrderManager.Instance.AfterFoodIsServedActions();
+        GameManager.Instance.readyToServeGameObjects.Clear();
+    }
+
+    private void TransferObjectsReadyToServeListMoveToOnPlateList()
+    {
+        for (int i= 0; i<GameManager.Instance.readyToServeGameObjects.Count; i++)
+        {
+            GameManager.Instance.onPlateGameObjectsTable1.Add(GameManager.Instance.readyToServeGameObjects[i]);
+            GameManager.Instance.readyToServeGameObjects.RemoveAt(i);            
+        }
     }
 
 
@@ -40,8 +53,12 @@ public class ServeFood : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             GameManager.Instance.isInServiceArea = true;
-            GameManager.Instance.serveTableLocation = transform.position;
-            GameManager.Instance.atTableName = _iAmTableNumber;
+            GameManager.Instance.atTableName = _iAmTableNumber; // use this value as a condition for other methods/actions to differentiate 'at which table'
+            GameManager.Instance.serveTableLocation = transform.position;   // Create a reference to the correct transform to be used in _transferFoodVector
+                                                                            // before this change, the transform.position for ServeFood script never updated after
+                                                                            // the first time a value was assigned.  food was moving from player location to 
+                                                                            // the same transform location each time.
+            
         }
     }
 

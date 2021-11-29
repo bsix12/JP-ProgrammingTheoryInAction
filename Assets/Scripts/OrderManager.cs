@@ -48,9 +48,23 @@ public class OrderManager : MonoBehaviour
     public TextMeshPro orderTextTable2;
     public TextMeshPro orderTextTable3;
 
-    public float delayUntilNextOrderTable1;
+    public GameObject[] dinersTable1;
+    public GameObject[] dinersTable2;
+    public GameObject[] dinersTable3;
+
+    private List<int> _dinersIndexList = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
+
+    public bool dinersClearedTable1 = false;
+    private bool _dinersClearedTable2;
+    private bool _dinersClearedTable3;
+
+    [SerializeField] private float _delayUntilNextOrderTable1;
     private float _delayUntilNextOrderTable2;
     private float _delayUntilNextOrderTable3;
+
+    [SerializeField] private float _eatTimeTable1;
+    private float _eatTimeTable2;
+    private float _eatTimeTable3;
 
     private int _maxScorePossibleTable1;
     private int _maxScorePossibleTable2;
@@ -72,23 +86,22 @@ public class OrderManager : MonoBehaviour
 
     private void Update()
     {
-        DelayUntilNextOrderTimer();
-        OrderTimerByTable();
+        TimeRemainingUntilNextOrder();
+        OrderPrepElapsedTimeByTable();
+        ResetTable1();
 
-        if (GameManager.Instance.isActiveTable1 && delayUntilNextOrderTable1 <= 0)
+        if (GameManager.Instance.isActiveTable1 && _delayUntilNextOrderTable1 <= 0)
         {
             GetNewOrderByTable();
         }
-
-
     }
 
     public void GetNewOrderByTable()
     {
-        //if (isDoneServingTable1)
-        //{
-        //    isReadyForNewOrderTable1 = true;
-        //}
+        if (isDoneServingTable1)
+        {
+            isReadyForNewOrderTable1 = true;
+        }
 
         if (isReadyForNewOrderTable1)
         {
@@ -118,6 +131,7 @@ public class OrderManager : MonoBehaviour
             _carrotsSteamedOrderedTable1 = GameManager.Instance.carrotsSteamedOrdered;
             _broccoliSteamedOrderedTable1 = GameManager.Instance.broccoliSteamedOrdered;
             _saladsOrderedTable1 = GameManager.Instance.saladsOrdered;
+            SeatDinersTable1();            
         }
 
         else if (isReadyForNewOrderTable2)
@@ -129,6 +143,50 @@ public class OrderManager : MonoBehaviour
             Debug.Log("future stuff for table3");
         }
     }
+
+    private void SeatDinersTable1()
+    {
+        int _diners = _chickenOrderedTable1 + _beefRareOrderedTable1 + _beefMediumOrderedTable1 + _beefWellDoneOrderedTable1;
+        
+        for (int i = 0; i<_diners; i++)
+        {
+            int _random = Random.Range(0, _dinersIndexList.Count - 1);
+
+            dinersTable1[_dinersIndexList[_random]].gameObject.SetActive(true);
+            _dinersIndexList.RemoveAt(_random);
+        }
+        ResetDinerIndexList();        
+    }
+
+    private void ResetDinerIndexList()
+    {
+        _dinersIndexList.Clear();
+
+        for (int i = 0; i < 8; i++)
+        {
+            _dinersIndexList.Add(i);
+        }
+    }
+
+    private void ResetTable1()
+    {
+        
+        if(dinersClearedTable1 == false && _eatTimeTable1 > _delayUntilNextOrderTable1)
+        {
+            for(int i=0; i < dinersTable1.Length; i++)
+            {
+                dinersTable1[i].gameObject.SetActive(false);
+            }
+            
+            dinersClearedTable1= true;
+            
+            for (int i = 0; i < GameManager.Instance.onPlateGameObjectsTable1.Count; i++)
+            {
+            Destroy(GameManager.Instance.onPlateGameObjectsTable1[i]);
+            }
+        }
+    }
+
     private void PublishOrderTable1()
     {
         for (int i = 0; i < _onlyFoodOrderedTable1.Count; i++)
@@ -138,7 +196,7 @@ public class OrderManager : MonoBehaviour
         }
     }
 
-    private void OrderTimerByTable()
+    private void OrderPrepElapsedTimeByTable()
     {
         if (isOnTimerTable1)
         {
@@ -150,14 +208,15 @@ public class OrderManager : MonoBehaviour
 
     public void GenerateNextOrderDelay()
     {
-        delayUntilNextOrderTable1 = Random.Range(5f, 15f); // debug timing ////////////////////////////////////////////////////////////////////
+        _delayUntilNextOrderTable1 = Random.Range(5f, 15f); // debug timing ////////////////////////////////////////////////////////////////////
+        _eatTimeTable1 = _delayUntilNextOrderTable1 * .5f;
     }
 
-    private void DelayUntilNextOrderTimer()
+    private void TimeRemainingUntilNextOrder()
     {
-        if (isReadyForNewOrderTable1 && delayUntilNextOrderTable1 > 0)
+        if (isReadyForNewOrderTable1 && _delayUntilNextOrderTable1 > 0)
         {
-            delayUntilNextOrderTable1 -= Time.deltaTime;
+            _delayUntilNextOrderTable1 -= Time.deltaTime;
         }
     }
 
@@ -165,12 +224,12 @@ public class OrderManager : MonoBehaviour
     {
         if (GameManager.Instance.atTableName == "Table1") // this string needs to match Inspector, DiningRoom/DiningTableX/inServiceAreaTrigger/ServeFood.cs
         {
+            Debug.Log("OrderManager AfterFoodIsServedActions called");
             isDoneServingTable1 = true;
             isOnTimerTable1 = false;
             isReadyForNewOrderTable1 = true;
             orderTicketBackgroundTable1.gameObject.SetActive(false);
             orderTicketTextUITable1.gameObject.SetActive(false);
-
             GameManager.Instance.chickenOrdered = _chickenOrderedTable1; // AfterFoodIsServedActions() will compare Dilvered versus OrderedTable1 
             GameManager.Instance.beefRareOrdered = _beefRareOrderedTable1;
             GameManager.Instance.beefMediumOrdered = _beefMediumOrderedTable1;
@@ -193,5 +252,4 @@ public class OrderManager : MonoBehaviour
             Debug.Log("Table3 delivery actions to be inititated");
         }
     }
-
 }
