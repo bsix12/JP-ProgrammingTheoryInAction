@@ -29,10 +29,10 @@ public class ServeFood : MonoBehaviour
             _itemToServeRb.velocity = Vector3.zero;
             _itemToServeRb.angularVelocity = Vector3.zero;
             _transferFoodVector = GameManager.Instance.serveTableLocation - playerTransform.position;
-            _itemToServeTransform.position += _transferFoodVector;
-            TransferObjectsReadyToServeListMoveToOnPlateList();
-            
+            _itemToServeTransform.position += _transferFoodVector;            
         }
+
+        TransferObjectsReadyToServeListMoveToOnPlateList();
         //Debug.Log("ServeFoodToTable Called");
         OrderManager.Instance.AfterFoodIsServedActions();
         GameManager.Instance.readyToServeGameObjects.Clear();
@@ -42,9 +42,10 @@ public class ServeFood : MonoBehaviour
     {
         for (int i= 0; i<GameManager.Instance.readyToServeGameObjects.Count; i++)
         {
-            GameManager.Instance.onPlateGameObjectsTable1.Add(GameManager.Instance.readyToServeGameObjects[i]);
-            GameManager.Instance.readyToServeGameObjects.RemoveAt(i);            
+            GameManager.Instance.onPlateGameObjectsTable1.Add(GameManager.Instance.readyToServeGameObjects[i]);               
         }
+
+        GameManager.Instance.readyToServeGameObjects.Clear();
     }
 
 

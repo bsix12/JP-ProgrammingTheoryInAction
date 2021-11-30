@@ -12,7 +12,9 @@ public class WasteStation : MonoBehaviour
         if (other.CompareTag("Food"))
         {
             audioSource.PlayOneShot(wasteSound);
-            Destroy(other);
+            Destroy(other.gameObject);  // Destroy(other) didn't work
+                                        // looked like object was removed but it was instead reset and falling
+                                        // need destroy the gameObject the script is attached to
 
         }
     }

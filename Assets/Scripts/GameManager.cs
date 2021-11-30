@@ -14,15 +14,16 @@ public class GameManager : MonoBehaviour
     public TextMeshPro reportCardText;
     public Button notesButton;
     public Image creditsNotesBackground;
-    public Vector3 serveTableLocation;
+    
+    public GameObject reservedTable1;
+    public GameObject reservedTable2;
+    public GameObject reservedTable3;
+    
     public List<GameObject> readyToServeGameObjects = new List<GameObject>();
     public List<GameObject> onPlateGameObjectsTable1 = new List<GameObject>();
     public List<string> onlyFoodOrderedNames = new List<string>();
     public List<string> foodDeliveredNames = new List<string>();
-    public GameObject reservedTable1;
-    public GameObject reservedTable2;
-    public GameObject reservedTable3;
-
+    public Vector3 serveTableLocation;
 
     public int maxScorePossible;
     public bool isInServiceArea; // manages if spacebar delivers food to table or allows for a new order
@@ -36,20 +37,17 @@ public class GameManager : MonoBehaviour
     public int broccoliSteamedOrdered;
     public int saladsOrdered;    
 
-    private List<string> _menuMainsNames = new List<string>();
-    private List<string> _menuSidesNames = new List<string>();
-    private List<string> _quantityOfEachFoodOrdered = new List<string>();
-    [SerializeField] private List<string> _reportCardToPost = new List<string>();
-
-    private bool _isActiveCredits = false;
-    private bool _isActiveNotes = false;
-
     public bool isActiveTable1 = false;
     public bool isActiveTable2 = false;
     public bool isActiveTable3 = false;
 
-    [SerializeField] private int _score;
-    [SerializeField] private int _holdTotalScore;
+    private List<string> _menuMainsNames = new List<string>();
+    private List<string> _menuSidesNames = new List<string>();
+    private List<string> _quantityOfEachFoodOrdered = new List<string>();
+    private List<string> _reportCardToPost = new List<string>();
+
+    private bool _isActiveCredits = false;
+    private bool _isActiveNotes = false;
 
     [SerializeField] private int _chickenRawDelivered;
     [SerializeField] private int _chickenCookedDelivered;
@@ -67,11 +65,40 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _broccoliBurnedDelivered;
     [SerializeField] private int _saladsGoodDelivered;
     [SerializeField] private int _saladsRuinedDelivered;
-    
+
+    [SerializeField] private int _score;
+    [SerializeField] private int _holdTotalScore;
+    private int _latePenalty = 5;
+    private float _perSecond = 1f;
+
     private void Start()
     {
         Instance = this;
+        LoadFoodMenu();
+    }
 
+    private void Update()
+    {
+        PerSecondPenaltyIfLate();
+    }
+
+    private void PerSecondPenaltyIfLate()
+    {
+        if (OrderManager.Instance.isLateTable1 && _perSecond > 0f) // 1 second timer
+        {
+            _perSecond -= Time.deltaTime;
+        }
+
+        if(OrderManager.Instance.isLateTable1 && _perSecond <= 0f)
+        {
+            _score -= _latePenalty; // for each second late, apply a penalty
+            scoreText.text = "Score: " + _score.ToString();
+            _perSecond = 1f; // reset 1 second timer
+        }
+    }
+
+    private void LoadFoodMenu()
+    {
         _menuMainsNames.Add("Chicken");
         _menuMainsNames.Add("Beef: Rare");
         _menuMainsNames.Add("Beef: Medium");
@@ -252,7 +279,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void CalculateMaximumScorePossible()
+    private void CalculateMaximumScorePossible() // utilize the same methods called to score delivery
     {
         _chickenCookedDelivered = chickenOrdered; // set input for perfect delivery
         _beefRareDelivered = beefRareOrdered;
@@ -275,7 +302,7 @@ public class GameManager : MonoBehaviour
         _saladsGoodDelivered = 0;
         
         _score = _holdTotalScore; // reset score to the stored value
-        scoreText.text = "Score: " + _score.ToString(); // update score on UI
+        scoreText.text = "Score: " + _score.ToString(); // update UI to restore actual game score
     }
 
     public void AfterFoodIsServedActions()

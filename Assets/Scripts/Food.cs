@@ -111,6 +111,7 @@ public class Food : MonoBehaviour
     protected virtual void OnTriggerExit(Collider other)
     {
         bool removedOne = false;
+        
         // remove OnHeat idicators from food when exiting cook area
         if (other.gameObject.CompareTag("Grill") || other.gameObject.CompareTag("Steamer"))
         {
