@@ -128,7 +128,7 @@ public class GameManager : MonoBehaviour
         onlyFoodOrderedNames.Clear();       // list of strings
         _quantityOfEachFoodOrdered.Clear(); // list of ints
         
-        foodDeliveredNames.Clear();         // list of strings
+        //foodDeliveredNames.Clear();         // list of strings
         onPlateGameObjectsTable1.Clear();   // list of GameObjects
         
         _reportCardToPost.Clear();          // list of strings

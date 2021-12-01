@@ -11733,8 +11733,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 50, y: 1, z: 1}
-  m_Center: {x: 25, y: 0, z: 0}
+  m_Size: {x: 56, y: 1, z: 1}
+  m_Center: {x: 28, y: 0.1, z: 0}
 --- !u!33 &1039087193
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -11799,8 +11799,6 @@ MonoBehaviour:
   isActiveTable1: 0
   isActiveTable2: 0
   isActiveTable3: 0
-  _score: 0
-  _holdTotalScore: 0
   _chickenRawDelivered: 0
   _chickenCookedDelivered: 0
   _chickenBurnedDelivered: 0
@@ -11817,6 +11815,8 @@ MonoBehaviour:
   _broccoliBurnedDelivered: 0
   _saladsGoodDelivered: 0
   _saladsRuinedDelivered: 0
+  _score: 0
+  _holdTotalScore: 0
 --- !u!4 &1040413984
 Transform:
   m_ObjectHideFlags: 0
