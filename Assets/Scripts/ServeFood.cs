@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class ServeFood : MonoBehaviour
 {
-    public Transform playerTransform;
     private Transform _itemToServeTransform;
     private Rigidbody _itemToServeRb;
     private Vector3 _transferFoodVector;
-    public string _iAmTableNumber;
+
 
     private void Update()
     {
@@ -30,7 +29,7 @@ public class ServeFood : MonoBehaviour
             Debug.Log("my start position is: " + _itemToServeTransform.position);
             _itemToServeRb.velocity = Vector3.zero;
             _itemToServeRb.angularVelocity = Vector3.zero;
-            _transferFoodVector = GameManager.Instance.serveTableLocation - playerTransform.position;
+            _transferFoodVector = GameManager.Instance.serveTableLocation - transform.position;
             _itemToServeTransform.position += _transferFoodVector;
             Debug.Log("my final position is: " + _itemToServeTransform.position);
         }
@@ -54,11 +53,11 @@ public class ServeFood : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Table"))
         {
             GameManager.Instance.isInServiceArea = true;
-            GameManager.Instance.atTableName = _iAmTableNumber; // use this value as a condition for other methods/actions to differentiate 'at which table'
-            GameManager.Instance.serveTableLocation = transform.position;   // Create a reference to the correct transform to be used in _transferFoodVector
+            GameManager.Instance.atTableName = other.GetComponent<TableIAm>().atTableName; // use this value as a condition for other methods/actions to differentiate 'at which table'
+            GameManager.Instance.serveTableLocation = other.transform.position;   // Create a reference to the correct transform to be used in _transferFoodVector
                                                                             // before this change, the transform.position for ServeFood script never updated after
                                                                             // the first time a value was assigned.  food was moving from player location to 
                                                                             // the same transform location each time.
@@ -68,7 +67,7 @@ public class ServeFood : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Table"))
         {
             GameManager.Instance.isInServiceArea = false;
         }

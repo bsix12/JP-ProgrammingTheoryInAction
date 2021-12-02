@@ -13,6 +13,7 @@ TagManager:
   - Grill
   - Steamer
   - CollectFoodTrigger
+  - Table
   layers:
   - Default
   - TransparentFX
