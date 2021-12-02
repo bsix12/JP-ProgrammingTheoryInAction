@@ -130,13 +130,13 @@ MonoBehaviour:
   isCooking: 0
   isCooked: 0
   isBurned: 0
+  iAm: 
   cookConditionIndicator: {fileID: 8300000, guid: a9f3cb7480db1a34ca2501de07b2dad8, type: 3}
   indicatorGrillPrefab: {fileID: 6787215316302648940, guid: 55e2878145cbe784db5e2aa51f095a94, type: 3}
   indicatorSteamerPrefab: {fileID: 1305866793593120617, guid: 21dd648336e40b0459df04379ee9a026, type: 3}
   isCookedRare: 0
   isCookedMedium: 0
   isCookedWellDone: 0
-  sizzleAudioSource: {fileID: 0}
 --- !u!82 &33324275571284374
 AudioSource:
   m_ObjectHideFlags: 0

@@ -67,9 +67,9 @@ public class OrderManager : MonoBehaviour
     private float _delayUntilNextOrderTable2;
     private float _delayUntilNextOrderTable3;
 
-    [SerializeField] private float _eatTimeTable1;
-    private float _eatTimeTable2;
-    private float _eatTimeTable3;
+    [SerializeField] private float _nonEatTimeTable1;
+    private float _nonEatTimeTable2;
+    private float _nonEatTimeTable3;
 
     private int _maxScorePossibleTable1;
     private int _maxScorePossibleTable2;
@@ -184,7 +184,7 @@ public class OrderManager : MonoBehaviour
     private void ResetTable1()
     {
         
-        if(dinersClearedTable1 == false && _eatTimeTable1 > _delayUntilNextOrderTable1)
+        if(dinersClearedTable1 == false && _nonEatTimeTable1 > _delayUntilNextOrderTable1)
         {
             for (int i = 0; i < GameManager.Instance.onPlateGameObjectsTable1.Count; i++)
             {
@@ -230,7 +230,7 @@ public class OrderManager : MonoBehaviour
     public void GenerateNextOrderDelay()
     {
         _delayUntilNextOrderTable1 = Random.Range(5f, 15f); // debug timing ////////////////////////////////////////////////////////////////////
-        _eatTimeTable1 = _delayUntilNextOrderTable1 * .5f;
+        _nonEatTimeTable1 = _delayUntilNextOrderTable1 * .2f; // this is percent of delay that diners and food will remain at table before being cleared
     }
 
     private void TimeRemainingUntilNextOrder()
@@ -245,7 +245,7 @@ public class OrderManager : MonoBehaviour
     {
         if (GameManager.Instance.atTableName == "Table1") // this string needs to match Inspector, DiningRoom/DiningTableX/inServiceAreaTrigger/ServeFood.cs
         {
-            Debug.Log("OrderManager AfterFoodIsServedActions called");
+            //Debug.Log("OrderManager AfterFoodIsServedActions called");
             isDoneServingTable1 = true;
             isOnTimerTable1 = false;
             isReadyForNewOrderTable1 = true;

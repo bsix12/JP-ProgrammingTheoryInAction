@@ -14,7 +14,8 @@ public class GameManager : MonoBehaviour
     public TextMeshPro reportCardText;
     public Button notesButton;
     public Image creditsNotesBackground;
-    
+
+    public GameObject kitchenDoor;
     public GameObject reservedTable1;
     public GameObject reservedTable2;
     public GameObject reservedTable3;
@@ -116,7 +117,7 @@ public class GameManager : MonoBehaviour
         ResetOrderAndReportText();
         PickMenuItemsAndQuantities();
         SummarizeOnlyFoodOrdered();
-        CalculateMaximumScorePossible();           
+        CalculateMaximumScorePossible();
     }
         
     // note to future self: doing .Clear() only on lists appeared to not work
@@ -126,11 +127,8 @@ public class GameManager : MonoBehaviour
     private void ResetStoredLists()
     {
         onlyFoodOrderedNames.Clear();       // list of strings
-        _quantityOfEachFoodOrdered.Clear(); // list of ints
-        
-        //foodDeliveredNames.Clear();         // list of strings
         onPlateGameObjectsTable1.Clear();   // list of GameObjects
-        
+        _quantityOfEachFoodOrdered.Clear(); // list of ints
         _reportCardToPost.Clear();          // list of strings
     }
 
@@ -923,6 +921,7 @@ public class GameManager : MonoBehaviour
     public void OpenDiningRoom()
     {
         isActiveTable1 = true;
+        kitchenDoor.gameObject.SetActive(false);
         reservedTable1.gameObject.SetActive(false);
         OrderManager.Instance.GenerateNextOrderDelay();
     }

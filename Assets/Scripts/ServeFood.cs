@@ -14,6 +14,11 @@ public class ServeFood : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && !OrderManager.Instance.isDoneServingTable1)
         {
             ServeFoodToTable();
+            TransferObjectsReadyToServeListMoveToOnPlateList();
+
+            OrderManager.Instance.AfterFoodIsServedActions();
+            GameManager.Instance.readyToServeGameObjects.Clear();
+
             GameManager.Instance.foodDeliveredNames.Clear();
             OrderManager.Instance.dinersClearedTable1 = false;
         }
@@ -23,21 +28,19 @@ public class ServeFood : MonoBehaviour
     {
         for (int i = 0; i < GameManager.Instance.readyToServeGameObjects.Count; i++)
         {
-            Debug.Log("I am element number: " + i);                
+            //Debug.Log("ServeFoodToTable Called")
+            //Debug.Log("I am element number: " + i);                
             _itemToServeRb = GameManager.Instance.readyToServeGameObjects[i].GetComponent<Rigidbody>();
             _itemToServeTransform = GameManager.Instance.readyToServeGameObjects[i].GetComponent<Transform>();
-            Debug.Log("my start position is: " + _itemToServeTransform.position);
+            //Debug.Log("my start position is: " + _itemToServeTransform.position);
             _itemToServeRb.velocity = Vector3.zero;
             _itemToServeRb.angularVelocity = Vector3.zero;
             _transferFoodVector = GameManager.Instance.serveTableLocation - transform.position;
             _itemToServeTransform.position += _transferFoodVector;
-            Debug.Log("my final position is: " + _itemToServeTransform.position);
+            //Debug.Log("my final position is: " + _itemToServeTransform.position);
         }
 
-        TransferObjectsReadyToServeListMoveToOnPlateList();
-        //Debug.Log("ServeFoodToTable Called");
-        OrderManager.Instance.AfterFoodIsServedActions();
-        GameManager.Instance.readyToServeGameObjects.Clear();
+        
     }
 
     private void TransferObjectsReadyToServeListMoveToOnPlateList()
