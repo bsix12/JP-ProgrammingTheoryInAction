@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CollectFood : MonoBehaviour
 {
+    /*
     //public List<GameObject> itemsToServe = new List<GameObject>();
 
     private void OnTriggerEnter(Collider other)
@@ -13,4 +14,5 @@ public class CollectFood : MonoBehaviour
             GameManager.Instance.readyToServeGameObjects.Add(other.gameObject);
         }
     }
+    */
 }

@@ -20,9 +20,9 @@ public class ServeFood : MonoBehaviour
             GameManager.Instance.readyToServeGameObjects.Clear();
 
             GameManager.Instance.foodDeliveredNames.Clear();
-            OrderManager.Instance.dinersClearedTable1 = false;
         }
     }
+
 
     private void ServeFoodToTable()
     {
@@ -38,16 +38,15 @@ public class ServeFood : MonoBehaviour
             _transferFoodVector = GameManager.Instance.serveTableLocation - transform.position;
             _itemToServeTransform.position += _transferFoodVector;
             //Debug.Log("my final position is: " + _itemToServeTransform.position);
-        }
-
-        
+        }        
     }
+
 
     private void TransferObjectsReadyToServeListMoveToOnPlateList()
     {
         for (int i= 0; i<GameManager.Instance.readyToServeGameObjects.Count; i++)
         {
-            GameManager.Instance.onPlateGameObjectsTable1.Add(GameManager.Instance.readyToServeGameObjects[i]);               
+            OrderManager.Instance.onPlateGameObjectsTable1.Add(GameManager.Instance.readyToServeGameObjects[i]);               
         }
 
         GameManager.Instance.readyToServeGameObjects.Clear();

@@ -3369,7 +3369,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4039522078584931431}
   m_Layer: 0
-  m_Name: Diners
+  m_Name: Guests
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

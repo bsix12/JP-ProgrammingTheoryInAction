@@ -8,6 +8,10 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    ////////////////////////////
+    /// Assign In Inspector
+    ////////////////////////////
+    
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI credits;
     public TextMeshProUGUI notes;
@@ -19,14 +23,17 @@ public class GameManager : MonoBehaviour
     public GameObject reservedTable1;
     public GameObject reservedTable2;
     public GameObject reservedTable3;
-    
+
+    ////////////////////////////
+ 
     public List<GameObject> readyToServeGameObjects = new List<GameObject>();
-    public List<GameObject> onPlateGameObjectsTable1 = new List<GameObject>();
+
     public List<string> onlyFoodOrderedNames = new List<string>();
     public List<string> foodDeliveredNames = new List<string>();
+    public List<string> reportCardToPost = new List<string>();
     public Vector3 serveTableLocation;
 
-    public int maxScorePossible;
+    public int maximumOrderScorePossible;
     public bool isInServiceArea; // manages if spacebar delivers food to table or allows for a new order
     public string atTableName; // reference to which table player is at
 
@@ -44,8 +51,8 @@ public class GameManager : MonoBehaviour
 
     private List<string> _menuMainsNames = new List<string>();
     private List<string> _menuSidesNames = new List<string>();
-    private List<string> _quantityOfEachFoodOrdered = new List<string>();
-    private List<string> _reportCardToPost = new List<string>();
+    private List<string> _includesNoneFoodOrderedNames = new List<string>();
+    
 
     private bool _isActiveCredits = false;
     private bool _isActiveNotes = false;
@@ -75,28 +82,16 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         Instance = this;
+        _score = 0;
         LoadFoodMenu();
     }
 
+
     private void Update()
     {
-        PerSecondPenaltyIfLate();
+        ApplyPerSecondPenaltyIfLate();
     }
 
-    private void PerSecondPenaltyIfLate()
-    {
-        if (OrderManager.Instance.isLateTable1 && _perSecond > 0f) // 1 second timer
-        {
-            _perSecond -= Time.deltaTime;
-        }
-
-        if(OrderManager.Instance.isLateTable1 && _perSecond <= 0f)
-        {
-            _score -= _latePenalty; // for each second late, apply a penalty
-            scoreText.text = "Score: " + _score.ToString();
-            _perSecond = 1f; // reset 1 second timer
-        }
-    }
 
     private void LoadFoodMenu()
     {
@@ -110,61 +105,19 @@ public class GameManager : MonoBehaviour
         //_menuSides.Add("Garden Salad");
     }
 
-    public void GenerateNewOrder()
+    //////////////////////////////////////////////////////////////////////////
+    /// Generate New Order Details
+    ///     this method is called whenever any table needs a new order
+    //////////////////////////////////////////////////////////////////////////
+
+    public void GenerateOrderDetails()
     {
-        ResetStoredLists();
-        ResetStoredInts();
-        ResetOrderAndReportText();
         PickMenuItemsAndQuantities();
         SummarizeOnlyFoodOrdered();
-        CalculateMaximumScorePossible();
+        CalculateMaximumOrderScorePossible();
+        UpdateScore();
     }
         
-    // note to future self: doing .Clear() only on lists appeared to not work
-    // new orders were added to previous orders and never got cleared
-    // took awhile to realize these lists are generated from stored data
-    // needed to reset all the input data to generate lists based only on current data
-    private void ResetStoredLists()
-    {
-        onlyFoodOrderedNames.Clear();       // list of strings
-        onPlateGameObjectsTable1.Clear();   // list of GameObjects
-        _quantityOfEachFoodOrdered.Clear(); // list of ints
-        _reportCardToPost.Clear();          // list of strings
-    }
-
-    private void ResetStoredInts()
-    {
-        chickenOrdered = 0;
-        beefRareOrdered = 0;
-        beefMediumOrdered = 0;
-        beefWellDoneOrdered = 0;
-        carrotsSteamedOrdered = 0;
-        broccoliSteamedOrdered = 0;
-        saladsOrdered = 0;
-
-        _chickenRawDelivered = 0;
-        _chickenCookedDelivered = 0;
-        _chickenBurnedDelivered = 0;
-        _beefRawDelivered = 0;
-        _beefRareDelivered = 0;
-        _beefMediumDelivered = 0;
-        _beefWellDoneDelivered = 0;
-        _beefBurnedDelivered = 0;
-        _carrotsRawDelivered = 0;
-        _carrotsSteamedDelivered = 0;
-        _carrotsBurnedDelivered = 0;
-        _broccoliRawDelivered = 0;
-        _broccoliSteamedDelivered = 0;
-        _broccoliBurnedDelivered = 0;
-        _saladsGoodDelivered = 0;
-        _saladsRuinedDelivered = 0;
-    }
-
-    private void ResetOrderAndReportText() // this will get moved to OrderManager when reports for each table are implemented
-    {
-        reportCardText.text = "";
-    }
-
     public void PickMenuItemsAndQuantities()
     {
         int minMains = 2;
@@ -190,43 +143,43 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < sides; i++)
         {
             sideSelectedIndex = Random.Range(0, _menuSidesNames.Count);
-            _quantityOfEachFoodOrdered.Add(_menuSidesNames[sideSelectedIndex]);
+            _includesNoneFoodOrderedNames.Add(_menuSidesNames[sideSelectedIndex]);
         }
 
         for (int i = 0; i < mains; i++)
         {
             mainSelectedIndex = Random.Range(0, _menuMainsNames.Count);
-            _quantityOfEachFoodOrdered.Add(_menuMainsNames[mainSelectedIndex]);
+            _includesNoneFoodOrderedNames.Add(_menuMainsNames[mainSelectedIndex]);
         }
 
-        for (int i = 0; i < _quantityOfEachFoodOrdered.Count; i++)
+        for (int i = 0; i < _includesNoneFoodOrderedNames.Count; i++)
         {
-            if (_quantityOfEachFoodOrdered[i] == "Chicken")
+            if (_includesNoneFoodOrderedNames[i] == "Chicken")
             {
                 chickenOrdered += 1;
             }
 
-            if (_quantityOfEachFoodOrdered[i] == "Beef: Rare")
+            if (_includesNoneFoodOrderedNames[i] == "Beef: Rare")
             {
                 beefRareOrdered += 1;
             }
 
-            if (_quantityOfEachFoodOrdered[i] == "Beef: Medium")
+            if (_includesNoneFoodOrderedNames[i] == "Beef: Medium")
             {
                 beefMediumOrdered += 1;
             }
 
-            if (_quantityOfEachFoodOrdered[i] == "Beef: Well-Done")
+            if (_includesNoneFoodOrderedNames[i] == "Beef: Well-Done")
             {
                 beefWellDoneOrdered += 1;
             }
 
-            if (_quantityOfEachFoodOrdered[i] == "Steamed Carrots")
+            if (_includesNoneFoodOrderedNames[i] == "Steamed Carrots")
             {
                 carrotsSteamedOrdered += 1;
             }
 
-            if (_quantityOfEachFoodOrdered[i] == "Steamed Broccoli")
+            if (_includesNoneFoodOrderedNames[i] == "Steamed Broccoli")
             {
                 broccoliSteamedOrdered += 1;
             }
@@ -277,7 +230,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void CalculateMaximumScorePossible() // utilize the same methods called to score delivery
+    private void CalculateMaximumOrderScorePossible() // utilize the same methods called to score delivery
     {
         _chickenCookedDelivered = chickenOrdered; // set input for perfect delivery
         _beefRareDelivered = beefRareOrdered;
@@ -289,30 +242,110 @@ public class GameManager : MonoBehaviour
 
         _score = 0; // reset score
         CalculateScore(); // call method to calculate score
-        maxScorePossible = _score; // store the max score
-       
-        _chickenCookedDelivered = 0; // reset
+        
+        maximumOrderScorePossible = _score; // store the max score
+        _score = _holdTotalScore; // reset score to the stored value
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////
+    /// Reset 
+    ///     note to future self: doing .Clear() on lists appeared to not work
+    ///     new orders were added to previous orders and never got cleared
+    ///     took awhile to realize these lists are generated from stored data
+    ///     needed to reset all the input data to generate lists based only on current data
+    //////////////////////////////////////////////////////////////////////////
+
+
+    public void ResetAfterOrderManagerStoresDetailsForTable()
+    {
+        ResetStoredLists(); 
+        ResetStoredInts();
+        ResetOrderAndReportText();
+    }
+   
+    private void ResetStoredLists()
+    {
+        _includesNoneFoodOrderedNames.Clear(); // list of ints
+    }
+
+    private void ResetStoredInts()
+    {
+        maximumOrderScorePossible = 0;
+
+        chickenOrdered = 0;
+        beefRareOrdered = 0;
+        beefMediumOrdered = 0;
+        beefWellDoneOrdered = 0;
+        carrotsSteamedOrdered = 0;
+        broccoliSteamedOrdered = 0;
+        saladsOrdered = 0;
+
+        _chickenRawDelivered = 0;
+        _chickenCookedDelivered = 0;
+        _chickenBurnedDelivered = 0;
+        _beefRawDelivered = 0;
         _beefRareDelivered = 0;
         _beefMediumDelivered = 0;
         _beefWellDoneDelivered = 0;
+        _beefBurnedDelivered = 0;
+        _carrotsRawDelivered = 0;
         _carrotsSteamedDelivered = 0;
+        _carrotsBurnedDelivered = 0;
+        _broccoliRawDelivered = 0;
         _broccoliSteamedDelivered = 0;
+        _broccoliBurnedDelivered = 0;
         _saladsGoodDelivered = 0;
-        
-        _score = _holdTotalScore; // reset score to the stored value
-        scoreText.text = "Score: " + _score.ToString(); // update UI to restore actual game score
+        _saladsRuinedDelivered = 0;
     }
+
+
+    private void ResetOrderAndReportText() // this will get moved to OrderManager when reports for each table are implemented
+    {
+        
+        reportCardText.text = "";
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////
+    /// Monitor and Tracking Actions
+    //////////////////////////////////////////////////////////////////////////
+
+    private void ApplyPerSecondPenaltyIfLate()
+    {
+        if (OrderManager.Instance.isLateTable1 && _perSecond > 0f) // 1 second timer
+        {
+            _perSecond -= Time.deltaTime;
+        }
+
+        if (OrderManager.Instance.isLateTable1 && _perSecond <= 0f)
+        {
+            _score -= _latePenalty; // for each second late, apply a penalty
+            scoreText.text = "Score: " + _score.ToString();
+            _perSecond = 1f; // reset 1 second timer
+        }
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////
+    /// After Player Makes Delivery
+    //////////////////////////////////////////////////////////////////////////
+
 
     public void AfterFoodIsServedActions()
     {
         //Debug.Log("after food is served has been called");
         CountFoodDelivered();
-        PostToKitchenReportCard();
         CalculateScore();
-        scoreText.text = "Score: " + _score.ToString();
-        _holdTotalScore = _score; // after delivery is scored, hold a copy of the total score
+        UpdateScore();
+        PostToKitchenReportCard();
+        PostCustomerComments();  // future
+
+        foodDeliveredNames.Clear();
+        ResetStoredInts();
     }
     
+
     private void CountFoodDelivered()
     {
         //Debug.Log("Count food delivered has been called");
@@ -400,86 +433,88 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     private void PostToKitchenReportCard()
     {
         //Debug.Log("post to kitchen report card has been called");
-        _reportCardToPost.Add("<b><u>Kitchen Report Card</b></u>\n\n");
+        reportCardToPost.Add("<b><u>Kitchen Report Card</b></u>\n\n");
 
         if (carrotsSteamedOrdered > 0 && _carrotsSteamedDelivered == carrotsSteamedOrdered)
         {
-            _reportCardToPost.Add("Steamed Carrots - Pass\n");
+            reportCardToPost.Add("Steamed Carrots - Pass\n");
         }
 
         if (carrotsSteamedOrdered > 0 && _carrotsSteamedDelivered != carrotsSteamedOrdered)
         {
-            _reportCardToPost.Add("Steamed Carrots - Fail\n");
+            reportCardToPost.Add("Steamed Carrots - Fail\n");
         }
 
         if (broccoliSteamedOrdered > 0 && _broccoliSteamedDelivered == broccoliSteamedOrdered)
         {
-            _reportCardToPost.Add("Steamed Broccoli - Pass\n");
+            reportCardToPost.Add("Steamed Broccoli - Pass\n");
         }
 
         if (broccoliSteamedOrdered > 0 && _broccoliSteamedDelivered != broccoliSteamedOrdered)
         {
-            _reportCardToPost.Add("Steamed Broccoli - Fail\n");
+            reportCardToPost.Add("Steamed Broccoli - Fail\n");
         }
 
         if (saladsOrdered > 0 && _saladsGoodDelivered == saladsOrdered)
         {
-            _reportCardToPost.Add("Salads - Pass\n");
+            reportCardToPost.Add("Salads - Pass\n");
         }
 
         if (saladsOrdered > 0 && _saladsGoodDelivered != saladsOrdered)
         {
-            _reportCardToPost.Add("Salads - Fail\n");
+            reportCardToPost.Add("Salads - Fail\n");
         }
 
         if (chickenOrdered > 0 && _chickenCookedDelivered == chickenOrdered)
         {
-            _reportCardToPost.Add("Chicken - Pass\n");
+            reportCardToPost.Add("Chicken - Pass\n");
         }
 
         if (chickenOrdered > 0 && _chickenCookedDelivered != chickenOrdered)
         {
-            _reportCardToPost.Add("Chicken - Fail\n");
+            reportCardToPost.Add("Chicken - Fail\n");
         }
 
         if (beefRareOrdered > 0 && _beefRareDelivered == beefRareOrdered)
         {
-            _reportCardToPost.Add("Beef: Rare - Pass\n");
+            reportCardToPost.Add("Beef: Rare - Pass\n");
         }
 
         if (beefRareOrdered > 0 && _beefRareDelivered != beefRareOrdered)
         {
-            _reportCardToPost.Add("Beef: Rare - Fail\n");
+            reportCardToPost.Add("Beef: Rare - Fail\n");
         }
 
         if (beefMediumOrdered > 0 && _beefMediumDelivered == beefMediumOrdered)
         {
-            _reportCardToPost.Add("Beef: Medium - Pass\n");
+            reportCardToPost.Add("Beef: Medium - Pass\n");
         }
 
         if (beefMediumOrdered > 0 && _beefMediumDelivered != beefMediumOrdered)
         {
-            _reportCardToPost.Add("Beef: Medium - Fail\n");
+            reportCardToPost.Add("Beef: Medium - Fail\n");
         }
 
         if (beefWellDoneOrdered > 0 && _beefWellDoneDelivered == beefWellDoneOrdered)
         {
-            _reportCardToPost.Add("Beef: Well-Done - Pass\n");
+            reportCardToPost.Add("Beef: Well-Done - Pass\n");
         }
 
         if (beefWellDoneOrdered > 0 && _beefWellDoneDelivered != beefWellDoneOrdered)
         {
-            _reportCardToPost.Add("Beef: Well-Done - Fail\n");
+            reportCardToPost.Add("Beef: Well-Done - Fail\n");
         }
 
-        for (int i = 0; i < _reportCardToPost.Count; i++)
+        for (int i = 0; i < reportCardToPost.Count; i++)
         {
-            reportCardText.text += _reportCardToPost[i] + "\n";
+            reportCardText.text += reportCardToPost[i] + "\n";
         }
     }
+
 
     private void CalculateScore()
     {
@@ -490,6 +525,7 @@ public class GameManager : MonoBehaviour
         CalculateScoreForBroccoliDelivered();   // 
         CalculateScoreForSaladsDelivered();     // 
     }
+
 
     private void CalculateScoreForBeefDelivered()
     {
@@ -600,9 +636,8 @@ public class GameManager : MonoBehaviour
 
         _score += _beefRawDelivered * _rawPortionPenalty; // penalty for every raw portion delivered
         _score += _beefBurnedDelivered * _ruinedPortionPenalty; // penalty for every burned portion delivered
-        
-        scoreText.text = "Score: " + _score.ToString();
     }
+
 
     private void CheckBeefPartials(int _allPortionsOrdered, int _largeOrder, bool _receivedAllCorrectBonus)
     {
@@ -654,6 +689,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     private void CalculateScoreForChickenDelivered()
     {
         int _allPortionsDeliveredAnyCondition = _chickenCookedDelivered + _chickenRawDelivered + _chickenBurnedDelivered;
@@ -701,8 +737,8 @@ public class GameManager : MonoBehaviour
 
         _score += _chickenRawDelivered * _rawPortionPenalty; // penalty for every raw portion delivered
         _score += _chickenBurnedDelivered * _ruinedPortionPenalty; // penalty for every burned portion delivered
-        scoreText.text = "Score: " + _score.ToString();    
     }
+
 
     private void CalculateScoreForCarrotsDelivered()
     {
@@ -751,8 +787,8 @@ public class GameManager : MonoBehaviour
 
         _score += _carrotsRawDelivered * _rawPortionPenalty; // penalty for every raw portion delivered
         _score += _carrotsBurnedDelivered * _ruinedPortionPenalty; // penalty for every burned portion delivered
-        scoreText.text = "Score: " + _score.ToString();
     }
+
 
     private void CalculateScoreForBroccoliDelivered()
     {
@@ -801,8 +837,8 @@ public class GameManager : MonoBehaviour
 
         _score += _broccoliRawDelivered * _rawPortionPenalty; // penalty for every raw portion delivered
         _score += _broccoliBurnedDelivered * _ruinedPortionPenalty; // penalty for every burned portion delivered
-        scoreText.text = "Score: " + _score.ToString();
     }
+
 
     private void CalculateScoreForSaladsDelivered()
     {
@@ -852,8 +888,21 @@ public class GameManager : MonoBehaviour
        
     }
 
-    private void CustomerComments()
+    private void UpdateScore()
     {
+        _holdTotalScore = _score; // after any score, hold a copy of the total score
+        scoreText.text = "Score: " + _score.ToString();
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////
+    /// WIP Customer Comments
+    ///     add feedback to kitchen based on performance, many potential things to evaluate
+    //////////////////////////////////////////////////////////////////////////
+
+    private void PostCustomerComments()
+    {
+        Debug.Log("WIP, post customer comments");
         /*
         int _deltaSteamedCarrots =  _carrotsSteamedDelivered - _carrotsSteamedOrdered;
         int _deltaSteamedBroccoli = _broccoliSteamedDelivered - _broccoliSteamedOrdered;
@@ -918,13 +967,23 @@ public class GameManager : MonoBehaviour
         */
     }
 
-    public void OpenDiningRoom()
+
+    //////////////////////////////////////////////////////////////////////////
+    /// UI Buttons
+    //////////////////////////////////////////////////////////////////////////
+
+    public void ActivateTable1()
     {
-        isActiveTable1 = true;
-        kitchenDoor.gameObject.SetActive(false);
+        Debug.Log("(1)  Table1 Activated");
+        kitchenDoor.gameObject.SetActive(false); // this should be in more generic section
+        
+        isActiveTable1 = true;        
         reservedTable1.gameObject.SetActive(false);
-        OrderManager.Instance.GenerateNextOrderDelay();
+        OrderManager.Instance.isReadyForNewOrderTable1 = true;
+        OrderManager.Instance.isDoneServingTable1 = true;
+        OrderManager.Instance.BeginNewOrderTable1();
     }
+
 
     public void Credits()
     {
@@ -947,6 +1006,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     public void Notes()
     {
         if(_isActiveNotes == true)
@@ -961,6 +1021,7 @@ public class GameManager : MonoBehaviour
             _isActiveNotes = true;
         }
     }
+
 
     public void QuitGame()
     {
