@@ -126,8 +126,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myTemp: 0
+  isSmashedPrefab: {fileID: 4715782599534251606, guid: 16205df31d9eb8c47b2f99c9bbb4f5ce, type: 3}
   isCooking: 0
   isCooked: 0
   isBurned: 0
-  basePointValue: 5
-  onHeatPrefab: {fileID: 6787215316302648940, guid: 55e2878145cbe784db5e2aa51f095a94, type: 3}
+  isOnFloor: 0
+  hasBeenOnFloor: 0
+  isSmashed: 0
+  iAm: 
+  cookConditionIndicator: {fileID: 0}
+  indicatorGrillPrefab: {fileID: 0}
+  indicatorSteamerPrefab: {fileID: 0}

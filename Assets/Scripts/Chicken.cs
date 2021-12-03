@@ -11,6 +11,8 @@ public class Chicken : Food  // INHERITANCE - Chicken inherits from the Food cla
     {
         _myRenderer = GetComponent<Renderer>();
         _myAudioSource = GetComponent<AudioSource>();
+        myRb = GetComponent<Rigidbody>();
+        myBoxCollider = GetComponent<BoxCollider>();
 
         myStartTemp = 60f;
         myIsCookedTemp = 120f;
@@ -32,12 +34,14 @@ public class Chicken : Food  // INHERITANCE - Chicken inherits from the Food cla
         if (!isCooked && iAm != "Raw Chicken")
         {
             _myRenderer.material.color = myRawColor;
+            myCurrentColor = myRawColor;
             iAm = "Raw Chicken";
         }
 
         if (isCooked && iAm != "Cooked Chicken" && !isBurned)
         {
             _myRenderer.material.color = myCookedColor;
+            myCurrentColor = myCookedColor;
             _myAudioSource.PlayOneShot(cookConditionIndicator, .5f);
             iAm = "Cooked Chicken";            
         }
@@ -45,6 +49,7 @@ public class Chicken : Food  // INHERITANCE - Chicken inherits from the Food cla
         if (isBurned && iAm != "Burned Chicken")
         {
             _myRenderer.material.color = isBurnedColor;
+            myCurrentColor = isBurnedColor;
             iAm = "Burned Chicken";
         }
     }

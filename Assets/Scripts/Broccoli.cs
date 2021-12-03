@@ -11,6 +11,8 @@ public class Broccoli : Food  // INHERITANCE - Broccoli inherits from the Food c
     {
         _myRenderer = GetComponent<Renderer>();
         _myAudioSource = GetComponent<AudioSource>();
+        myRb = GetComponent<Rigidbody>();
+        myBoxCollider = GetComponent<BoxCollider>();
 
         myStartTemp = 57f;
         myIsCookedTemp = 110f;
@@ -32,12 +34,14 @@ public class Broccoli : Food  // INHERITANCE - Broccoli inherits from the Food c
         if (!isCooked && iAm != "Raw Broccoli")
         {
             _myRenderer.material.color = myRawColor;
+            myCurrentColor = myRawColor;
             iAm = "Raw Broccoli";
         }
 
         if (isCooked && iAm != "Steamed Broccoli" && !isBurned)
         {
             _myRenderer.material.color = myCookedColor;
+            myCurrentColor = myCookedColor;
             _myAudioSource.PlayOneShot(cookConditionIndicator, .1f);
             iAm = "Steamed Broccoli";
         }
@@ -45,6 +49,7 @@ public class Broccoli : Food  // INHERITANCE - Broccoli inherits from the Food c
         if (isBurned && iAm != "Burned Broccoli")
         {
             _myRenderer.material.color = isBurnedColor;
+            myCurrentColor = isBurnedColor;
             iAm = "Burned Broccoli";
         }
     }

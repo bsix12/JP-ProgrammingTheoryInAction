@@ -5,17 +5,22 @@ using UnityEngine;
 public class Food : MonoBehaviour
 {
     [SerializeField] private float _myTemp; // ENCAPSULATION - backing field for myTemp.  Treating the food temperature like a 'health bar' that is not directly accessed
-    
+
+    public GameObject isSmashedPrefab;
+
     [SerializeField] protected bool isCooking;
     [SerializeField] protected bool isCooked;
     [SerializeField] protected bool isBurned;
-    
+    [SerializeField] protected bool isOnFloor;
+    [SerializeField] protected bool hasBeenOnFloor;
+    [SerializeField] protected bool isSmashed;
     protected float myTemp {get{ return _myTemp;} set{_myTemp = value;}} // ENCAPSULATION - accessible property
     protected float myStartTemp;
     protected float myIsBurnedTemp;
     protected float myIsCookedTemp;
+    protected float onFloorTime;
+    protected float smashedSinkSpeed = .2f;
 
-    //protected string iAm;
     public string iAm;
     
     protected Color32 myRawColor;
@@ -27,14 +32,19 @@ public class Food : MonoBehaviour
     public GameObject indicatorGrillPrefab;
     public GameObject indicatorSteamerPrefab;
 
+    protected Rigidbody myRb;
+    protected Collider myBoxCollider;
     private float _roomTemperature = 72;
     private static float _stationHeatingRate;
+
 
     protected virtual void Update()
     {
         UpdateFoodTemperature();    // ABSTRACTION - method name indicates Update() action, details in separate method
         MonitorCookedCondition();   // ABSTRACTION - method name indicates Update() action, details in separate method
+        MonitorTimeOnFloor();
     }
+
     
     private void UpdateFoodTemperature()
     {
@@ -61,11 +71,13 @@ public class Food : MonoBehaviour
         }
     }
 
+
     public static float GetHeatingRate(float stationHeatingRate)
     {
         _stationHeatingRate = stationHeatingRate;
         return _stationHeatingRate;
     }
+
 
     protected virtual void MonitorCookedCondition()
     {
@@ -78,6 +90,38 @@ public class Food : MonoBehaviour
             isCooked = true;
         }
     }
+
+
+    protected void MonitorTimeOnFloor()
+    {
+        if (isOnFloor && !isSmashed)
+        {
+            onFloorTime += Time.deltaTime;
+        }
+
+        if (onFloorTime > 5 && !isSmashed) // play test value
+        {
+            isSmashed = true;
+            ReplaceFoodWithSmashed();
+            GameManager.Instance.ApplySmashedFoodPenalty();
+        }
+
+        if (isSmashed)
+        {
+            myRb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+            myRb.isKinematic = true;
+            myRb.detectCollisions = false;
+            transform.Translate(Vector3.down * Time.deltaTime * smashedSinkSpeed);
+        }
+    }
+   
+
+    protected void ReplaceFoodWithSmashed()
+    {
+        GameObject foodSmashed = Instantiate(isSmashedPrefab, transform.position + new Vector3(-.095f, -.1f), transform.rotation);
+        foodSmashed.GetComponent<FoodSmashed>().myColor = myCurrentColor;        
+    }
+
 
     protected virtual void OnTriggerEnter(Collider other)
     {
@@ -148,6 +192,16 @@ public class Food : MonoBehaviour
     // a getChildWithTag type of option might be more robust; I don't see this option
     // maybe logic equivalent to if(other.transform.GetChild(2).gameObject.Tag != "TopPlate) {Debug.Log("message here")}
 
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Floor"))
+        {
+            isOnFloor = true;
+            hasBeenOnFloor = true;
+        }
+    }        
+
     private void OnCollisionStay(Collision other)
     {
         if (other.gameObject.CompareTag("Player"))
@@ -155,11 +209,16 @@ public class Food : MonoBehaviour
             transform.parent = other.transform.GetChild(2);
         }
     }
-        
+
     private void OnCollisionExit(Collision other)
     {
         // remains on floor if falls off plate/player
         transform.parent = null;
+
+        if (other.gameObject.CompareTag("Floor"))
+        {
+            isOnFloor = false;
+        }
     }
 }
 

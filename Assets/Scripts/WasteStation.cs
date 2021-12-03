@@ -15,7 +15,8 @@ public class WasteStation : MonoBehaviour
             Destroy(other.gameObject);  // Destroy(other) didn't work
                                         // looked like object was removed but it was instead reset and falling
                                         // need destroy the gameObject the script is attached to
-
+            Debug.Log("Hit Waste");
+            GameManager.Instance.ApplyWastedFoodPenalty();
         }
     }
 }

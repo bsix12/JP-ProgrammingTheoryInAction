@@ -16,6 +16,8 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
     {
         _myRenderer = GetComponent<Renderer>();
         _myAudioSource = GetComponent<AudioSource>();
+        myRb = GetComponent<Rigidbody>();
+        myBoxCollider = GetComponent<BoxCollider>();
          
         myStartTemp = 60f;
         myIsBurnedTemp = 200f;
@@ -60,32 +62,38 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
 
     private void SetFoodColor()
     {
-        myRawColor = new Color32(225, 145, 145, 255);
-
+        myRawColor = new Color32(225, 145, 145, 255);        
+        Color32 myRareColor = new Color32(245, 125, 100, 255);
+        Color32 myMediumColor = new Color32(175, 100, 50, 255);
+        Color32 myWellDoneColor = new Color32(125, 75, 25, 255);
 
         if (!isCooked && iAm != "Raw Beef")
         {
             _myRenderer.material.color = myRawColor;
+            myCurrentColor = myRawColor;
             iAm = "Raw Beef";
         }
 
         if (isCookedRare && iAm != "Beef: Rare" && !isCookedMedium && !isCookedWellDone && !isBurned)
         {
-            _myRenderer.material.color = new Color32(245, 125, 100, 255);
+            _myRenderer.material.color = myRareColor;
+            myCurrentColor = myRareColor;
             _myAudioSource.PlayOneShot(cookConditionIndicator, .5f);
             iAm = "Beef: Rare";
         }
 
         if (isCookedMedium && iAm != "Beef: Medium" && !isCookedRare && !isCookedWellDone && !isBurned)
         {
-            _myRenderer.material.color = new Color32(175, 100, 50, 255);
+            _myRenderer.material.color = myMediumColor;
+            myCurrentColor = myMediumColor;
             _myAudioSource.PlayOneShot(cookConditionIndicator, .5f);
             iAm = "Beef: Medium";
         }
 
         if (isCookedWellDone && iAm != "Beef: Well-Done" && !isCookedRare && !isCookedMedium && !isBurned)
         {
-            _myRenderer.material.color = new Color32(125, 75, 25, 255);
+            _myRenderer.material.color = myWellDoneColor;
+            myCurrentColor = myWellDoneColor;
             _myAudioSource.PlayOneShot(cookConditionIndicator, .5f);
             iAm = "Beef: Well-Done";
         }
@@ -93,6 +101,7 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
         if (isBurned && iAm != "Burned Beef")
         {
             _myRenderer.material.color = isBurnedColor;
+            myCurrentColor = isBurnedColor;
             iAm = "Burned Beef";
         }
     }

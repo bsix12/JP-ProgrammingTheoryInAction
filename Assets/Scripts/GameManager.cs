@@ -43,7 +43,9 @@ public class GameManager : MonoBehaviour
     public int beefWellDoneOrdered;
     public int carrotsSteamedOrdered;
     public int broccoliSteamedOrdered;
-    public int saladsOrdered;    
+    public int saladsOrdered;
+    public int smashedFoodPenalty = 100; // play test value, should vary for mains versus sides
+    public int wastedFoodPenalty = 50; // play test value, should vary for mains versus sides
 
     public bool isActiveTable1 = false;
     public bool isActiveTable2 = false;
@@ -73,11 +75,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _broccoliBurnedDelivered;
     [SerializeField] private int _saladsGoodDelivered;
     [SerializeField] private int _saladsRuinedDelivered;
-
     [SerializeField] private int _score;
+    
     [SerializeField] private int _holdTotalScore;
-    private int _latePenalty = 5;
-    private float _perSecond = 1f;
+    private int _latePenalty = 5; // play test value
+    private float _oncePerSecond = 1f; 
 
     private void Start()
     {
@@ -92,6 +94,17 @@ public class GameManager : MonoBehaviour
         ApplyPerSecondPenaltyIfLate();
     }
 
+    public void ApplySmashedFoodPenalty()
+    {
+        _score -= smashedFoodPenalty;
+        UpdateScore();
+    }
+
+    public void ApplyWastedFoodPenalty()
+    {
+        _score -= wastedFoodPenalty;
+        UpdateScore();
+    }
 
     private void LoadFoodMenu()
     {
@@ -117,7 +130,7 @@ public class GameManager : MonoBehaviour
         CalculateMaximumOrderScorePossible();
         UpdateScore();
     }
-        
+    
     public void PickMenuItemsAndQuantities()
     {
         int minMains = 2;
@@ -313,16 +326,16 @@ public class GameManager : MonoBehaviour
 
     private void ApplyPerSecondPenaltyIfLate()
     {
-        if (OrderManager.Instance.isLateTable1 && _perSecond > 0f) // 1 second timer
+        if (OrderManager.Instance.isLateTable1 && _oncePerSecond > 0f) // 1 second timer
         {
-            _perSecond -= Time.deltaTime;
+            _oncePerSecond -= Time.deltaTime;
         }
 
-        if (OrderManager.Instance.isLateTable1 && _perSecond <= 0f)
+        if (OrderManager.Instance.isLateTable1 && _oncePerSecond <= 0f)
         {
             _score -= _latePenalty; // for each second late, apply a penalty
             scoreText.text = "Score: " + _score.ToString();
-            _perSecond = 1f; // reset 1 second timer
+            _oncePerSecond = 1f; // reset 1 second timer
         }
     }
 
@@ -974,7 +987,6 @@ public class GameManager : MonoBehaviour
 
     public void ActivateTable1()
     {
-        Debug.Log("(1)  Table1 Activated");
         kitchenDoor.gameObject.SetActive(false); // this should be in more generic section
         
         isActiveTable1 = true;        

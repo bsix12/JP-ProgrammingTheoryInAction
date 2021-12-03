@@ -166,12 +166,10 @@ public class OrderManager : MonoBehaviour
     {
         int _numberOfGuests = _mainDishesOrderedTable1;
         _guestsIndexList = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
-        Debug.Log("(4)  how many in guestIndexList: " + _guestsIndexList.Count);
         
         for (int i = 0; i < _numberOfGuests; i++)
         {
             int _random = Random.Range(0, _guestsIndexList.Count - 1); 
-            Debug.Log("(5)  Loop Cycle i: " + i + ", IndexSelected: " + _random);
 
             guestsTable1[_guestsIndexList[_random]].gameObject.SetActive(true);
             _guestsIndexList.RemoveAt(_random); // needs to be non-repeating random index
@@ -295,8 +293,7 @@ public class OrderManager : MonoBehaviour
 
             if (_timeRemainingUntilNextOrderTable1 <= 0)
             {
-                isReadyForNewOrderTable1 = false; //////////////////////////////// CHANGED
-                Debug.Log("(2)  GenerateOrderDetailsTable1");
+                isReadyForNewOrderTable1 = false;
                 GenerateOrderDetailsTable1();
             }
         }
@@ -315,7 +312,7 @@ public class OrderManager : MonoBehaviour
         }
 
         _mainDishesOrderedTable1 = 0;
-        onPlateGameObjectsTable1.Clear();   // list of GameObjects
-        GameManager.Instance.reportCardToPost.Clear();          // list of strings
+        onPlateGameObjectsTable1.Clear(); // list of GameObjects
+        GameManager.Instance.reportCardToPost.Clear(); // list of strings
     }
 }

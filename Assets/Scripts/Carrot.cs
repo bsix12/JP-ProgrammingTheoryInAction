@@ -11,6 +11,8 @@ public class Carrot : Food  // INHERITANCE - Carrot inherits from the Food class
     {
         _myRenderer = GetComponent<Renderer>();
         _myAudioSource = GetComponent<AudioSource>();
+        myRb = GetComponent<Rigidbody>();
+        myBoxCollider = GetComponent<BoxCollider>();
 
         myStartTemp = 57f;
         myIsCookedTemp = 110f;
@@ -32,12 +34,14 @@ public class Carrot : Food  // INHERITANCE - Carrot inherits from the Food class
         if (!isCooked && iAm != "Raw Carrots")
         {
             _myRenderer.material.color = myRawColor;
+            myCurrentColor = myRawColor;
             iAm = "Raw Carrots";
         }
 
         if (isCooked && iAm != "Steamed Carrots" && !isBurned)
         {
             _myRenderer.material.color = myCookedColor;
+            myCurrentColor = myCookedColor;
             _myAudioSource.PlayOneShot(cookConditionIndicator, .1f);
             iAm = "Steamed Carrots";
         }
@@ -45,6 +49,7 @@ public class Carrot : Food  // INHERITANCE - Carrot inherits from the Food class
         if (isBurned && iAm != "Burned Carrots")
         {
             _myRenderer.material.color = isBurnedColor;
+            myCurrentColor = isBurnedColor;
             iAm = "Burned Carrots";
         }
     }

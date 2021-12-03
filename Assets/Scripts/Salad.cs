@@ -8,6 +8,8 @@ public class Salad : Food
     private void Awake()
     {
         _myRenderer = GetComponent<Renderer>();
+        myRb = GetComponent<Rigidbody>();
+        myBoxCollider = GetComponent<BoxCollider>();
 
         myStartTemp = 57f;
         myIsCookedTemp = myStartTemp;
@@ -27,12 +29,14 @@ public class Salad : Food
         if (!isCooked && iAm != "Salad")
         {
             _myRenderer.material.color = myRawColor;
+            myCurrentColor = myRawColor;
             iAm = "Salad";
         }
 
         if (isBurned && iAm != "Ruined Salad")
         {
             _myRenderer.material.color = isBurnedColor;
+            myCurrentColor = isBurnedColor;
             iAm = "Ruined Salad";
         }
     }
