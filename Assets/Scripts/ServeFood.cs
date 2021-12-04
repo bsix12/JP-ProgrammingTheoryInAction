@@ -13,10 +13,12 @@ public class ServeFood : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && !OrderManager.Instance.isDoneServingTable1)
         {
+            OrderManager.Instance.AfterFoodIsServedActions();
             ServeFoodToTable();
+            StartCoroutine("ClearPlayerPlateInCaseItemStrandedByDoubleMove");
             TransferObjectsReadyToServeListMoveToOnPlateList();
 
-            OrderManager.Instance.AfterFoodIsServedActions();
+            //
             GameManager.Instance.readyToServeGameObjects.Clear();
 
             GameManager.Instance.foodDeliveredNames.Clear();
@@ -28,17 +30,31 @@ public class ServeFood : MonoBehaviour
     {
         for (int i = 0; i < GameManager.Instance.readyToServeGameObjects.Count; i++)
         {
-            //Debug.Log("ServeFoodToTable Called")
-            //Debug.Log("I am element number: " + i);                
-            _itemToServeRb = GameManager.Instance.readyToServeGameObjects[i].GetComponent<Rigidbody>();
-            _itemToServeTransform = GameManager.Instance.readyToServeGameObjects[i].GetComponent<Transform>();
-            //Debug.Log("my start position is: " + _itemToServeTransform.position);
-            _itemToServeRb.velocity = Vector3.zero;
-            _itemToServeRb.angularVelocity = Vector3.zero;
-            _transferFoodVector = GameManager.Instance.serveTableLocation - transform.position;
-            _itemToServeTransform.position += _transferFoodVector;
-            //Debug.Log("my final position is: " + _itemToServeTransform.position);
+            if(GameManager.Instance.readyToServeGameObjects[i].GetComponent<Food>().hasBeenMovedToPlate == false)
+            {
+                //Debug.Log("ServeFoodToTable Called")
+                //Debug.Log("I am element number: " + i);                
+                _itemToServeRb = GameManager.Instance.readyToServeGameObjects[i].GetComponent<Rigidbody>();
+                _itemToServeTransform = GameManager.Instance.readyToServeGameObjects[i].GetComponent<Transform>();
+                //Debug.Log("my start position is: " + _itemToServeTransform.position);
+                _itemToServeRb.velocity = Vector3.zero;
+                _itemToServeRb.angularVelocity = Vector3.zero;
+                _transferFoodVector = GameManager.Instance.serveTableLocation - transform.position;
+                _itemToServeTransform.position += _transferFoodVector;
+                GameManager.Instance.readyToServeGameObjects[i].GetComponent<Food>().hasBeenMovedToPlate = true;
+                //Debug.Log("my final position is: " + _itemToServeTransform.position);
+            }
         }        
+    }
+
+   IEnumerator ClearPlayerPlateInCaseItemStrandedByDoubleMove()
+    {
+        yield return new WaitForSeconds(.1f);
+        Debug.Log("count to destroy: " + transform.GetChild(2).childCount);
+        foreach (Transform child in transform.GetChild(2))
+        {
+            Destroy(child.gameObject);
+        }
     }
 
 

@@ -12,6 +12,8 @@ TagManager:
   - CollectFoodTrigger
   - Table
   - Floor
+  - CookStation
+  - Waste
   layers:
   - Default
   - TransparentFX

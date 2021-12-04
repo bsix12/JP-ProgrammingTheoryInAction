@@ -14,6 +14,7 @@ public class Food : MonoBehaviour
     [SerializeField] protected bool isOnFloor;
     [SerializeField] protected bool hasBeenOnFloor;
     [SerializeField] protected bool isSmashed;
+    public bool hasBeenMovedToPlate = false; // work around.  prevent double move in ServeFood/ServeFoodToTable()/_transferFoodVector.  have not found way to prevent
     protected float myTemp {get{ return _myTemp;} set{_myTemp = value;}} // ENCAPSULATION - accessible property
     protected float myStartTemp;
     protected float myIsBurnedTemp;
@@ -118,7 +119,7 @@ public class Food : MonoBehaviour
 
     protected void ReplaceFoodWithSmashed()
     {
-        GameObject foodSmashed = Instantiate(isSmashedPrefab, transform.position + new Vector3(-.095f, -.1f), transform.rotation);
+        GameObject foodSmashed = Instantiate(isSmashedPrefab, transform.position + new Vector3(0, Random.Range(-.085f, -.1f), 0), transform.rotation);
         foodSmashed.GetComponent<FoodSmashed>().myColor = myCurrentColor;        
     }
 

@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _score;
     
     [SerializeField] private int _holdTotalScore;
-    private int _latePenalty = 5; // play test value
+    private int _perSecondPenaltyIfLate = 5; // play test value
     private float _oncePerSecond = 1f; 
 
     private void Start()
@@ -333,7 +333,7 @@ public class GameManager : MonoBehaviour
 
         if (OrderManager.Instance.isLateTable1 && _oncePerSecond <= 0f)
         {
-            _score -= _latePenalty; // for each second late, apply a penalty
+            _score -= _perSecondPenaltyIfLate; // for each second late, apply a penalty
             scoreText.text = "Score: " + _score.ToString();
             _oncePerSecond = 1f; // reset 1 second timer
         }
@@ -349,6 +349,7 @@ public class GameManager : MonoBehaviour
     {
         //Debug.Log("after food is served has been called");
         CountFoodDelivered();
+        Debug.Log("total delivered: " + foodDeliveredNames.Count);
         CalculateScore();
         UpdateScore();
         PostToKitchenReportCard();
