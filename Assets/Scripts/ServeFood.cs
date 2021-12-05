@@ -14,25 +14,22 @@ public class ServeFood : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && !OrderManager.Instance.isDoneServingTable1)
         {
             OrderManager.Instance.AfterFoodIsServedActions();
-            ServeFoodToTable();
-            StartCoroutine("ClearPlayerPlateInCaseItemStrandedByDoubleMove");
-            TransferObjectsReadyToServeListMoveToOnPlateList();
+            MoveFoodGameObjectsToTable(); // visual only.  scoring based on FoodDeliveredNames<string> list
+            StartCoroutine("ClearFoodGameObjectsStrandedByDoubleMove");
+            MoveFoodGameObjectsToOnPlateListFromReadyToServeList();
 
-            //
             GameManager.Instance.readyToServeGameObjects.Clear();
-
-            GameManager.Instance.foodDeliveredNames.Clear();
+            GameManager.Instance.foodDeliveredNames.Clear(); // this cannot clear before score is calculated.  if issue, need to store working copy
         }
     }
 
 
-    private void ServeFoodToTable()
+    private void MoveFoodGameObjectsToTable()
     {
         for (int i = 0; i < GameManager.Instance.readyToServeGameObjects.Count; i++)
         {
             if(GameManager.Instance.readyToServeGameObjects[i].GetComponent<Food>().hasBeenMovedToPlate == false)
             {
-                //Debug.Log("ServeFoodToTable Called")
                 //Debug.Log("I am element number: " + i);                
                 _itemToServeRb = GameManager.Instance.readyToServeGameObjects[i].GetComponent<Rigidbody>();
                 _itemToServeTransform = GameManager.Instance.readyToServeGameObjects[i].GetComponent<Transform>();
@@ -47,7 +44,7 @@ public class ServeFood : MonoBehaviour
         }        
     }
 
-   IEnumerator ClearPlayerPlateInCaseItemStrandedByDoubleMove()
+   IEnumerator ClearFoodGameObjectsStrandedByDoubleMove()
     {
         yield return new WaitForSeconds(.1f);
         Debug.Log("count to destroy: " + transform.GetChild(2).childCount);
@@ -58,7 +55,7 @@ public class ServeFood : MonoBehaviour
     }
 
 
-    private void TransferObjectsReadyToServeListMoveToOnPlateList()
+    private void MoveFoodGameObjectsToOnPlateListFromReadyToServeList()
     {
         for (int i= 0; i<GameManager.Instance.readyToServeGameObjects.Count; i++)
         {

@@ -4,9 +4,23 @@ using UnityEngine;
 
 public class Food : MonoBehaviour
 {
-    [SerializeField] private float _myTemp; // ENCAPSULATION - backing field for myTemp.  Treating the food temperature like a 'health bar' that is not directly accessed
+    ////////////////////////////
+    /// Assign In Inspector
+    ////////////////////////////
 
     public GameObject isSmashedPrefab;
+    public GameObject indicatorGrillPrefab;
+    public GameObject indicatorSteamerPrefab;
+    public AudioClip cookConditionIndicator; // rings each time food is cooked or next stage of isCooked
+
+    public string iAm;
+
+    ////////////////////////////
+
+    public bool hasBeenMovedToPlate = false; // work around.  prevent double move in ServeFood/ServeFoodToTable()/_transferFoodVector.  have not found way to prevent
+
+    protected Rigidbody myRb;
+    protected Collider myBoxCollider;
 
     [SerializeField] protected bool isCooking;
     [SerializeField] protected bool isCooked;
@@ -14,7 +28,12 @@ public class Food : MonoBehaviour
     [SerializeField] protected bool isOnFloor;
     [SerializeField] protected bool hasBeenOnFloor;
     [SerializeField] protected bool isSmashed;
-    public bool hasBeenMovedToPlate = false; // work around.  prevent double move in ServeFood/ServeFoodToTable()/_transferFoodVector.  have not found way to prevent
+    
+    protected Color32 myRawColor;
+    protected Color32 myCookedColor;
+    protected Color32 myCurrentColor;
+    protected Color32 isBurnedColor = new Color32(25, 25, 0, 255);
+    
     protected float myTemp {get{ return _myTemp;} set{_myTemp = value;}} // ENCAPSULATION - accessible property
     protected float myStartTemp;
     protected float myIsBurnedTemp;
@@ -22,22 +41,12 @@ public class Food : MonoBehaviour
     protected float onFloorTime;
     protected float smashedSinkSpeed = .2f;
 
-    public string iAm;
-    
-    protected Color32 myRawColor;
-    protected Color32 myCookedColor;
-    protected Color32 myCurrentColor;
-    protected Color32 isBurnedColor = new Color32(25, 25, 0, 255);
-
-    public AudioClip cookConditionIndicator; // rings each time food is cooked or next stage of isCooked
-    public GameObject indicatorGrillPrefab;
-    public GameObject indicatorSteamerPrefab;
-
-    protected Rigidbody myRb;
-    protected Collider myBoxCollider;
-    private float _roomTemperature = 72;
     private static float _stationHeatingRate;
+    
+    [SerializeField] private float _myTemp; // ENCAPSULATION - backing field for myTemp.  Treating the food temperature like a 'health bar' that is not directly accessed
+    private float _roomTemperature = 72;
 
+    
 
     protected virtual void Update()
     {
@@ -111,7 +120,7 @@ public class Food : MonoBehaviour
         {
             myRb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
             myRb.isKinematic = true;
-            myRb.detectCollisions = false;
+            myRb.detectCollisions = true;
             transform.Translate(Vector3.down * Time.deltaTime * smashedSinkSpeed);
         }
     }
@@ -142,6 +151,11 @@ public class Food : MonoBehaviour
         {
             GameManager.Instance.foodDeliveredNames.Add(iAm);
             GameManager.Instance.readyToServeGameObjects.Add(gameObject);
+        }
+
+        if (other.gameObject.CompareTag("DestroyOnEnter"))
+        {
+            Destroy(gameObject);
         }
     }
 
@@ -201,7 +215,12 @@ public class Food : MonoBehaviour
             isOnFloor = true;
             hasBeenOnFloor = true;
         }
-    }        
+
+        if (isSmashed && other.gameObject.CompareTag("Player"))
+        {
+            Physics.IgnoreCollision(myBoxCollider, other.collider);
+        }
+    }
 
     private void OnCollisionStay(Collision other)
     {

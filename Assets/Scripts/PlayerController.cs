@@ -5,7 +5,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 	private Rigidbody _playerRb;
-	public Transform _plateCenter;
+	//public Transform _plateCenter;
+	public GameObject pickupScrubbi;
+	public GameObject pickupTopPlate;
 
 	private float _moveForce = 15f; // will vary based on mass and result desired
 	private float _turnSpeed = 150f;
@@ -50,5 +52,24 @@ public class PlayerController : MonoBehaviour
 			transform.Rotate(Time.deltaTime * _turnSpeed * Vector3.up);
 		}
 	}
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("PickupTopPlate"))
+        {
+			pickupTopPlate.gameObject.SetActive(false);
+			pickupScrubbi.gameObject.SetActive(true);
+			transform.GetChild(4).gameObject.SetActive(false);
+			transform.GetChild(2).gameObject.SetActive(true);
+		}
+
+        if (other.gameObject.CompareTag("PickupScrubbi"))
+        {
+			pickupScrubbi.gameObject.SetActive(false);
+			pickupTopPlate.gameObject.SetActive(true);
+			transform.GetChild(2).gameObject.SetActive(false);
+			transform.GetChild(4).gameObject.SetActive(true);
+		}
+    }
 }
 

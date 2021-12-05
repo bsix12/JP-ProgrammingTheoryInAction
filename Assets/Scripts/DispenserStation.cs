@@ -23,7 +23,7 @@ public class DispenserStation : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("TopPlate"))
         {
             _canDispense = true;
         }        
@@ -31,7 +31,7 @@ public class DispenserStation : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("TopPlate"))
         {
             _canDispense = false;
         }

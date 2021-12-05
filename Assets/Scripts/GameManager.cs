@@ -274,7 +274,7 @@ public class GameManager : MonoBehaviour
     {
         ResetStoredLists(); 
         ResetStoredInts();
-        ResetOrderAndReportText();
+        //ResetOrderReportText();
     }
    
     private void ResetStoredLists()
@@ -313,7 +313,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private void ResetOrderAndReportText() // this will get moved to OrderManager when reports for each table are implemented
+    private void ResetOrderReportText() // this will get moved to OrderManager when reports for each table are implemented
     {
         
         reportCardText.text = "";
@@ -352,6 +352,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("total delivered: " + foodDeliveredNames.Count);
         CalculateScore();
         UpdateScore();
+        ResetOrderReportText();
         PostToKitchenReportCard();
         PostCustomerComments();  // future
 

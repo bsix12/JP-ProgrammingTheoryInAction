@@ -14,6 +14,10 @@ TagManager:
   - Floor
   - CookStation
   - Waste
+  - DestroyOnEnter
+  - TopPlate
+  - PickupScrubbi
+  - PickupTopPlate
   layers:
   - Default
   - TransparentFX
