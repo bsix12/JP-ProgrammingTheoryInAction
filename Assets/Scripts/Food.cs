@@ -12,7 +12,6 @@ public class Food : MonoBehaviour
     public GameObject indicatorGrillPrefab;
     public GameObject indicatorSteamerPrefab;
     public AudioClip cookConditionIndicator; // rings each time food is cooked or next stage of isCooked
-
     public string iAm;
 
     ////////////////////////////
@@ -46,7 +45,8 @@ public class Food : MonoBehaviour
     [SerializeField] private float _myTemp; // ENCAPSULATION - backing field for myTemp.  Treating the food temperature like a 'health bar' that is not directly accessed
     private float _roomTemperature = 72;
 
-    
+
+
 
     protected virtual void Update()
     {
@@ -129,7 +129,7 @@ public class Food : MonoBehaviour
     protected void ReplaceFoodWithSmashed()
     {
         GameObject foodSmashed = Instantiate(isSmashedPrefab, transform.position + new Vector3(0, Random.Range(-.085f, -.1f), 0), transform.rotation);
-        foodSmashed.GetComponent<FoodSmashed>().myColor = myCurrentColor;        
+        foodSmashed.GetComponent<FoodSmashed>().myColor = myCurrentColor;
     }
 
 

@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     ////////////////////////////
     
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI messageText;
     public TextMeshProUGUI credits;
     public TextMeshProUGUI notes;
     public TextMeshPro reportCardText;
@@ -58,6 +59,8 @@ public class GameManager : MonoBehaviour
 
     private bool _isActiveCredits = false;
     private bool _isActiveNotes = false;
+    [SerializeField] private bool _mustClean = false;
+    public bool canDispense;
 
     [SerializeField] private int _chickenRawDelivered;
     [SerializeField] private int _chickenCookedDelivered;
@@ -79,11 +82,14 @@ public class GameManager : MonoBehaviour
     
     [SerializeField] private int _holdTotalScore;
     private int _perSecondPenaltyIfLate = 5; // play test value
-    private float _oncePerSecond = 1f; 
+    private float _oncePerSecond = 1f;
+    public GameObject smashedFoodContainer;
+
 
     private void Start()
     {
         Instance = this;
+        canDispense = true;
         _score = 0;
         LoadFoodMenu();
     }
@@ -92,6 +98,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         ApplyPerSecondPenaltyIfLate();
+        MonitorSmashedFoodContainer();
     }
 
     public void ApplySmashedFoodPenalty()
@@ -324,6 +331,18 @@ public class GameManager : MonoBehaviour
     /// Monitor and Tracking Actions
     //////////////////////////////////////////////////////////////////////////
 
+    private void KitchenDoorControl()
+    {
+        if (isActiveTable1 || isActiveTable2 || isActiveTable3)
+        {
+            kitchenDoor.gameObject.SetActive(false); // this should be in more generic section
+        }
+        else
+        {
+            kitchenDoor.gameObject.SetActive(true);
+        }
+    }
+
     private void ApplyPerSecondPenaltyIfLate()
     {
         if (OrderManager.Instance.isLateTable1 && _oncePerSecond > 0f) // 1 second timer
@@ -339,6 +358,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void MonitorSmashedFoodContainer()
+    {
+        if (smashedFoodContainer.transform.childCount > 20 && !_mustClean)
+        {
+            canDispense = false;
+            messageText.text = "This place is a mess...you must clean up!";
+            _mustClean = true;
+        }
+
+        if (smashedFoodContainer.transform.childCount < 3 && _mustClean)
+        {
+            canDispense = true;
+            messageText.text = "";
+            _mustClean = false;
+        }
+    }
 
     //////////////////////////////////////////////////////////////////////////
     /// After Player Makes Delivery
@@ -989,13 +1024,35 @@ public class GameManager : MonoBehaviour
 
     public void ActivateTable1()
     {
-        kitchenDoor.gameObject.SetActive(false); // this should be in more generic section
-        
-        isActiveTable1 = true;        
-        reservedTable1.gameObject.SetActive(false);
-        OrderManager.Instance.isReadyForNewOrderTable1 = true;
-        OrderManager.Instance.isDoneServingTable1 = true;
-        OrderManager.Instance.BeginNewOrderTable1();
+        if (!isActiveTable1)
+        {            
+            isActiveTable1 = true;        
+            reservedTable1.gameObject.SetActive(false);
+            OrderManager.Instance.isReadyForNewOrderTable1 = true;
+            OrderManager.Instance.isDoneServingTable1 = true;
+            OrderManager.Instance.BeginNewOrderTable1();
+        }
+
+        else if (isActiveTable1) // note to future self, need to do 'else if' for these 'one or the other' otherwise cycles
+        {
+            isActiveTable1 = false;
+            reservedTable1.gameObject.SetActive(true);
+            OrderManager.Instance.isReadyForNewOrderTable1 = false;
+            OrderManager.Instance.isDoneServingTable1 = false;
+        }
+
+        KitchenDoorControl();
+
+    }
+
+    public void ActivateTable2()
+    {
+        Debug.Log("table2");
+    }
+
+    public void ActivateTable3()
+    {
+        Debug.Log("table3");
     }
 
 

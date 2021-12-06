@@ -8,13 +8,12 @@ public class DispenserStation : MonoBehaviour
     public Transform spawnLoc;
     public AudioSource audioSource;
     public AudioClip dispenserSound;
-
-    private bool _canDispense;
-
+    [SerializeField] private bool _canDispense;
+    
 
     private void Update()
     {
-        if (_canDispense && Input.GetKeyDown(KeyCode.Space))
+        if (GameManager.Instance.canDispense && _canDispense && Input.GetKeyDown(KeyCode.Space))
         {
             Instantiate(stationMaterial, spawnLoc);
             audioSource.PlayOneShot(dispenserSound, .3f);

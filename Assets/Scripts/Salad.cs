@@ -43,7 +43,7 @@ public class Salad : Food
 
     protected override void OnTriggerEnter(Collider other) // POLYMORPHISM - override method
     {
-        if (!isBurned && other.CompareTag("CookStation"))
+        if (!isBurned && (other.CompareTag("Grill") || (other.CompareTag("Steamer"))))
         {
             isBurned = true;
         }

@@ -6,11 +6,11 @@ public class FoodSmashed : MonoBehaviour
 {
     private Renderer _myRenderer;
     public Color32 myColor; // provided by the food object that this new object replaces
-    private bool _isMaxSize;
 
     private void Awake()
     {
-        _myRenderer = GetComponent<Renderer>();       
+        _myRenderer = GetComponent<Renderer>();
+        transform.parent = GameManager.Instance.smashedFoodContainer.transform;
     }
 
     private void Start()
