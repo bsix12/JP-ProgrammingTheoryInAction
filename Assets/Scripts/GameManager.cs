@@ -81,10 +81,21 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _score;
     
     [SerializeField] private int _holdTotalScore;
+
+    public float secondsOfPrepAllowedPerMain = 90;
     private int _perSecondPenaltyIfLate = 5; // play test value
     private float _oncePerSecond = 1f;
     public GameObject smashedFoodContainer;
 
+    public bool isReadyForNewOrderTable1 = true;
+    public bool isReadyForNewOrderTable2 = true;
+    public bool isReadyForNewOrderTable3 = true;
+
+    public bool isDoneServingTable1 = true;
+    public bool isDoneServingTable2 = true;
+    public bool isDoneServingTable3 = true;
+
+    public int isLateTableCount;
 
     private void Start()
     {
@@ -331,9 +342,9 @@ public class GameManager : MonoBehaviour
     /// Monitor and Tracking Actions
     //////////////////////////////////////////////////////////////////////////
 
-    private void KitchenDoorControl()
+    public void KitchenDoorControl()
     {
-        if (isActiveTable1 || isActiveTable2 || isActiveTable3)
+        if (isActiveTable1 || isActiveTable2 || isActiveTable3 || !isDoneServingTable1 || !isDoneServingTable2 || !isDoneServingTable3)
         {
             kitchenDoor.gameObject.SetActive(false); // this should be in more generic section
         }
@@ -342,22 +353,22 @@ public class GameManager : MonoBehaviour
             kitchenDoor.gameObject.SetActive(true);
         }
     }
-
-    private void ApplyPerSecondPenaltyIfLate()
+    
+    private void ApplyPerSecondPenaltyIfLate() //////////// ADD up tabels late
     {
-        if (OrderManager.Instance.isLateTable1 && _oncePerSecond > 0f) // 1 second timer
+        if (isLateTableCount > 0 && _oncePerSecond > 0f) // 1 second timer
         {
             _oncePerSecond -= Time.deltaTime;
         }
 
-        if (OrderManager.Instance.isLateTable1 && _oncePerSecond <= 0f)
+        if (isLateTableCount > 0 && _oncePerSecond <= 0f)
         {
-            _score -= _perSecondPenaltyIfLate; // for each second late, apply a penalty
+            _score -= _perSecondPenaltyIfLate * isLateTableCount; // for each second late, apply a penalty, per table late
             scoreText.text = "Score: " + _score.ToString();
             _oncePerSecond = 1f; // reset 1 second timer
         }
     }
-
+    
     private void MonitorSmashedFoodContainer()
     {
         if (smashedFoodContainer.transform.childCount > 20 && !_mustClean)
@@ -1028,31 +1039,76 @@ public class GameManager : MonoBehaviour
         {            
             isActiveTable1 = true;        
             reservedTable1.gameObject.SetActive(false);
-            OrderManager.Instance.isReadyForNewOrderTable1 = true;
-            OrderManager.Instance.isDoneServingTable1 = true;
-            OrderManager.Instance.BeginNewOrderTable1();
+            isReadyForNewOrderTable1 = true;
+            isDoneServingTable1 = true;
+            GameObject.Find("TablesManager").GetComponent<Table1>().BeginNewOrder(); 
         }
 
         else if (isActiveTable1) // note to future self, need to do 'else if' for these 'one or the other' otherwise cycles
         {
+            if (isDoneServingTable1)
+            {
+                reservedTable1.gameObject.SetActive(true);
+            }
+
             isActiveTable1 = false;
-            reservedTable1.gameObject.SetActive(true);
-            OrderManager.Instance.isReadyForNewOrderTable1 = false;
-            OrderManager.Instance.isDoneServingTable1 = false;
+            //isReadyForNewOrderTable1 = false;
+            //isDoneServingTable1 = false;
         }
 
         KitchenDoorControl();
-
     }
 
     public void ActivateTable2()
     {
-        Debug.Log("table2");
+        if (!isActiveTable2)
+        {
+            isActiveTable2 = true;
+            reservedTable2.gameObject.SetActive(false);
+            isReadyForNewOrderTable2 = true;
+            isDoneServingTable2 = true;
+            GameObject.Find("TablesManager").GetComponent<Table2>().BeginNewOrder();
+        }
+
+        else if (isActiveTable2) // note to future self, need to do 'else if' for these 'one or the other' otherwise cycles
+        {
+            if (isDoneServingTable2)
+            {
+                reservedTable2.gameObject.SetActive(true);
+            }
+
+            isActiveTable2 = false;
+            //isReadyForNewOrderTable2 = false;
+            //isDoneServingTable2 = false;
+        }
+
+        KitchenDoorControl();
     }
 
     public void ActivateTable3()
     {
-        Debug.Log("table3");
+        if (!isActiveTable3)
+        {
+            isActiveTable3 = true;
+            reservedTable3.gameObject.SetActive(false);
+            isReadyForNewOrderTable3 = true;
+            isDoneServingTable3 = true;
+            GameObject.Find("TablesManager").GetComponent<Table3>().BeginNewOrder();
+        }
+
+        else if (isActiveTable3) // note to future self, need to do 'else if' for these 'one or the other' otherwise cycles
+        {
+            if (isDoneServingTable3)
+            {
+                reservedTable3.gameObject.SetActive(true);
+            }
+
+            isActiveTable3 = false;
+            //isReadyForNewOrderTable3 = false;
+            //isDoneServingTable3 = false;
+        }
+
+        KitchenDoorControl();
     }
 
 

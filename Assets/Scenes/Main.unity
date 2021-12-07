@@ -9895,7 +9895,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &513601132
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12207,7 +12207,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &759053737
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15080,6 +15080,14 @@ MonoBehaviour:
   _score: 0
   _holdTotalScore: 0
   smashedFoodContainer: {fileID: 592265254}
+  isReadyForNewOrderTable1: 1
+  isReadyForNewOrderTable2: 1
+  isReadyForNewOrderTable3: 1
+  isDoneServingTable1: 1
+  isDoneServingTable2: 1
+  isDoneServingTable3: 1
+  orderGeneratorIsBusy: 0
+  isLateTableCount: 0
 --- !u!4 &1040413984
 Transform:
   m_ObjectHideFlags: 0
@@ -21216,9 +21224,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1755949195}
+  - component: {fileID: 1755949196}
+  - component: {fileID: 1755949197}
   - component: {fileID: 1755949194}
   m_Layer: 0
-  m_Name: OrderManager
+  m_Name: TablesManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21233,46 +21243,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1755949193}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd74b01c0edce634abdc6584ce73462d, type: 3}
+  m_Script: {fileID: 11500000, guid: 09e6ed94920a7f04daf9cf1990edcfbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orderTicketTable1: {fileID: 807055056}
-  orderTicketTable2: {fileID: 894512279}
-  orderTicketTable3: {fileID: 1111130500}
-  orderTicketTextUITable1: {fileID: 1431818811}
-  orderTicketTextUITable2: {fileID: 1221060055}
-  orderTicketTextUITable3: {fileID: 1989864756}
-  timeElapsedTextUITable1: {fileID: 2084568806}
-  timeElapsedTextUITable2: {fileID: 1864724261}
-  timeElapsedTextUITable3: {fileID: 1789931338}
-  maximumOrderScorePossibleTextUITable1: {fileID: 43599504}
-  maximumOrderScorePossibleTextUITable2: {fileID: 608774856}
-  maximumOrderScorePossibleTextUITable3: {fileID: 615093063}
-  orderTicketBackgroundTable1: {fileID: 1903193515}
-  orderTicketBackgroundTable2: {fileID: 17834182}
-  orderTicketBackgroundTable3: {fileID: 1089576716}
-  orderTextTable1: {fileID: 135922015}
-  orderTextTable2: {fileID: 1703384705}
-  orderTextTable3: {fileID: 1686004798}
-  guestsTable1:
-  - {fileID: 2048144067}
-  - {fileID: 1848100492}
-  - {fileID: 1209664852}
-  - {fileID: 1872952805}
-  - {fileID: 1918889023}
-  - {fileID: 1621708894}
-  - {fileID: 1406530652}
-  - {fileID: 2107268116}
-  guestsTable2:
-  - {fileID: 1510381258}
-  - {fileID: 66660127}
-  - {fileID: 1710726267}
-  - {fileID: 1109507799}
-  - {fileID: 136484053}
-  - {fileID: 1460337373}
-  - {fileID: 2052779219}
-  - {fileID: 1300795254}
-  guestsTable3:
+  _timeRemainingUntilNextOrder: 0
+  isOnTimer: 0
+  onPlateGameObjects: []
+  _chickenOrdered: 0
+  _beefRareOrdered: 0
+  _beefMediumOrdered: 0
+  _beefWellDoneOrdered: 0
+  _carrotsSteamedOrdered: 0
+  _broccoliSteamedOrdered: 0
+  _saladsOrdered: 0
+  guests:
   - {fileID: 896996421}
   - {fileID: 1994977928}
   - {fileID: 1242433240}
@@ -21281,24 +21265,17 @@ MonoBehaviour:
   - {fileID: 1489348897}
   - {fileID: 881223140}
   - {fileID: 1348648424}
-  onPlateGameObjectsTable1: []
-  onPlateGameObjectsTable2: []
-  onPlateGameObjectsTable3: []
-  isReadyForNewOrderTable1: 0
-  isReadyForNewOrderTable2: 0
-  isReadyForNewOrderTable3: 0
-  isDoneServingTable1: 0
-  isDoneServingTable2: 0
-  isDoneServingTable3: 0
-  isOnTimerTable1: 0
-  isOnTimerTable2: 0
-  isOnTimerTable3: 0
-  isLateTable1: 0
-  isLateTable2: 0
-  isLateTable3: 0
-  timeElapsedTable1: 0
-  timeElapsedTable2: 0
-  timeElapsedTable3: 0
+  orderText: {fileID: 1686004798}
+  orderTicketBackground: {fileID: 1089576716}
+  orderTicket: {fileID: 1111130500}
+  maximumOrderScorePossibleTextUI: {fileID: 615093063}
+  orderTicketTextUI: {fileID: 1989864756}
+  isLate: 0
+  timeElapsedTextUI: {fileID: 1789931338}
+  timeElapsed: 0
+  isGeneratingOrderTable1: 0
+  isGeneratingOrderTable2: 0
+  isGeneratingOrderTable3: 0
 --- !u!4 &1755949195
 Transform:
   m_ObjectHideFlags: 0
@@ -21313,6 +21290,90 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1755949196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755949193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f134f0b261506ef4e8bbb758e8a28961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _timeRemainingUntilNextOrder: 0
+  isOnTimer: 0
+  onPlateGameObjects: []
+  _chickenOrdered: 0
+  _beefRareOrdered: 0
+  _beefMediumOrdered: 0
+  _beefWellDoneOrdered: 0
+  _carrotsSteamedOrdered: 0
+  _broccoliSteamedOrdered: 0
+  _saladsOrdered: 0
+  guests:
+  - {fileID: 2048144067}
+  - {fileID: 1848100492}
+  - {fileID: 1209664852}
+  - {fileID: 1872952805}
+  - {fileID: 1918889023}
+  - {fileID: 1621708894}
+  - {fileID: 1406530652}
+  - {fileID: 2107268116}
+  orderText: {fileID: 135922015}
+  orderTicketBackground: {fileID: 1903193515}
+  orderTicket: {fileID: 807055056}
+  maximumOrderScorePossibleTextUI: {fileID: 43599504}
+  orderTicketTextUI: {fileID: 1431818811}
+  isLate: 0
+  timeElapsedTextUI: {fileID: 2084568806}
+  timeElapsed: 0
+  isGeneratingOrderTable1: 0
+  isGeneratingOrderTable2: 0
+  isGeneratingOrderTable3: 0
+--- !u!114 &1755949197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755949193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 809595804c79ae941ba033b5d6624445, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _timeRemainingUntilNextOrder: 0
+  isOnTimer: 0
+  onPlateGameObjects: []
+  _chickenOrdered: 0
+  _beefRareOrdered: 0
+  _beefMediumOrdered: 0
+  _beefWellDoneOrdered: 0
+  _carrotsSteamedOrdered: 0
+  _broccoliSteamedOrdered: 0
+  _saladsOrdered: 0
+  guests:
+  - {fileID: 1510381258}
+  - {fileID: 66660127}
+  - {fileID: 1710726267}
+  - {fileID: 1109507799}
+  - {fileID: 136484053}
+  - {fileID: 1460337373}
+  - {fileID: 2052779219}
+  - {fileID: 1300795254}
+  orderText: {fileID: 1703384705}
+  orderTicketBackground: {fileID: 17834182}
+  orderTicket: {fileID: 894512279}
+  maximumOrderScorePossibleTextUI: {fileID: 608774856}
+  orderTicketTextUI: {fileID: 1221060055}
+  isLate: 0
+  timeElapsedTextUI: {fileID: 1864724261}
+  timeElapsed: 0
+  isGeneratingOrderTable1: 0
+  isGeneratingOrderTable2: 0
+  isGeneratingOrderTable3: 0
 --- !u!1 &1778987525
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,19 +10,36 @@ public class ServeFood : MonoBehaviour
 
 
     private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && !OrderManager.Instance.isDoneServingTable1)
+    {                                               // probably need to make serving area specific in case multiple tables !isDoneServing
+        if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && GameManager.Instance.atTableName == "Table1" && !GameManager.Instance.isDoneServingTable1) //TABLE SPECIFIC //
         {
-            OrderManager.Instance.AfterFoodIsServedActions();
+            GameObject.Find("TablesManager").GetComponent<Table1>().AfterFoodIsServedActions();
+            DoOtherThings();
+        }
+        
+        else if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && GameManager.Instance.atTableName == "Table2" && !GameManager.Instance.isDoneServingTable2) //TABLE SPECIFIC //
+        {
+            GameObject.Find("TablesManager").GetComponent<Table2>().AfterFoodIsServedActions();
+            DoOtherThings();
+        }
+
+        else if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && GameManager.Instance.atTableName == "Table3" && !GameManager.Instance.isDoneServingTable3) //TABLE SPECIFIC //
+        {
+            GameObject.Find("TablesManager").GetComponent<Table3>().AfterFoodIsServedActions();
+            DoOtherThings();
+        }
+
+    }
+
+    private void DoOtherThings()
+    {
             MoveFoodGameObjectsToTable(); // visual only.  scoring based on FoodDeliveredNames<string> list
             StartCoroutine("ClearFoodGameObjectsStrandedByDoubleMove");
             MoveFoodGameObjectsToOnPlateListFromReadyToServeList();
 
             GameManager.Instance.readyToServeGameObjects.Clear();
             GameManager.Instance.foodDeliveredNames.Clear(); // this cannot clear before score is calculated.  if issue, need to store working copy
-        }
     }
-
 
     private void MoveFoodGameObjectsToTable()
     {
@@ -55,11 +72,30 @@ public class ServeFood : MonoBehaviour
     }
 
 
-    private void MoveFoodGameObjectsToOnPlateListFromReadyToServeList()
+    private void MoveFoodGameObjectsToOnPlateListFromReadyToServeList() //TABLE SPECIFIC//
     {
-        for (int i= 0; i<GameManager.Instance.readyToServeGameObjects.Count; i++)
+        if (GameManager.Instance.atTableName == "Table1")
         {
-            OrderManager.Instance.onPlateGameObjectsTable1.Add(GameManager.Instance.readyToServeGameObjects[i]);               
+            for (int i= 0; i<GameManager.Instance.readyToServeGameObjects.Count; i++)
+            {
+            GameObject.Find("TablesManager").GetComponent<Table1>().onPlateGameObjects.Add(GameManager.Instance.readyToServeGameObjects[i]);               
+            }
+        }
+
+        else if (GameManager.Instance.atTableName == "Table2")
+        {
+            for (int i = 0; i < GameManager.Instance.readyToServeGameObjects.Count; i++)
+            {
+                GameObject.Find("TablesManager").GetComponent<Table2>().onPlateGameObjects.Add(GameManager.Instance.readyToServeGameObjects[i]);
+            }
+        }
+
+        else if (GameManager.Instance.atTableName == "Table3")
+        {
+            for (int i = 0; i < GameManager.Instance.readyToServeGameObjects.Count; i++)
+            {
+                GameObject.Find("TablesManager").GetComponent<Table3>().onPlateGameObjects.Add(GameManager.Instance.readyToServeGameObjects[i]);
+            }
         }
 
         GameManager.Instance.readyToServeGameObjects.Clear();
