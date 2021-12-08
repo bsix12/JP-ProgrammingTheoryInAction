@@ -756,7 +756,7 @@ GameObject:
   - component: {fileID: 9047476719082604645}
   m_Layer: 0
   m_Name: DispenseTrigger
-  m_TagString: Untagged
+  m_TagString: Dispenser
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -853,3 +853,4 @@ MonoBehaviour:
   spawnLoc: {fileID: 0}
   audioSource: {fileID: 0}
   dispenserSound: {fileID: 0}
+  _canDispense: 0

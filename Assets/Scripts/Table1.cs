@@ -19,11 +19,11 @@ public class Table1 : Table
                 _timeRemainingUntilNextOrder -= Time.deltaTime;
             }
 
-            else if (_timeRemainingUntilNextOrder <= 0 && !isGeneratingOrderTable2 && !isGeneratingOrderTable3)
+            else if (_timeRemainingUntilNextOrder <= 0 && !GameManager.Instance.isGeneratingOrderTable2 && !GameManager.Instance.isGeneratingOrderTable3 && !GameManager.Instance.isCalculatingScore)
             {
                 GameManager.Instance.isReadyForNewOrderTable1 = false;
-                isGeneratingOrderTable1 = true;
-                GenerateOrderDetailsForTable();
+                GameManager.Instance.isGeneratingOrderTable1 = true;
+                GenerateOrderForTable();
             }
         }
     }

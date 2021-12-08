@@ -14,13 +14,26 @@ public class RotatePlate : MonoBehaviour
 
     private void RotatePlateTop()
     {
-        if (Input.GetKey(KeyCode.Q))
+        if (Input.GetKey(KeyCode.Q) && GameManager.Instance.moveWithQEUnlocked)
         {
+            if (GameManager.Instance.isFirstTimeSpinningPlatter)
+            {
+                GameManager.Instance.messageText.text = "";
+                GameManager.Instance.isFirstTimeSpinningPlatter = false;
+                GameManager.Instance.isDoingMovementTutorial = false;
+            }
             transform.Rotate(Time.deltaTime * _turnSpeed * Vector3.down);
         }
 
-        if (Input.GetKey(KeyCode.E))
+        if (Input.GetKey(KeyCode.E) && GameManager.Instance.moveWithQEUnlocked)
         {
+            if (GameManager.Instance.isFirstTimeSpinningPlatter)
+            {
+                GameManager.Instance.messageText.text = "";
+                GameManager.Instance.isFirstTimeSpinningPlatter = false;
+                GameManager.Instance.isDoingMovementTutorial = false;
+            }
+
             transform.Rotate(Time.deltaTime * _turnSpeed * Vector3.up);
         }
     }

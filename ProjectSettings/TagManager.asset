@@ -17,6 +17,9 @@ TagManager:
   - TopPlate
   - PickupScrubbi
   - PickupTopPlate
+  - CookStation
+  - DiningRoom
+  - Dispenser
   layers:
   - Default
   - TransparentFX
