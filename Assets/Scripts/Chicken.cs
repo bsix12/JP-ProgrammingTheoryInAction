@@ -7,6 +7,8 @@ public class Chicken : Food  // INHERITANCE - Chicken inherits from the Food cla
     private Renderer _myRenderer;
     private AudioSource _myAudioSource;
 
+
+
     private void Awake()
     {
         _myRenderer = GetComponent<Renderer>();
@@ -42,7 +44,7 @@ public class Chicken : Food  // INHERITANCE - Chicken inherits from the Food cla
         {
             _myRenderer.material.color = myCookedColor;
             myCurrentColor = myCookedColor;
-            _myAudioSource.PlayOneShot(cookConditionIndicator, .5f);
+            _myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
             iAm = "Cooked Chicken";            
         }
 

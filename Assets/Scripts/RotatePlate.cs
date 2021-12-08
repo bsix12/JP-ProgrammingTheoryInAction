@@ -6,7 +6,8 @@ public class RotatePlate : MonoBehaviour
 {
     private float _turnSpeed = 150f;
 
-    // Update is called once per frame
+
+
     void Update()
     {
         RotatePlateTop();

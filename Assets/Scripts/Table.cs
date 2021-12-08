@@ -6,15 +6,38 @@ using UnityEngine.UI;
 
 public class Table : MonoBehaviour
 {
-    [SerializeField] protected float _timeRemainingUntilNextOrder;
-    private float _timeGuestsStay;
-    //public bool isReadyForNewOrder = false;
-    //public bool isDoneServing = false;
-    private List<string> _onlyFoodOrderedNames = new List<string>();
-    public bool isOnTimer;
+    ////////////////////////////
+    /// Assign In Inspector
+    ////////////////////////////
+
+    public GameObject[] guests;
+    public GameObject orderTicket;
+    public AudioSource playerAudioSource;
+    public AudioClip newOrderBell;
+
     public List<GameObject> onPlateGameObjects = new List<GameObject>();
 
-    private int _maximumOrderScorePossible;
+    public TextMeshProUGUI maximumOrderScorePossibleTextUI;
+    public TextMeshProUGUI orderTicketTextUI;
+    public TextMeshProUGUI timeElapsedTextUI;
+    public TextMeshPro orderText;
+    public Image orderTicketBackground;
+
+    ////////////////////////////
+
+    public bool isOnTimer;
+    public bool isLate;
+
+    public float timeElapsed = 0;
+
+    ////////////////////////////
+ 
+    [SerializeField] protected float _timeRemainingUntilNextOrder;
+
+    ////////////////////////////
+
+    private List<int> _guestsIndexList;
+    private List<string> _onlyFoodOrderedNames = new List<string>();
 
     [SerializeField] private int _chickenOrdered;
     [SerializeField] private int _beefRareOrdered;
@@ -23,27 +46,10 @@ public class Table : MonoBehaviour
     [SerializeField] private int _carrotsSteamedOrdered;
     [SerializeField] private int _broccoliSteamedOrdered;
     [SerializeField] private int _saladsOrdered;
+    private int _maximumOrderScorePossible;
     private int _mainDishesOrdered;
 
-    private List<int> _guestsIndexList;
-    public GameObject[] guests;
-
-    public TextMeshPro orderText;
-    public Image orderTicketBackground;
-    public GameObject orderTicket;
-    public TextMeshProUGUI maximumOrderScorePossibleTextUI;
-    public TextMeshProUGUI orderTicketTextUI;
-    public bool isLate;
-
-    public TextMeshProUGUI timeElapsedTextUI;
-    public float timeElapsed = 0;
-
-
-    //protected bool isGeneratingOrderTable1; // order generator can only be used by one table at a time
-    //protected bool isGeneratingOrderTable2;
-    //protected bool isGeneratingOrderTable3;
-
-    //protected bool isCalculatingScore;
+    private float _timeGuestsStay;
 
 
 
@@ -141,6 +147,7 @@ public class Table : MonoBehaviour
         orderText.text = ""; // clear the 'waiting for new order'
         orderTicketBackground.gameObject.SetActive(true);
         orderTicket.gameObject.SetActive(true);
+        playerAudioSource.PlayOneShot(newOrderBell, .15f);
         maximumOrderScorePossibleTextUI.text = _maximumOrderScorePossible.ToString() + " points possible";
 
         for (int i = 0; i < _onlyFoodOrderedNames.Count; i++)

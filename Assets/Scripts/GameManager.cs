@@ -17,29 +17,39 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI credits;
     public TextMeshProUGUI notes;
     public TextMeshPro reportCardText;
+
+    public Button foodGuideButton;
     public Button notesButton;
-    public Image creditsNotesBackground;
+
+    public Image diningTablesUIBackground;
     public Image foodGuidBackground;
+    public Image creditsNotesBackground;
 
     public GameObject kitchenDoor;
     public GameObject reservedTable1;
     public GameObject reservedTable2;
     public GameObject reservedTable3;
+    public GameObject smashedFoodContainer;
+    public GameObject diningTablesUI;
     public GameObject foodGuide;
 
     ////////////////////////////
- 
-    public List<GameObject> readyToServeGameObjects = new List<GameObject>();
 
+    public List<GameObject> readyToServeGameObjects = new List<GameObject>();
     public List<string> onlyFoodOrderedNames = new List<string>();
     public List<string> foodDeliveredNames = new List<string>();
     public List<string> reportCardToPost = new List<string>();
+    
     public Vector3 serveTableLocation;
-
-    public int maximumOrderScorePossible;
-    public bool isInServiceArea; // manages if spacebar delivers food to table or allows for a new order
+        
     public string atTableName; // reference to which table player is at
+    
+    public float secondsOfPrepAllowedPerMain = 90;
+    public float secondsToWaitBeforeClearMessage;
 
+    public int isLateTableCount;
+    public int numberOfSeatedGuests = 0;
+    public int maximumOrderScorePossible;
     public int chickenOrdered;
     public int beefRareOrdered;
     public int beefMediumOrdered;
@@ -53,27 +63,50 @@ public class GameManager : MonoBehaviour
     public bool isActiveTable1 = false;
     public bool isActiveTable2 = false;
     public bool isActiveTable3 = false;
+    public bool isReadyForNewOrderTable1 = true;
+    public bool isReadyForNewOrderTable2 = true;
+    public bool isReadyForNewOrderTable3 = true;
+    public bool isGeneratingOrderTable1; // order generator can only be used by one table at a time          ////////////might be able to move this back to Table
+    public bool isGeneratingOrderTable2;
+    public bool isGeneratingOrderTable3;
+    public bool isDoneServingTable1 = true;
+    public bool isDoneServingTable2 = true;
+    public bool isDoneServingTable3 = true;
+    
+    public bool isDoingMovementTutorial = true;
+    public bool moveWithWSUnlocked = false;
+    public bool moveWithADUnlocked = false;
+    public bool moveWithQEUnlocked = false;
+    public bool isFirstTimeTriggeringDispenser = true;
+    public bool isFirstTimeSpinningPlatter = true;
+    public bool isFirstTimeAtCookStation = true;
+    public bool isFirstTimeServingCustomers = true;
+ 
+    public bool isCalculatingScore;   
+    public bool isInServiceArea; // manages if spacebar delivers food to table or allows for a new order
+    public bool playerInDiningRoom;
+    public bool canDispense;
+
+    ////////////////////////////
+
+    private TextMeshProUGUI _buttonTable1Text;
+    private TextMeshProUGUI _buttonTable2Text;
+    private TextMeshProUGUI _buttonTable3Text;
+    private TextMeshProUGUI _buttonFoodGuideText;
 
     private List<string> _menuMainsNames = new List<string>();
     private List<string> _menuSidesNames = new List<string>();
     private List<string> _includesNoneFoodOrderedNames = new List<string>();
 
     private bool _isFirstTimeOpeningDiningRoom = true;
-    
-    public bool isFirstTimeSpinningPlatter = true;
-    public bool isFirstTimeServingCustomers = true;
-    public bool isFirstTimeTriggeringDispenser = true;
-    public bool isDoingMovementTutorial = true;
-    public bool moveWithWSUnlocked = false;
-    public bool moveWithQEUnlocked = false;
-    public bool moveWithADUnlocked = false;
-
-    [SerializeField] private bool _isFirstTimeClosingTableWithGuestsSeated = true;
+    private bool _isFirstTimeClosingTableWithGuestsSeated = true;
     private bool _isActiveCredits = false;
     private bool _isActiveNotes = false;
     private bool _isActiveFoodGuide = false;
-    [SerializeField] private bool _mustClean = false;
-    public bool canDispense;
+    private bool _mustClean = false;
+
+    private int _perSecondPenaltyIfLate = 5; // play test value
+    private float _oncePerSecond = 1f;
 
     [SerializeField] private int _chickenRawDelivered;
     [SerializeField] private int _chickenCookedDelivered;
@@ -92,50 +125,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _saladsGoodDelivered;
     [SerializeField] private int _saladsRuinedDelivered;
     [SerializeField] private int _score;
-    
     [SerializeField] private int _holdTotalScore;
 
-    public float secondsOfPrepAllowedPerMain = 90;
-    private int _perSecondPenaltyIfLate = 5; // play test value
-    private float _oncePerSecond = 1f;
-    public GameObject smashedFoodContainer;
 
-    public bool isReadyForNewOrderTable1 = true;
-    public bool isReadyForNewOrderTable2 = true;
-    public bool isReadyForNewOrderTable3 = true;
-
-    public bool isDoneServingTable1 = true;
-    public bool isDoneServingTable2 = true;
-    public bool isDoneServingTable3 = true;
-
-    public int isLateTableCount;
-
-
-    private TextMeshProUGUI _buttonTable1Text;
-    private TextMeshProUGUI _buttonTable2Text;
-    private TextMeshProUGUI _buttonTable3Text;
-    private TextMeshProUGUI _buttonFoodGuideText;
-
-    public bool isGeneratingOrderTable1; // order generator can only be used by one table at a time          ////////////might be able to move this back to Table
-    public bool isGeneratingOrderTable2;
-    public bool isGeneratingOrderTable3;
-
-    public bool playerInDiningRoom;
-    public bool isCalculatingScore;
-    public int numberOfSeatedGuests = 0;
-    public float secondsToWait;
 
     private void Start()
     {
         Instance = this;
-
-        _buttonTable1Text = GameObject.Find("OpenTable1ButtonText").GetComponent<TextMeshProUGUI>();
-        _buttonTable2Text = GameObject.Find("OpenTable2ButtonText").GetComponent<TextMeshProUGUI>();
-        _buttonTable3Text = GameObject.Find("OpenTable3ButtonText").GetComponent<TextMeshProUGUI>();
-        _buttonFoodGuideText = GameObject.Find("FoodGuideButtonText").GetComponent<TextMeshProUGUI>();
-        _buttonTable1Text.color = Color.red;
-        _buttonTable2Text.color = Color.red;
-        _buttonTable3Text.color = Color.red;
     
         _score = 0;
         canDispense = true;
@@ -143,7 +139,6 @@ public class GameManager : MonoBehaviour
         LoadFoodMenu();
         KitchenDoorControl();
         StartCoroutine(BeginTutorial());
-
     }
 
 
@@ -161,6 +156,28 @@ public class GameManager : MonoBehaviour
         messageText.text = "Use <u>A</u> or <u>D</u> to rotate around.";
     }
 
+    public void EnableDiningTablesUI()
+    {
+        diningTablesUIBackground.gameObject.SetActive(true);
+        Instance.diningTablesUI.gameObject.SetActive(true);
+        
+        _buttonTable1Text = GameObject.Find("OpenTable1ButtonText").GetComponent<TextMeshProUGUI>();
+        _buttonTable2Text = GameObject.Find("OpenTable2ButtonText").GetComponent<TextMeshProUGUI>();
+        _buttonTable3Text = GameObject.Find("OpenTable3ButtonText").GetComponent<TextMeshProUGUI>();
+        _buttonTable1Text.color = Color.red;
+        _buttonTable2Text.color = Color.red;
+        _buttonTable3Text.color = Color.red;
+    }
+
+    public void EnableFoodGuide()
+    {
+        messageText.text = "A food guide is available for reference.";
+        StartCoroutine(ClearMessage(5));
+        foodGuideButton.gameObject.SetActive(true);
+        _buttonFoodGuideText = GameObject.Find("FoodGuideButtonText").GetComponent<TextMeshProUGUI>();
+    }
+
+    
     public void ApplySmashedFoodPenalty()
     {
         _score -= smashedFoodPenalty;
@@ -401,7 +418,7 @@ public class GameManager : MonoBehaviour
             
             if (_isFirstTimeOpeningDiningRoom)
             {
-                messageText.text = "Guest will arrive soon, be prepared for orders.";
+                messageText.text = "Guest will arrive soon and begin placing orders.";
                 StartCoroutine(ClearMessage(5));
                 _isFirstTimeOpeningDiningRoom = false;
             }
@@ -420,7 +437,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    IEnumerator ClearMessage(float secondsToWait)
+    public IEnumerator ClearMessage(float secondsToWait)
     {
         yield return new WaitForSeconds(secondsToWait);
         messageText.text = "";
@@ -1202,7 +1219,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
+    
     public void FoodGuide()
     {
         if(_isActiveFoodGuide == true)
@@ -1221,7 +1238,7 @@ public class GameManager : MonoBehaviour
             _isActiveFoodGuide = true;
         }
     }
-
+    
 
     public void Credits()
     {

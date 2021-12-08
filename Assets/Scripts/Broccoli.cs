@@ -7,6 +7,8 @@ public class Broccoli : Food  // INHERITANCE - Broccoli inherits from the Food c
     private Renderer _myRenderer;
     private AudioSource _myAudioSource;
 
+
+
     private void Awake()
     {
         _myRenderer = GetComponent<Renderer>();
@@ -42,7 +44,7 @@ public class Broccoli : Food  // INHERITANCE - Broccoli inherits from the Food c
         {
             _myRenderer.material.color = myCookedColor;
             myCurrentColor = myCookedColor;
-            _myAudioSource.PlayOneShot(cookConditionIndicator, .1f);
+            _myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
             iAm = "Steamed Broccoli";
         }
 

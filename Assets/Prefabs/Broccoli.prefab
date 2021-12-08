@@ -126,18 +126,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a30ae24850222741ac429158de40713, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _myTemp: 0
   isSmashedPrefab: {fileID: 4715782599534251606, guid: 16205df31d9eb8c47b2f99c9bbb4f5ce, type: 3}
+  indicatorGrillPrefab: {fileID: 6787215316302648940, guid: 55e2878145cbe784db5e2aa51f095a94, type: 3}
+  indicatorSteamerPrefab: {fileID: 1305866793593120617, guid: 21dd648336e40b0459df04379ee9a026, type: 3}
+  cookConditionIndicator: {fileID: 8300000, guid: ccff8717db9572e4ea6c202a58361d06, type: 3}
+  iAm: 
+  hasBeenMovedToPlate: 0
   isCooking: 0
   isCooked: 0
   isBurned: 0
   isOnFloor: 0
   hasBeenOnFloor: 0
   isSmashed: 0
-  iAm: 
-  cookConditionIndicator: {fileID: 8300000, guid: a9f3cb7480db1a34ca2501de07b2dad8, type: 3}
-  indicatorGrillPrefab: {fileID: 6787215316302648940, guid: 55e2878145cbe784db5e2aa51f095a94, type: 3}
-  indicatorSteamerPrefab: {fileID: 1305866793593120617, guid: 21dd648336e40b0459df04379ee9a026, type: 3}
+  _myTemp: 0
 --- !u!82 &4335677575725916599
 AudioSource:
   m_ObjectHideFlags: 0

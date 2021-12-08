@@ -9,6 +9,7 @@ public class ServeFood : MonoBehaviour
     private Vector3 _transferFoodVector;
 
 
+
     private void Update()
     {                                               
         if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && GameManager.Instance.atTableName == "Table1" && !GameManager.Instance.isDoneServingTable1)
@@ -77,6 +78,7 @@ public class ServeFood : MonoBehaviour
             }
         }        
     }
+
 
    IEnumerator ClearFoodGameObjectsStrandedByDoubleMove()
     {

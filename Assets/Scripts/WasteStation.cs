@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class WasteStation : MonoBehaviour
 {
+    ////////////////////////////
+    /// Assign In Inspector
+    ////////////////////////////
+
     public AudioSource audioSource;
     public AudioClip wasteSound;
+
+
 
     private void OnTriggerEnter(Collider other)
     {

@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class FoodSmashed : MonoBehaviour
 {
-    private Renderer _myRenderer;
     public Color32 myColor; // provided by the food object that this new object replaces
+
+    private Renderer _myRenderer;
+
+
 
     private void Awake()
     {

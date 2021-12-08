@@ -47,7 +47,6 @@ public class Food : MonoBehaviour
 
 
 
-
     protected virtual void Update()
     {
         UpdateFoodTemperature();    // ABSTRACTION - method name indicates Update() action, details in separate method
@@ -139,11 +138,23 @@ public class Food : MonoBehaviour
         if (other.gameObject.CompareTag("Grill"))
         {
             Instantiate(indicatorGrillPrefab, transform);
+            
+            if (GameManager.Instance.isFirstTimeAtCookStation)
+            {
+                GameManager.Instance.isFirstTimeAtCookStation = false;
+                GameManager.Instance.EnableFoodGuide();               
+            }            
         }
 
         if (other.gameObject.CompareTag("Steamer"))
         {
             Instantiate(indicatorSteamerPrefab, transform);
+            
+            if (GameManager.Instance.isFirstTimeAtCookStation)
+            {
+                GameManager.Instance.isFirstTimeAtCookStation = false;
+                GameManager.Instance.EnableFoodGuide();
+            }
         }
 
         // tally up the food delivered, each food objects adds itself (iAm) to list

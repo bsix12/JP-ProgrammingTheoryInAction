@@ -12,6 +12,7 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
     private AudioSource _myAudioSource;
     
 
+
     private void Awake()
     {
         _myRenderer = GetComponent<Renderer>();
@@ -78,7 +79,7 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
         {
             _myRenderer.material.color = myRareColor;
             myCurrentColor = myRareColor;
-            _myAudioSource.PlayOneShot(cookConditionIndicator, .5f);
+            _myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
             iAm = "Beef: Rare";
         }
 
@@ -86,7 +87,7 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
         {
             _myRenderer.material.color = myMediumColor;
             myCurrentColor = myMediumColor;
-            _myAudioSource.PlayOneShot(cookConditionIndicator, .5f);
+            _myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
             iAm = "Beef: Medium";
         }
 
@@ -94,7 +95,7 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
         {
             _myRenderer.material.color = myWellDoneColor;
             myCurrentColor = myWellDoneColor;
-            _myAudioSource.PlayOneShot(cookConditionIndicator, .5f);
+            _myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
             iAm = "Beef: Well-Done";
         }
 

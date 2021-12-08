@@ -22,6 +22,7 @@ public class CreditsAndNotes : MonoBehaviour
             "Hardmoon\n" +
             "\n" +
             "Sound Effects:\n" +
+            "pleasing-bell\n" +
             "bell_02\n" +
             "cooking_without_cover_01\n" +
             "fire\n" +
@@ -30,6 +31,7 @@ public class CreditsAndNotes : MonoBehaviour
             "plop_01\n" +
             "qubodupFireLoop\n" +
             "Sizzling-sound-effect\n" +
+            "wood01\n" +
             "\n" +
             "Thank you to my family for play testing and feedback!";
     }

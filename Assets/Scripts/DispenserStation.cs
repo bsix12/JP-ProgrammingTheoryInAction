@@ -4,12 +4,20 @@ using UnityEngine;
 
 public class DispenserStation : MonoBehaviour
 {
+    ////////////////////////////
+    /// Assign In Inspector
+    ////////////////////////////
+
     public GameObject stationMaterial;
     public Transform spawnLoc;
     public AudioSource audioSource;
     public AudioClip dispenserSound;
+
+    ////////////////////////////
+
     [SerializeField] private bool _canDispense;
    
+
 
     private void Update()
     {
@@ -27,14 +35,14 @@ public class DispenserStation : MonoBehaviour
                 else
                 {
                     GameManager.Instance.messageText.text = "";
-                }
-                
+                }                
             }
             
             Instantiate(stationMaterial, spawnLoc);
             audioSource.PlayOneShot(dispenserSound, .3f);
         }
     }
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -43,6 +51,7 @@ public class DispenserStation : MonoBehaviour
             _canDispense = true;
         }        
     }
+
 
     private void OnTriggerExit(Collider other)
     {

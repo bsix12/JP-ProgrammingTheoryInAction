@@ -4,33 +4,51 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-	private Rigidbody _playerRb;
-	//public Transform _plateCenter;
+	////////////////////////////
+	/// Assign In Inspector
+	////////////////////////////
+
 	public GameObject pickupScrubbi;
 	public GameObject pickupTopPlate;
+	
+	public AudioClip footstepsKitchen;
+
+	////////////////////////////
+
+	private Rigidbody _playerRb;
+	private AudioSource _myAudioSource;
+
+	private bool _isFirstTimeUsingAD = true;
+	private bool _isFirstTimeUsingWS = true;
 	private bool _isFirstTimePickingUpPlatter = true;
+	private bool _isFootstepAudioPlaying = false;
 
 	private float _moveForce = 15f; // will vary based on mass and result desired
 	private float _turnSpeed = 150f;
-	private bool _isFirstTimeUsingAD = true;
-	private bool _isFirstTimeUsingWS = true;
+	
+
 
 	private void Awake()
 	{
 		_playerRb = GetComponent<Rigidbody>();  // caching during awake
+		_myAudioSource = GetComponent<AudioSource>();
 		pickupTopPlate.gameObject.SetActive(true);
 		transform.GetChild(2).gameObject.SetActive(false);
 	}
+
 
     private void Update()
     {
 		RotatePlayer();
     }
 
+
 	private void FixedUpdate()
 	{
 		MovePlayer(); // move with physics in FixedUpdate
+		PlayFootsteps();
 	}
+
 
 	private void MovePlayer()
 	{
@@ -40,7 +58,7 @@ public class PlayerController : MonoBehaviour
 			if (_isFirstTimeUsingWS)
 			{
 				_isFirstTimeUsingWS = false;
-				GameManager.Instance.messageText.text = "Pick up your serving platter.";
+				GameManager.Instance.messageText.text = "Pick up the serving platter,\nit's leaning against the wall.";	
 			}
 		}
 
@@ -50,10 +68,11 @@ public class PlayerController : MonoBehaviour
 			if (_isFirstTimeUsingWS)
 			{
 				_isFirstTimeUsingWS = false;
-				GameManager.Instance.messageText.text = "Pick up your serving platter.";
+				GameManager.Instance.messageText.text = "Pick up the serving platter,\nit's leaning against the wall.";
 			}
 		}
 	}
+
 
 	private void RotatePlayer()
 	{
@@ -80,6 +99,24 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
+
+	private void PlayFootsteps()
+    {
+		if(!_isFootstepAudioPlaying && GameManager.Instance.moveWithWSUnlocked && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)))
+		{
+			_isFootstepAudioPlaying = true;
+			_myAudioSource.Play();
+
+        }
+  
+		if(!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
+        {
+			_isFootstepAudioPlaying = false;
+			_myAudioSource.Stop();
+		}
+	}
+
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("PickupTopPlate"))
@@ -88,6 +125,7 @@ public class PlayerController : MonoBehaviour
             {
 				_isFirstTimePickingUpPlatter = false;
 				GameManager.Instance.messageText.text = "To begin seating guests, select dining room tables to open.";
+				GameManager.Instance.EnableDiningTablesUI();
 			}
 
 			else if (!_isFirstTimePickingUpPlatter)
@@ -96,8 +134,8 @@ public class PlayerController : MonoBehaviour
 			}
 			
 			pickupTopPlate.gameObject.SetActive(false);
-			transform.GetChild(4).gameObject.SetActive(false);
 			transform.GetChild(2).gameObject.SetActive(true);
+			transform.GetChild(4).gameObject.SetActive(false);
 		}
 
         if (other.gameObject.CompareTag("PickupScrubbi"))
@@ -127,6 +165,7 @@ public class PlayerController : MonoBehaviour
 		}
     }
 
+
     private void OnTriggerExit(Collider other)
     {
 		if (other.gameObject.CompareTag("DiningRoom"))
@@ -138,8 +177,8 @@ public class PlayerController : MonoBehaviour
 		if(other.gameObject.CompareTag("Dispenser") && GameManager.Instance.isFirstTimeTriggeringDispenser)
         {
 			GameManager.Instance.messageText.text = "";
-
 		}
+
 		if (GameManager.Instance.isFirstTimeServingCustomers && transform.GetChild(2).childCount > 0)
 		{
 			GameManager.Instance.messageText.text = "";
