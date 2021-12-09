@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI messageText;
     public TextMeshProUGUI credits;
     public TextMeshProUGUI notes;
+    public TextMeshProUGUI buttonTable1Text;
+    public TextMeshProUGUI buttonTable2Text;
+    public TextMeshProUGUI buttonTable3Text;
     public TextMeshPro reportCardText;
 
     public Button foodGuideButton;
@@ -43,11 +46,13 @@ public class GameManager : MonoBehaviour
     public Vector3 serveTableLocation;
         
     public string atTableName; // reference to which table player is at
+    public string lastTableServedName;
     
     public float secondsOfPrepAllowedPerMain = 90;
     public float secondsToWaitBeforeClearMessage;
 
-    public int isLateTableCount;
+    public int isOpenNowTableCount = 0;
+    public int isLateNowTableCount = 0;
     public int numberOfSeatedGuests = 0;
     public int maximumOrderScorePossible;
     public int chickenOrdered;
@@ -63,35 +68,37 @@ public class GameManager : MonoBehaviour
     public bool isActiveTable1 = false;
     public bool isActiveTable2 = false;
     public bool isActiveTable3 = false;
+    public bool isGeneratingOrderTable1 = false; // order generator can only be used by one table at a time
+    public bool isGeneratingOrderTable2 = false;
+    public bool isGeneratingOrderTable3 = false;
     public bool isReadyForNewOrderTable1 = true;
     public bool isReadyForNewOrderTable2 = true;
     public bool isReadyForNewOrderTable3 = true;
-    public bool isGeneratingOrderTable1; // order generator can only be used by one table at a time          ////////////might be able to move this back to Table
-    public bool isGeneratingOrderTable2;
-    public bool isGeneratingOrderTable3;
     public bool isDoneServingTable1 = true;
     public bool isDoneServingTable2 = true;
     public bool isDoneServingTable3 = true;
-    
-    public bool isDoingMovementTutorial = true;
-    public bool moveWithWSUnlocked = false;
-    public bool moveWithADUnlocked = false;
-    public bool moveWithQEUnlocked = false;
+    public bool isWaitingToCloseTable1 = false;
+    public bool isWaitingToCloseTable2 = false;
+    public bool isWaitingToCloseTable3 = false;
+
+    public bool isMovementTutorialActive = true;
+    public bool isMoveWithWSUnlocked = false;
+    public bool isMoveWithADUnlocked = false;
+    public bool isMoveWithQEUnlocked = false;
     public bool isFirstTimeTriggeringDispenser = true;
     public bool isFirstTimeSpinningPlatter = true;
     public bool isFirstTimeAtCookStation = true;
     public bool isFirstTimeServingCustomers = true;
  
-    public bool isCalculatingScore;   
-    public bool isInServiceArea; // manages if spacebar delivers food to table or allows for a new order
-    public bool playerInDiningRoom;
-    public bool canDispense;
+    public bool isCalculatingScore = false;   
+    public bool isInServiceArea = false; // manages if spacebar delivers food to table or allows for a new order
+    public bool playerInDiningRoom = false;
+    public bool canDispense = true;
+    public bool isUsingScrubbi = false;
 
     ////////////////////////////
 
-    private TextMeshProUGUI _buttonTable1Text;
-    private TextMeshProUGUI _buttonTable2Text;
-    private TextMeshProUGUI _buttonTable3Text;
+
     private TextMeshProUGUI _buttonFoodGuideText;
 
     private List<string> _menuMainsNames = new List<string>();
@@ -127,12 +134,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _score;
     [SerializeField] private int _holdTotalScore;
 
+    private TableTracker _table1;
+    private TableTracker _table2;
+    private TableTracker _table3;
 
 
     private void Start()
     {
         Instance = this;
-    
+
+        _table1 = GameObject.Find("TablesManager").GetComponent<Table1>();
+        _table2 = GameObject.Find("TablesManager").GetComponent<Table2>();
+        _table3 = GameObject.Find("TablesManager").GetComponent<Table3>();
+
         _score = 0;
         canDispense = true;
         
@@ -151,8 +165,8 @@ public class GameManager : MonoBehaviour
     IEnumerator BeginTutorial()
     {
         messageText.text = "Welcome to your kitchen!";
-        yield return new WaitForSeconds(2);
-        moveWithADUnlocked = true;
+        yield return new WaitForSeconds(1.5f);
+        isMoveWithADUnlocked = true;
         messageText.text = "Use <u>A</u> or <u>D</u> to rotate around.";
     }
 
@@ -161,12 +175,12 @@ public class GameManager : MonoBehaviour
         diningTablesUIBackground.gameObject.SetActive(true);
         Instance.diningTablesUI.gameObject.SetActive(true);
         
-        _buttonTable1Text = GameObject.Find("OpenTable1ButtonText").GetComponent<TextMeshProUGUI>();
-        _buttonTable2Text = GameObject.Find("OpenTable2ButtonText").GetComponent<TextMeshProUGUI>();
-        _buttonTable3Text = GameObject.Find("OpenTable3ButtonText").GetComponent<TextMeshProUGUI>();
-        _buttonTable1Text.color = Color.red;
-        _buttonTable2Text.color = Color.red;
-        _buttonTable3Text.color = Color.red;
+        buttonTable1Text = GameObject.Find("OpenTable1ButtonText").GetComponent<TextMeshProUGUI>();
+        buttonTable2Text = GameObject.Find("OpenTable2ButtonText").GetComponent<TextMeshProUGUI>();
+        buttonTable3Text = GameObject.Find("OpenTable3ButtonText").GetComponent<TextMeshProUGUI>();
+        buttonTable1Text.color = Color.red;
+        buttonTable2Text.color = Color.red;
+        buttonTable3Text.color = Color.red;
     }
 
     public void EnableFoodGuide()
@@ -207,6 +221,31 @@ public class GameManager : MonoBehaviour
     ///     this method is called whenever any table needs a new order
     //////////////////////////////////////////////////////////////////////////
 
+    public void GenerateOrderForTable()
+    {
+        if (isActiveTable1 && isDoneServingTable1 && isGeneratingOrderTable1)
+        {
+            _table1.GenerateAndPublishOrderDetails();
+            isDoneServingTable1 = false;
+            isGeneratingOrderTable1 = false;
+        }
+
+        if (isActiveTable2 && isDoneServingTable2 && isGeneratingOrderTable2)
+        {
+            _table2.GenerateAndPublishOrderDetails();
+            isDoneServingTable2 = false;
+            isGeneratingOrderTable2 = false;
+        }
+
+        if (isActiveTable3 && isDoneServingTable3 && isGeneratingOrderTable3)
+        {
+            _table3.GenerateAndPublishOrderDetails();
+            isDoneServingTable3 = false;
+            isGeneratingOrderTable3 = false;
+        }
+    }
+
+
     public void GenerateOrderDetails()
     {
         PickMenuItemsAndQuantities();
@@ -215,6 +254,7 @@ public class GameManager : MonoBehaviour
         UpdateScore();
     }
     
+
     public void PickMenuItemsAndQuantities()
     {
         int minMains = 2;
@@ -285,6 +325,7 @@ public class GameManager : MonoBehaviour
         }        
     }
 
+
     private void SummarizeOnlyFoodOrdered()
     {        
         onlyFoodOrderedNames.Add("<b><u>Main Dishes</b></u>\n");
@@ -327,6 +368,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     private void CalculateMaximumOrderScorePossible() // utilize the same methods called to score delivery
     {
         _chickenCookedDelivered = chickenOrdered; // set input for perfect delivery
@@ -361,10 +403,12 @@ public class GameManager : MonoBehaviour
         //ResetOrderReportText();
     }
    
+
     private void ResetStoredLists()
     {
         _includesNoneFoodOrderedNames.Clear(); // list of ints
     }
+
 
     private void ResetStoredInts()
     {
@@ -412,14 +456,14 @@ public class GameManager : MonoBehaviour
     {
 
 
-        if (isActiveTable1 || isActiveTable2 || isActiveTable3 || !isDoneServingTable1 || !isDoneServingTable2 || !isDoneServingTable3)
+        if (isOpenNowTableCount > 0)
         {
             kitchenDoor.gameObject.SetActive(false); // this should be in more generic section
             
             if (_isFirstTimeOpeningDiningRoom)
             {
-                messageText.text = "Guest will arrive soon and begin placing orders.";
-                StartCoroutine(ClearMessage(5));
+                messageText.text = "Guests will arrive soon and begin placing orders.";
+                StartCoroutine(ClearMessage(2.5f));
                 _isFirstTimeOpeningDiningRoom = false;
             }
       /*      else
@@ -429,34 +473,68 @@ public class GameManager : MonoBehaviour
       */
         }
 
-        else if (!isActiveTable1 && !isActiveTable2 && !isActiveTable3 && isDoneServingTable1 && isDoneServingTable2 && isDoneServingTable3 && !playerInDiningRoom && !isDoingMovementTutorial)
+        else if (isOpenNowTableCount == 0 && !playerInDiningRoom)
         {
             kitchenDoor.gameObject.SetActive(true);
-            messageText.text = "The dining room is now closed.\nTo begin seating guests, select tables to open.";
-            //StartCoroutine(ClearMessage(5));
+
+            if (!isMovementTutorialActive)
+            {
+                messageText.text = "The dining room is now closed.\nTo begin seating guests, select tables to open.";
+            }
         }
     }
+
+
+    public void CloseTableThatWasWaitingToClose()
+    {
+        if (!isActiveTable1 && isWaitingToCloseTable1 && lastTableServedName == "Table1")
+        {
+            reservedTable1.gameObject.SetActive(true);
+            isWaitingToCloseTable1 = false;
+            isOpenNowTableCount -= 1;
+            buttonTable1Text.text = "Closed";
+        }
+
+        else if (!isActiveTable2 && isWaitingToCloseTable2 && lastTableServedName == "Table2")
+        {
+            reservedTable2.gameObject.SetActive(true);
+            isWaitingToCloseTable2 = false;
+            isOpenNowTableCount -= 1;
+            buttonTable2Text.text = "Closed";
+        }
+
+        else if (!isActiveTable3 && isWaitingToCloseTable3 && lastTableServedName == "Table3")
+        {
+            reservedTable3.gameObject.SetActive(true);
+            isWaitingToCloseTable3 = false;
+            isOpenNowTableCount -= 1;
+            buttonTable3Text.text = "Closed";
+        }
+    }
+
 
     public IEnumerator ClearMessage(float secondsToWait)
     {
         yield return new WaitForSeconds(secondsToWait);
         messageText.text = "";
     }
+
     
     private void ApplyPerSecondPenaltyIfLate() //////////// ADD up tabels late
     {
-        if (isLateTableCount > 0 && _oncePerSecond > 0f) // 1 second timer
+        if (isLateNowTableCount > 0 && _oncePerSecond > 0f) // 1 second timer
         {
             _oncePerSecond -= Time.deltaTime;
         }
 
-        if (isLateTableCount > 0 && _oncePerSecond <= 0f)
+        if (isLateNowTableCount > 0 && _oncePerSecond <= 0f)
         {
-            _score -= _perSecondPenaltyIfLate * isLateTableCount; // for each second late, apply a penalty, per table late
+            _score -= _perSecondPenaltyIfLate * isLateNowTableCount; // for each second late, apply a penalty, per table late
             scoreText.text = "Score: " + _score.ToString();
             _oncePerSecond = 1f; // reset 1 second timer
         }
     }
+
     
     private void MonitorSmashedFoodContainer()
     {
@@ -483,6 +561,7 @@ public class GameManager : MonoBehaviour
     public void AfterFoodIsServedActions()
     {
         //Debug.Log("after food is served has been called");
+        DetermineWhichTableWasServed();
         CountFoodDelivered();
         CalculateScore();
         UpdateScore();
@@ -494,7 +573,29 @@ public class GameManager : MonoBehaviour
         ResetStoredInts();
         isCalculatingScore = false;
     }
-    
+
+
+    public void DetermineWhichTableWasServed()
+    {
+        if (atTableName == "Table1") // string must match Inspector, DiningRoom/DiningTableX/inServiceAreaTrigger/TableIAm.cs
+        {
+            isDoneServingTable1 = true;
+            isReadyForNewOrderTable1 = true;            
+        }
+
+        else if (atTableName == "Table2") // string must match Inspector, DiningRoom/DiningTableX/inServiceAreaTrigger/TableIAm.cs
+        {
+            isDoneServingTable2 = true;
+            isReadyForNewOrderTable2 = true;           
+        }
+
+        else if (atTableName == "Table3") // string must match Inspector, DiningRoom/DiningTableX/inServiceAreaTrigger/TableIAm.cs
+        {
+            isDoneServingTable3 = true;
+            isReadyForNewOrderTable3 = true;            
+        }
+    }
+
 
     private void CountFoodDelivered()
     {
@@ -1127,89 +1228,116 @@ public class GameManager : MonoBehaviour
         if (!isActiveTable1 && isDoneServingTable1)
         {            
             isActiveTable1 = true;
-            _buttonTable1Text.color = new Color32(75, 200, 50, 255);
-            _buttonTable1Text.text = "Open";
+            isOpenNowTableCount += 1;
+            buttonTable1Text.color = new Color32(75, 200, 50, 255);
+            buttonTable1Text.text = "Open";
             reservedTable1.gameObject.SetActive(false);
             isReadyForNewOrderTable1 = true;
-            //isDoneServingTable1 = true;
+            messageText.text = "";
             GameObject.Find("TablesManager").GetComponent<Table1>().BeginNewOrder();
         }
 
         else if (isActiveTable1) // note to future self, need to do 'else if' for these 'one or the other' otherwise cycles
         {
-            if (isDoneServingTable1)
+            isActiveTable1 = false;
+            buttonTable1Text.color = Color.red;
+            
+            if (_table1.isEmptyWithNoGuests)
             {
                 reservedTable1.gameObject.SetActive(true);
+                isOpenNowTableCount -= 1;
+                buttonTable1Text.text = "Closed";
             }
 
-            isActiveTable1 = false;
-            _buttonTable1Text.color = Color.red;
-            _buttonTable1Text.text = "Closed";
-            CheckIfFirstTimeClosingTableWhileGuestsSeated();
+            else if (!_table1.isEmptyWithNoGuests)
+            {
+                CheckIfFirstTimeClosingTableWhileGuestsNotServed();
+                isWaitingToCloseTable1 = true;
+                buttonTable1Text.text = "To Close";
+            }            
         }
 
         KitchenDoorControl();
     }
+
 
     public void ActivateTable2()
     {
         if (!isActiveTable2 && isDoneServingTable2)
         {
             isActiveTable2 = true;
-            _buttonTable2Text.color = new Color32(75, 200, 50, 255);
-            _buttonTable2Text.text = "Open";
+            isOpenNowTableCount += 1;
+            buttonTable2Text.color = new Color32(75, 200, 50, 255);
+            buttonTable2Text.text = "Open";
             reservedTable2.gameObject.SetActive(false);
             isReadyForNewOrderTable2 = true;
-            //isDoneServingTable2 = true;
+            messageText.text = "";
             GameObject.Find("TablesManager").GetComponent<Table2>().BeginNewOrder();
         }
 
         else if (isActiveTable2) // note to future self, need to do 'else if' for these 'one or the other' otherwise cycles
         {
-            if (isDoneServingTable2)
+            isActiveTable2 = false;
+            buttonTable2Text.color = Color.red;
+            
+            if (_table2.isEmptyWithNoGuests)
             {
                 reservedTable2.gameObject.SetActive(true);
+                isOpenNowTableCount -= 1;
+                buttonTable2Text.text = "Closed";
             }
 
-            isActiveTable2 = false;
-            _buttonTable2Text.color = Color.red;
-            _buttonTable2Text.text = "Closed";
-            CheckIfFirstTimeClosingTableWhileGuestsSeated();
+            else if (!_table2.isEmptyWithNoGuests)
+            {
+                CheckIfFirstTimeClosingTableWhileGuestsNotServed();
+                isWaitingToCloseTable2 = true;
+                buttonTable2Text.text = "To Close";
+            }
         }
 
         KitchenDoorControl();
     }
+
 
     public void ActivateTable3()
     {
         if (!isActiveTable3 && isDoneServingTable3)
         {
             isActiveTable3 = true;
-            _buttonTable3Text.color = new Color32(75, 200, 50, 255);
-            _buttonTable3Text.text = "Open";
+            isOpenNowTableCount += 1;
+            buttonTable3Text.color = new Color32(75, 200, 50, 255);
+            buttonTable3Text.text = "Open";
             reservedTable3.gameObject.SetActive(false);
             isReadyForNewOrderTable3 = true;
-            //isDoneServingTable3 = true;
+            messageText.text = "";
             GameObject.Find("TablesManager").GetComponent<Table3>().BeginNewOrder();            
         }
 
         else if (isActiveTable3) // note to future self, need to do 'else if' for these 'one or the other' otherwise cycles
         {
-            if (isDoneServingTable3)
+            isActiveTable3 = false;
+            buttonTable3Text.color = Color.red;
+            
+            if (_table3.isEmptyWithNoGuests)
             {
                 reservedTable3.gameObject.SetActive(true);
+                isOpenNowTableCount -= 1;
+                buttonTable3Text.text = "Closed";
             }
 
-            isActiveTable3 = false;
-            _buttonTable3Text.color = Color.red;
-            _buttonTable3Text.text = "Closed";
-            CheckIfFirstTimeClosingTableWhileGuestsSeated();
+            else if (!_table3.isEmptyWithNoGuests)
+            {
+                CheckIfFirstTimeClosingTableWhileGuestsNotServed();
+                isWaitingToCloseTable3 = true;
+                buttonTable3Text.text = "To Close";
+            }
         }
 
         KitchenDoorControl();
     }
 
-    private void CheckIfFirstTimeClosingTableWhileGuestsSeated()
+
+    private void CheckIfFirstTimeClosingTableWhileGuestsNotServed()
     {
         if (_isFirstTimeClosingTableWithGuestsSeated && (!isDoneServingTable1 || !isDoneServingTable2 || !isDoneServingTable3))
         {

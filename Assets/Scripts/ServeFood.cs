@@ -20,6 +20,7 @@ public class ServeFood : MonoBehaviour
                 GameManager.Instance.messageText.text = "";
             }
 
+            GameManager.Instance.lastTableServedName = GameManager.Instance.atTableName;
             GameObject.Find("TablesManager").GetComponent<Table1>().AfterFoodIsServedActions();
             ProcessFoodGameObjects();
         }
@@ -32,6 +33,7 @@ public class ServeFood : MonoBehaviour
                 GameManager.Instance.messageText.text = "";
             }
 
+            GameManager.Instance.lastTableServedName = GameManager.Instance.atTableName;
             GameObject.Find("TablesManager").GetComponent<Table2>().AfterFoodIsServedActions();
             ProcessFoodGameObjects();
         }
@@ -44,6 +46,7 @@ public class ServeFood : MonoBehaviour
                 GameManager.Instance.messageText.text = "";
             }
 
+            GameManager.Instance.lastTableServedName = GameManager.Instance.atTableName;
             GameObject.Find("TablesManager").GetComponent<Table3>().AfterFoodIsServedActions();
             ProcessFoodGameObjects();
         }

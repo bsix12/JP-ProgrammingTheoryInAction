@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class Table : MonoBehaviour
+public class TableTracker : MonoBehaviour
 {
     ////////////////////////////
     /// Assign In Inspector
@@ -27,12 +27,13 @@ public class Table : MonoBehaviour
 
     public bool isOnTimer;
     public bool isLate;
-
+    public bool isEmptyWithNoGuests = true;
     public float timeElapsed = 0;
 
     ////////////////////////////
  
     [SerializeField] protected float _timeRemainingUntilNextOrder;
+
 
     ////////////////////////////
 
@@ -46,6 +47,7 @@ public class Table : MonoBehaviour
     [SerializeField] private int _carrotsSteamedOrdered;
     [SerializeField] private int _broccoliSteamedOrdered;
     [SerializeField] private int _saladsOrdered;
+
     private int _maximumOrderScorePossible;
     private int _mainDishesOrdered;
 
@@ -69,36 +71,11 @@ public class Table : MonoBehaviour
     {
         _timeRemainingUntilNextOrder = Random.Range(5f, 15f); // debug timing ////////////////////////////////////////////////////////////////////
         _timeGuestsStay = _timeRemainingUntilNextOrder * .8f; // this is percent of delay that diners and food will remain at table before being cleared
-        Invoke("GuestsLeaveAndClear", _timeGuestsStay);
+        Invoke("GuestsLeaveAndClearTable", _timeGuestsStay);
     }
 
 
-    public void GenerateOrderForTable()
-    {
-        if (GameManager.Instance.isActiveTable1 && GameManager.Instance.isDoneServingTable1 && GameManager.Instance.isGeneratingOrderTable1)
-        {
-            GenerateAndPublishOrderDetails();
-            GameManager.Instance.isDoneServingTable1 = false;
-            GameManager.Instance.isGeneratingOrderTable1 = false;
-        }
-
-        if (GameManager.Instance.isActiveTable2 && GameManager.Instance.isDoneServingTable2 && GameManager.Instance.isGeneratingOrderTable2)
-        {
-            GenerateAndPublishOrderDetails();
-            GameManager.Instance.isDoneServingTable2 = false;
-            GameManager.Instance.isGeneratingOrderTable2 = false;
-        }
-
-        if (GameManager.Instance.isActiveTable3 && GameManager.Instance.isDoneServingTable3 && GameManager.Instance.isGeneratingOrderTable3)
-        {
-            GenerateAndPublishOrderDetails();
-            GameManager.Instance.isDoneServingTable3 = false;
-            GameManager.Instance.isGeneratingOrderTable3 = false;
-        }
-    }
-
-
-    private void GenerateAndPublishOrderDetails()
+    public void GenerateAndPublishOrderDetails()
     {
             GameManager.Instance.GenerateOrderDetails(); // GameManagerGenerates the order              
             StoreOrderDetails();
@@ -111,6 +88,7 @@ public class Table : MonoBehaviour
             _onlyFoodOrderedNames.Clear();
             isOnTimer = true;
     }
+
 
     private void StoreOrderDetails()
     {
@@ -127,11 +105,13 @@ public class Table : MonoBehaviour
         _mainDishesOrdered = _chickenOrdered + _beefRareOrdered + _beefMediumOrdered + _beefWellDoneOrdered;
     }
 
+
     private void SeatGuests()
     {
         int _numberOfGuests = _mainDishesOrdered;
         GameManager.Instance.numberOfSeatedGuests += _numberOfGuests;
         _guestsIndexList = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
+        isEmptyWithNoGuests = false;
 
         for (int i = 0; i < _numberOfGuests; i++)
         {
@@ -141,6 +121,7 @@ public class Table : MonoBehaviour
             _guestsIndexList.RemoveAt(_random); // needs to be non-repeating random index
         }
     }
+
 
     private void PublishOrder()
     {
@@ -157,6 +138,7 @@ public class Table : MonoBehaviour
         }
     }
 
+
     private void OrderPrepElapsedTime()
     {
        // timeElapsedTextUI.color = Color.black;
@@ -172,11 +154,13 @@ public class Table : MonoBehaviour
             {
                 timeElapsedTextUI.color = Color.red;
                 isLate = true;
-                GameManager.Instance.isLateTableCount += 1;
+                GameManager.Instance.isLateNowTableCount += 1;
             }
         }
     }
-    private void GuestsLeaveAndClear()
+
+
+    private void GuestsLeaveAndClearTable() // this is invoked from TableTracker/BeginNewOrder(), name of method must match
     {
         for (int i = 0; i < onPlateGameObjects.Count; i++)
         {
@@ -190,55 +174,22 @@ public class Table : MonoBehaviour
 
         GameManager.Instance.numberOfSeatedGuests -= _mainDishesOrdered; // _mainDishesOrdered = number of guests
         _mainDishesOrdered = 0;
-
+        isEmptyWithNoGuests = true;
         onPlateGameObjects.Clear(); // list of GameObjects
         GameManager.Instance.reportCardToPost.Clear(); // list of strings
 
-        if (!GameManager.Instance.isActiveTable1 && GameManager.Instance.isDoneServingTable1)
-        {
-            GameManager.Instance.reservedTable1.gameObject.SetActive(true);
-        }
-        
-        if (!GameManager.Instance.isActiveTable2 && GameManager.Instance.isDoneServingTable2)
-        {
-            GameManager.Instance.reservedTable2.gameObject.SetActive(true);
-        }
-        
-        if (!GameManager.Instance.isActiveTable3 && GameManager.Instance.isDoneServingTable3)
-        {
-            GameManager.Instance.reservedTable3.gameObject.SetActive(true);
-        }
-
+        GameManager.Instance.CloseTableThatWasWaitingToClose();
         GameManager.Instance.KitchenDoorControl();
     }
 
 
     public void AfterFoodIsServedActions()
     {
-        if (GameManager.Instance.atTableName == "Table1") // string must match Inspector, DiningRoom/DiningTableX/inServiceAreaTrigger/TableIAm.cs
-        {
-            GameManager.Instance.isDoneServingTable1 = true;
-            GameManager.Instance.isReadyForNewOrderTable1 = true;
-            ResetTicket();
-            EvaluateDeliveryBeforeStartingNextOrder();
-        }
-
-        else if (GameManager.Instance.atTableName == "Table2") // string must match Inspector, DiningRoom/DiningTableX/inServiceAreaTrigger/TableIAm.cs
-        {
-            GameManager.Instance.isDoneServingTable2 = true;
-            GameManager.Instance.isReadyForNewOrderTable2 = true;
-            ResetTicket();
-            EvaluateDeliveryBeforeStartingNextOrder();
-        }
-
-        else if (GameManager.Instance.atTableName == "Table3") // string must match Inspector, DiningRoom/DiningTableX/inServiceAreaTrigger/TableIAm.cs
-        {
-            GameManager.Instance.isDoneServingTable3 = true;
-            GameManager.Instance.isReadyForNewOrderTable3 = true;
-            ResetTicket();
-            EvaluateDeliveryBeforeStartingNextOrder();
-        }
+        GameManager.Instance.DetermineWhichTableWasServed();
+        ResetTicket();
+        EvaluateDeliveryBeforeStartingNextOrder();        
     }
+
 
     private void ResetTicket()
     {
@@ -248,7 +199,7 @@ public class Table : MonoBehaviour
         isOnTimer = false;
         if (isLate)
         {            
-            GameManager.Instance.isLateTableCount -= 1;
+            GameManager.Instance.isLateNowTableCount -= 1;
             timeElapsedTextUI.color = Color.black;
             isLate = false;
         }
@@ -260,6 +211,7 @@ public class Table : MonoBehaviour
         orderTicketTextUI.text = "";
         maximumOrderScorePossibleTextUI.text = "----";
     }
+
 
     private void EvaluateDeliveryBeforeStartingNextOrder()
     {

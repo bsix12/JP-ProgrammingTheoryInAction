@@ -15,7 +15,7 @@ public class DispenserStation : MonoBehaviour
 
     ////////////////////////////
 
-    [SerializeField] private bool _canDispense;
+    [SerializeField] private bool _canDispense; // _canDispense is player in trigger.  GameManager.Instance.canDispense is disabled if needs to clean
    
 
 
@@ -29,7 +29,7 @@ public class DispenserStation : MonoBehaviour
 
                 if (GameManager.Instance.isFirstTimeSpinningPlatter)
                 {
-                    GameManager.Instance.moveWithQEUnlocked = true;
+                    GameManager.Instance.isMoveWithQEUnlocked = true;
                     GameManager.Instance.messageText.text = "Press <u>Q</u> or <u>E</u> to rotate platter.";
                 }
                 else
@@ -49,7 +49,17 @@ public class DispenserStation : MonoBehaviour
         if (other.CompareTag("TopPlate"))
         {
             _canDispense = true;
-        }        
+
+            if (GameManager.Instance.isFirstTimeTriggeringDispenser)
+            {
+                GameManager.Instance.messageText.text = "Press <u>spacebar</u> to dispense food.";
+            }
+
+            if (GameManager.Instance.isMoveWithQEUnlocked && GameManager.Instance.isFirstTimeSpinningPlatter)
+            {
+                GameManager.Instance.messageText.text = "Press <u>Q</u> or <u>E</u> to rotate platter.";
+            }            
+        }  
     }
 
 
@@ -58,6 +68,11 @@ public class DispenserStation : MonoBehaviour
         if (other.CompareTag("TopPlate"))
         {
             _canDispense = false;
+
+            if (GameManager.Instance.isFirstTimeTriggeringDispenser)
+            {
+                GameManager.Instance.messageText.text = "";
+            }
         }
     }
 }

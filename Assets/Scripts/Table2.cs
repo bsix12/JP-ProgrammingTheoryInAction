@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Table2 : Table
+public class Table2 : TableTracker
 {
     protected override void Update()
     {
@@ -23,7 +23,7 @@ public class Table2 : Table
             {
                 GameManager.Instance.isReadyForNewOrderTable2 = false;
                 GameManager.Instance.isGeneratingOrderTable2 = true;
-                GenerateOrderForTable();
+                GameManager.Instance.GenerateOrderForTable();
             }
         }
     }

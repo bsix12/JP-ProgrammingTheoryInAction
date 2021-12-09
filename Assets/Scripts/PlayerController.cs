@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
 
 	private void MovePlayer()
 	{
-		if (Input.GetKey(KeyCode.W) && GameManager.Instance.moveWithWSUnlocked)
+		if (Input.GetKey(KeyCode.W) && GameManager.Instance.isMoveWithWSUnlocked)
 		{
 			_playerRb.AddForce(_moveForce * transform.forward);
 			if (_isFirstTimeUsingWS)
@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
 			}
 		}
 
-		if (Input.GetKey(KeyCode.S) && GameManager.Instance.moveWithWSUnlocked)
+		if (Input.GetKey(KeyCode.S) && GameManager.Instance.isMoveWithWSUnlocked)
 		{
 			_playerRb.AddForce(_moveForce * -transform.forward);  // give back
 			if (_isFirstTimeUsingWS)
@@ -76,10 +76,10 @@ public class PlayerController : MonoBehaviour
 
 	private void RotatePlayer()
 	{
-		if (Input.GetKey(KeyCode.A) && GameManager.Instance.moveWithADUnlocked)
+		if (Input.GetKey(KeyCode.A) && GameManager.Instance.isMoveWithADUnlocked)
 		{
 			transform.Rotate(Time.deltaTime * _turnSpeed * Vector3.down);
-			GameManager.Instance.moveWithWSUnlocked = true; // not sure if bad to write value every time instead of just once
+			GameManager.Instance.isMoveWithWSUnlocked = true; // not sure if bad to write value every time instead of just once
 			if (_isFirstTimeUsingAD)
             {
 				_isFirstTimeUsingAD = false;
@@ -87,10 +87,10 @@ public class PlayerController : MonoBehaviour
 			}
 		}
 
-		if (Input.GetKey(KeyCode.D) && GameManager.Instance.moveWithADUnlocked)
+		if (Input.GetKey(KeyCode.D) && GameManager.Instance.isMoveWithADUnlocked)
 		{
 			transform.Rotate(Time.deltaTime * _turnSpeed * Vector3.up);
-			GameManager.Instance.moveWithWSUnlocked  = true;
+			GameManager.Instance.isMoveWithWSUnlocked  = true;
 			if (_isFirstTimeUsingAD)
 			{
 				_isFirstTimeUsingAD = false;
@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour
 
 	private void PlayFootsteps()
     {
-		if(!_isFootstepAudioPlaying && GameManager.Instance.moveWithWSUnlocked && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)))
+		if(!_isFootstepAudioPlaying && GameManager.Instance.isMoveWithWSUnlocked && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)))
 		{
 			_isFootstepAudioPlaying = true;
 			_myAudioSource.Play();
@@ -130,12 +130,13 @@ public class PlayerController : MonoBehaviour
 
 			else if (!_isFirstTimePickingUpPlatter)
             {
-				pickupScrubbi.gameObject.SetActive(true);
+				pickupScrubbi.gameObject.SetActive(true);				
 			}
 			
 			pickupTopPlate.gameObject.SetActive(false);
 			transform.GetChild(2).gameObject.SetActive(true);
 			transform.GetChild(4).gameObject.SetActive(false);
+			GameManager.Instance.isUsingScrubbi = false;
 		}
 
         if (other.gameObject.CompareTag("PickupScrubbi"))
@@ -146,23 +147,24 @@ public class PlayerController : MonoBehaviour
 				pickupTopPlate.gameObject.SetActive(true);
 				transform.GetChild(2).gameObject.SetActive(false);
 				transform.GetChild(4).gameObject.SetActive(true);
+				GameManager.Instance.isUsingScrubbi = true;
             }
 		}
 
 		if (other.gameObject.CompareTag("DiningRoom"))
         {
+			GameManager.Instance.playerInDiningRoom = true;
+			
 			if(GameManager.Instance.isFirstTimeServingCustomers && transform.GetChild(2).childCount > 0)
             {
 				GameManager.Instance.messageText.text = "Approach table and press <u>spacebar</u> to serve food to guests.";
-			}
-			
-			GameManager.Instance.playerInDiningRoom = true;
+			}			
         }
 
-		if (other.gameObject.CompareTag("Dispenser") && GameManager.Instance.isFirstTimeTriggeringDispenser)
-        {
-			GameManager.Instance.messageText.text = "Press <u>spacebar</u> to dispense food.";
-		}
+		//if (other.gameObject.CompareTag("Dispenser") && GameManager.Instance.isFirstTimeTriggeringDispenser)
+        //{
+		//	GameManager.Instance.messageText.text = "Press <u>spacebar</u> to dispense food.";
+		//}
     }
 
 
@@ -172,17 +174,19 @@ public class PlayerController : MonoBehaviour
 		{
 			GameManager.Instance.playerInDiningRoom = false;
 			GameManager.Instance.KitchenDoorControl();
+	
+			if (GameManager.Instance.isFirstTimeServingCustomers && transform.GetChild(2).childCount > 0)
+			{
+				GameManager.Instance.messageText.text = "";
+			}
 		}
 
-		if(other.gameObject.CompareTag("Dispenser") && GameManager.Instance.isFirstTimeTriggeringDispenser)
-        {
-			GameManager.Instance.messageText.text = "";
-		}
+		//if(other.gameObject.CompareTag("Dispenser") && GameManager.Instance.isFirstTimeTriggeringDispenser)
+        //{
+		//	GameManager.Instance.messageText.text = "";
+		//}
 
-		if (GameManager.Instance.isFirstTimeServingCustomers && transform.GetChild(2).childCount > 0)
-		{
-			GameManager.Instance.messageText.text = "";
-		}
+
 	}
 }
 
