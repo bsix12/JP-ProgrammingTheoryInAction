@@ -40,7 +40,22 @@ public class CreditsAndNotes : MonoBehaviour
     {
         notesText.text =
             "\n<b><u>Notes</b></u>\n" +
-            "Created for Unity Learn Junior Programming Theory In Action";
+            "Created for Unity Learn Junior Programming Theory In Action\n" +
+            "Completed on xxxxxxxxxxxxxxxxxxxxx\n" +
+            "\n" +
+            "On my beginners journey to Unity and game development, I've heard the following message many times, 'just build something, <u>finish it</u> and publish it; that is the best way to learn.  For this last assignment, I decided to expand my effort andy try to finish a more complete game.\n" +
+            "In this way, I would reinforce skills development in the UnityLearn Pathways while building a body of\n" +
+            "work that could serve as reference material for future work.\n" +
+            "\n" +
+            "<u>Assignment Details</u>\n" +
+
+            "ABSTRACTION - probably the easiest of the pillars to put into beginners practice.   \n" +
+            "INHERITANCE -\n" +
+            "POLYMORPHISM -\n" +
+            "ENCAPSULATION -\n" +
+
+            "While developing this game, code was refactored a number of times.  First time in an attempts to be\n" +
+            "purposful/thoughtful about resetting variables after use.";
 
     }
 }

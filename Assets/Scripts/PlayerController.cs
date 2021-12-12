@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
 			if (_isFirstTimeUsingWS)
 			{
 				_isFirstTimeUsingWS = false;
-				GameManager.Instance.messageText.text = "Pick up the serving platter,\nit's leaning against the wall.";	
+				GameManager.Instance.messageText.text = "Pick up the round serving platter\n\nleaning against the wall.";	
 			}
 		}
 
@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour
 			if (_isFirstTimeUsingWS)
 			{
 				_isFirstTimeUsingWS = false;
-				GameManager.Instance.messageText.text = "Pick up the serving platter,\nit's leaning against the wall.";
+				GameManager.Instance.messageText.text = "Pick up the round serving platter\n\nleaning against the wall.";
 			}
 		}
 	}

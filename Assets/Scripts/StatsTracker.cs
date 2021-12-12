@@ -7,23 +7,23 @@ public class StatsTracker : MonoBehaviour
     public static StatsTracker Instance;
 
 
-    public bool isGameStarted;
-    public bool isAnyTableOpen;
 
-
+ 
     public float elapsedGameTimeTotal = 0;
-    public float diningRoomOpenTimeTotal = 0;
-    public float tableOpenTimeTotal = 0; // 1 table open for one minute = 1; 3 tables open for one minute = 3.
-    public float isUsingScrubbiTimeTotal = 0;
-    public float isLateTimeTotal = 0;
-    public float averageTimeToServePerGuest = 0;
+    public float diningRoomOpenTimeTotal = 0; // StatsTracker/TrackDiningRoomServiceTimeTotal()
+    public float tableOpenTimeTotal = 0; // StatsTracker/TrackDiningRoomServiceTimeTotal().  1 table open for one minute = 1; 3 tables open for one minute = 3.
+    public float isUsingScrubbiTimeTotal = 0; // StatsTracker/TrackScrubbiTimeTotal()
+    public float isLateTimeTotal = 0; // StatsTracker/TrackLateTimeTotal()
+    public float elapsedTimeToServeOrder = 0; // StatsTracker/TrackElapsedGameTimeTotal()
+    public float averageTimeToServePerGuest = 0; // (elapsedTimeToServeOrder/guestsSeatedTotal)
+    public float averageTimeToServePerTable = 0; // (elapsedTimeToServeOrder/deliveriesMadeTotal)
 
     ////////////////////////////
 
-    public int ordersReceivedTotal = 0;
-    public int guestsSeatedTotal = 0;
-    public int deliveriesMadeTotal = 0;
-    public int perfectDeliveriesMadeTotal = 0;
+    public int ordersReceivedTotal = 0; // TableTracker/PublishOrder()
+    public int guestsSeatedTotal = 0; // TableTracker/SeatGuests()
+    public int deliveriesMadeTotal = 0; // ServeFood/Update()/GetKeyDown
+    public int perfectDeliveriesMadeTotal = 0; // GameManager/CheckIfPerfectDelivery()
     public int wasLateTableCountTotal = 0;
 
     ////////////////////////////
@@ -84,12 +84,14 @@ public class StatsTracker : MonoBehaviour
         TrackDiningRoomServiceTimeTotal();
         TrackScrubbiTimeTotal();
         TrackLateTimeTotal();
+        averageTimeToServePerGuest = elapsedTimeToServeOrder / guestsSeatedTotal;
+        averageTimeToServePerTable = elapsedTimeToServeOrder / deliveriesMadeTotal;
     }
 
 
     private void TrackElapsedGameTimeTotal()
     {
-        if (isGameStarted)
+        if (GameManager.Instance.isGameStarted)
         {
             elapsedGameTimeTotal += Time.deltaTime;
         }

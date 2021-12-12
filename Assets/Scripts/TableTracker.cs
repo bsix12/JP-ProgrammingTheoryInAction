@@ -49,7 +49,7 @@ public class TableTracker : MonoBehaviour
     [SerializeField] private int _saladsOrdered;
 
     private int _maximumOrderScorePossible;
-    private int _mainDishesOrdered;
+    private int _numberOfGuestsThisOrder;
 
     private float _timeGuestsStay;
 
@@ -102,18 +102,19 @@ public class TableTracker : MonoBehaviour
         _carrotsSteamedOrdered = GameManager.Instance.carrotsSteamedOrdered;
         _broccoliSteamedOrdered = GameManager.Instance.broccoliSteamedOrdered;
         _saladsOrdered = GameManager.Instance.saladsOrdered;
-        _mainDishesOrdered = _chickenOrdered + _beefRareOrdered + _beefMediumOrdered + _beefWellDoneOrdered;
+        _numberOfGuestsThisOrder = _chickenOrdered + _beefRareOrdered + _beefMediumOrdered + _beefWellDoneOrdered;
     }
 
 
     private void SeatGuests()
     {
-        int _numberOfGuests = _mainDishesOrdered;
-        GameManager.Instance.numberOfSeatedGuests += _numberOfGuests;
+        GameManager.Instance.numberOfSeatedGuests += _numberOfGuestsThisOrder;
+        StatsTracker.Instance.guestsSeatedTotal += _numberOfGuestsThisOrder;
+
         _guestsIndexList = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
         isEmptyWithNoGuests = false;
 
-        for (int i = 0; i < _numberOfGuests; i++)
+        for (int i = 0; i < _numberOfGuestsThisOrder; i++)
         {
             int _random = Random.Range(0, _guestsIndexList.Count - 1);
 
@@ -125,6 +126,7 @@ public class TableTracker : MonoBehaviour
 
     private void PublishOrder()
     {
+        StatsTracker.Instance.ordersReceivedTotal += 1;
         orderText.text = ""; // clear the 'waiting for new order'
         orderTicketBackground.gameObject.SetActive(true);
         orderTicket.gameObject.SetActive(true);
@@ -150,11 +152,12 @@ public class TableTracker : MonoBehaviour
             string _roundTime = Mathf.Floor(timeElapsed / 60).ToString("0") + ":" + Mathf.FloorToInt(timeElapsed % 60).ToString("00");
             timeElapsedTextUI.text = _roundTime;
 
-            if (timeElapsed > _mainDishesOrdered * GameManager.Instance.secondsOfPrepAllowedPerMain && !isLate)
+            if (timeElapsed > _numberOfGuestsThisOrder * GameManager.Instance.secondsOfPrepAllowedPerMain && !isLate)
             {
                 timeElapsedTextUI.color = Color.red;
                 isLate = true;
                 GameManager.Instance.isLateNowTableCount += 1;
+                StatsTracker.Instance.wasLateTableCountTotal += 1;
             }
         }
     }
@@ -172,8 +175,8 @@ public class TableTracker : MonoBehaviour
             guests[i].gameObject.SetActive(false);
         }
 
-        GameManager.Instance.numberOfSeatedGuests -= _mainDishesOrdered; // _mainDishesOrdered = number of guests
-        _mainDishesOrdered = 0;
+        GameManager.Instance.numberOfSeatedGuests -= _numberOfGuestsThisOrder; // _mainDishesOrdered = number of guests
+        _numberOfGuestsThisOrder = 0;
         isEmptyWithNoGuests = true;
         onPlateGameObjects.Clear(); // list of GameObjects
         GameManager.Instance.reportCardToPost.Clear(); // list of strings
@@ -186,8 +189,10 @@ public class TableTracker : MonoBehaviour
     public void AfterFoodIsServedActions()
     {
         GameManager.Instance.DetermineWhichTableWasServed();
+        StatsTracker.Instance.deliveriesMadeTotal += 1;
+        StatsTracker.Instance.elapsedTimeToServeOrder += timeElapsed;
+        EvaluateDeliveryBeforeStartingNextOrder();   
         ResetTicket();
-        EvaluateDeliveryBeforeStartingNextOrder();        
     }
 
 
@@ -223,6 +228,7 @@ public class TableTracker : MonoBehaviour
         GameManager.Instance.carrotsSteamedOrdered = _carrotsSteamedOrdered;
         GameManager.Instance.broccoliSteamedOrdered = _broccoliSteamedOrdered;
         GameManager.Instance.saladsOrdered = _saladsOrdered;
+        GameManager.Instance.maximumOrderScorePossible = _maximumOrderScorePossible;
 
         _chickenOrdered = 0;
         _beefRareOrdered = 0;
