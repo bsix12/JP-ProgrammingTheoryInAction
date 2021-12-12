@@ -20,25 +20,31 @@ public class Food : MonoBehaviour
 
     protected Rigidbody myRb;
     protected Collider myBoxCollider;
+    protected Renderer myRenderer;
+    protected AudioSource myAudioSource;
 
-    [SerializeField] protected bool isCooking;
-    [SerializeField] protected bool isCooked;
-    [SerializeField] protected bool isBurned;
-    [SerializeField] protected bool isOnFloor;
-    [SerializeField] protected bool hasBeenOnFloor;
-    [SerializeField] protected bool isSmashed;
+    [SerializeField] protected bool isCooking = false;
+    [SerializeField] protected bool isCooked = false;
+    [SerializeField] protected bool isRuined = false;
+    [SerializeField] protected bool isOnFloor = false;
+    [SerializeField] protected bool hasBeenOnFloor = false;
+    [SerializeField] protected bool isSmashed = false;
     
     protected Color32 myRawColor;
     protected Color32 myCookedColor;
     protected Color32 myCurrentColor;
-    protected Color32 isBurnedColor = new Color32(25, 25, 0, 255);
+    protected Color32 isRuinedColor = new Color32(25, 25, 0, 255);
     
     protected float myTemp {get{ return _myTemp;} set{_myTemp = value;}} // ENCAPSULATION - accessible property
     protected float myStartTemp;
-    protected float myIsBurnedTemp;
+    protected float myIsRuinedTemp;
     protected float myIsCookedTemp;
     protected float onFloorTime;
     protected float smashedSinkSpeed = .2f;
+
+    protected string myRawName;
+    protected string myCookedName;
+    protected string myRuinedName;
 
     private static float _stationHeatingRate;
     
@@ -51,7 +57,8 @@ public class Food : MonoBehaviour
     {
         UpdateFoodTemperature();    // ABSTRACTION - method name indicates Update() action, details in separate method
         MonitorCookedCondition();   // ABSTRACTION - method name indicates Update() action, details in separate method
-        MonitorTimeOnFloor();
+        SetFoodGameObjectProperties();
+        MonitorTimeOnFloor();        
     }
 
     
@@ -88,11 +95,37 @@ public class Food : MonoBehaviour
     }
 
 
+    protected virtual void SetFoodGameObjectProperties()
+    {
+        if (!isCooked && iAm != myRawName)
+        {
+            myRenderer.material.color = myRawColor;
+            myCurrentColor = myRawColor;
+            iAm = myRawName;
+        }
+
+        if (isCooked && iAm != myCookedName && !isRuined)
+        {
+            myRenderer.material.color = myCookedColor;
+            myCurrentColor = myCookedColor;
+            myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
+            iAm = myCookedName;
+        }
+
+        if (isRuined && iAm != myRuinedName)
+        {
+            myRenderer.material.color = isRuinedColor;
+            myCurrentColor = isRuinedColor;
+            iAm = myRuinedName;
+        }
+    }
+
+
     protected virtual void MonitorCookedCondition()
     {
-        if (!isBurned && _myTemp >= myIsBurnedTemp)
+        if (!isRuined && _myTemp >= myIsRuinedTemp)
         {
-            isBurned = true;
+            isRuined = true;
         }
         else if (!isCooked && _myTemp >= myIsCookedTemp)
         {
@@ -112,6 +145,7 @@ public class Food : MonoBehaviour
         {
             isSmashed = true;
             ReplaceFoodWithSmashed();
+            StatsTracker.Instance.foodSmashedTotal += 1;
             GameManager.Instance.ApplySmashedFoodPenalty();
         }
 
@@ -157,10 +191,10 @@ public class Food : MonoBehaviour
             }
         }
 
-        // tally up the food delivered, each food objects adds itself (iAm) to list
+        // tally up the food served, each food objects adds itself (iAm) to list
         if (other.gameObject.CompareTag("CollectFoodTrigger"))
         {
-            GameManager.Instance.foodDeliveredNames.Add(iAm);
+            GameManager.Instance.foodServedNames.Add(iAm);
             GameManager.Instance.readyToServeGameObjects.Add(gameObject);
         }
 
@@ -192,11 +226,11 @@ public class Food : MonoBehaviour
 
         if (other.gameObject.CompareTag("CollectFoodTrigger"))
         {
-            for (int i = 0; i < GameManager.Instance.foodDeliveredNames.Count; i++)
+            for (int i = 0; i < GameManager.Instance.foodServedNames.Count; i++)
             {
-                if (GameManager.Instance.foodDeliveredNames[i] == iAm && !removedOne)
+                if (GameManager.Instance.foodServedNames[i] == iAm && !removedOne)
                 {
-                    GameManager.Instance.foodDeliveredNames.RemoveAt(i);
+                    GameManager.Instance.foodServedNames.RemoveAt(i);
                     GameManager.Instance.readyToServeGameObjects.RemoveAt(i);
                     removedOne = true;
                 }

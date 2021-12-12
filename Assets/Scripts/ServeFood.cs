@@ -60,7 +60,7 @@ public class ServeFood : MonoBehaviour
             MoveFoodGameObjectsToOnPlateListFromReadyToServeList();
 
             GameManager.Instance.readyToServeGameObjects.Clear();
-            GameManager.Instance.foodDeliveredNames.Clear(); // this cannot clear before score is calculated.  if issue, need to store working copy
+            GameManager.Instance.foodServedNames.Clear(); // this cannot clear before score is calculated.  if issue, need to store working copy
     }
 
     private void MoveFoodGameObjectsToTable()

@@ -8,28 +8,19 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
     public bool isCookedMedium;
     public bool isCookedWellDone;
 
-    private Renderer _myRenderer;
-    private AudioSource _myAudioSource;
-    
-
 
     private void Awake()
     {
-        _myRenderer = GetComponent<Renderer>();
-        _myAudioSource = GetComponent<AudioSource>();
+        myRenderer = GetComponent<Renderer>();
+        myAudioSource = GetComponent<AudioSource>();
         myRb = GetComponent<Rigidbody>();
         myBoxCollider = GetComponent<BoxCollider>();
          
         myStartTemp = 60f;
-        myIsBurnedTemp = 200f;
-        myTemp = myStartTemp;        
+        myIsRuinedTemp = 200f;
+        myTemp = myStartTemp;
     }
 
-    protected override void Update()  // POLYMORPHISM - override method.  Each food type has unique color pallette
-    {
-        SetFoodColor();  // ABSTRACTION - method name indicates Update() action, details in separate method
-        base.Update();   // Run Update() of base class.
-    }
 
     protected override void MonitorCookedCondition()  // POLYMORPHISM - Beef has rare, medium, and well-done conditions
     {
@@ -38,9 +29,9 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
         float _myIsWellDoneTemp = 170f;
         
 
-        if (isCookedWellDone && myTemp >= myIsBurnedTemp)
+        if (isCookedWellDone && myTemp >= myIsRuinedTemp)
         {
-            isBurned = true;
+            isRuined = true;
             isCookedWellDone = false;
         }
 
@@ -61,7 +52,7 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
         }
     }
 
-    private void SetFoodColor()
+    protected override void SetFoodGameObjectProperties()
     {
         myRawColor = new Color32(225, 145, 145, 255);        
         Color32 myRareColor = new Color32(245, 125, 100, 255);
@@ -70,40 +61,40 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
 
         if (!isCooked && iAm != "Raw Beef")
         {
-            _myRenderer.material.color = myRawColor;
+            myRenderer.material.color = myRawColor;
             myCurrentColor = myRawColor;
             iAm = "Raw Beef";
         }
 
-        if (isCookedRare && iAm != "Beef: Rare" && !isCookedMedium && !isCookedWellDone && !isBurned)
+        if (isCookedRare && iAm != "Beef: Rare" && !isCookedMedium && !isCookedWellDone && !isRuined)
         {
-            _myRenderer.material.color = myRareColor;
+            myRenderer.material.color = myRareColor;
             myCurrentColor = myRareColor;
-            _myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
+            myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
             iAm = "Beef: Rare";
         }
 
-        if (isCookedMedium && iAm != "Beef: Medium" && !isCookedRare && !isCookedWellDone && !isBurned)
+        if (isCookedMedium && iAm != "Beef: Medium" && !isCookedRare && !isCookedWellDone && !isRuined)
         {
-            _myRenderer.material.color = myMediumColor;
+            myRenderer.material.color = myMediumColor;
             myCurrentColor = myMediumColor;
-            _myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
+            myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
             iAm = "Beef: Medium";
         }
 
-        if (isCookedWellDone && iAm != "Beef: Well-Done" && !isCookedRare && !isCookedMedium && !isBurned)
+        if (isCookedWellDone && iAm != "Beef: Well-Done" && !isCookedRare && !isCookedMedium && !isRuined)
         {
-            _myRenderer.material.color = myWellDoneColor;
+            myRenderer.material.color = myWellDoneColor;
             myCurrentColor = myWellDoneColor;
-            _myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
+            myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
             iAm = "Beef: Well-Done";
         }
 
-        if (isBurned && iAm != "Burned Beef")
+        if (isRuined && iAm != "Ruined Beef")
         {
-            _myRenderer.material.color = isBurnedColor;
-            myCurrentColor = isBurnedColor;
-            iAm = "Burned Beef";
+            myRenderer.material.color = isRuinedColor;
+            myCurrentColor = isRuinedColor;
+            iAm = "Ruined Beef";
         }
     }
 
@@ -111,7 +102,7 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
     {
         if (other.gameObject.CompareTag("Grill"))
         {
-            _myAudioSource.Play(); // Apply 'sizzleSound' for meats only && on grill only
+            myAudioSource.Play(); // Apply 'sizzleSound' for meats only && on grill only
         }
 
         base.OnTriggerEnter(other);
@@ -121,7 +112,7 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
     {
         if (other.gameObject.CompareTag("Grill"))
         {
-            _myAudioSource.Stop(); // Apply 'sizzleSound' for meats only && on grill only
+            myAudioSource.Stop(); // Apply 'sizzleSound' for meats only && on grill only
         }
         
         base.OnTriggerExit(other);        

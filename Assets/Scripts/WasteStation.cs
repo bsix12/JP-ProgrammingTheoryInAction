@@ -12,7 +12,6 @@ public class WasteStation : MonoBehaviour
     public AudioClip wasteSound;
 
 
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Food"))
@@ -22,6 +21,7 @@ public class WasteStation : MonoBehaviour
                                         // looked like object was removed but it was instead reset and falling
                                         // need destroy the gameObject the script is attached to
             GameManager.Instance.ApplyWastedFoodPenalty();
+            StatsTracker.Instance.foodWasteBinTotal += 1;
         }
     }
 }

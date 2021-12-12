@@ -108,7 +108,7 @@ public class TableTracker : MonoBehaviour
 
     private void SeatGuests()
     {
-        GameManager.Instance.numberOfSeatedGuests += _numberOfGuestsThisOrder;
+        GameManager.Instance.numberOfNowSeatedGuests += _numberOfGuestsThisOrder;
         StatsTracker.Instance.guestsSeatedTotal += _numberOfGuestsThisOrder;
 
         _guestsIndexList = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
@@ -175,7 +175,7 @@ public class TableTracker : MonoBehaviour
             guests[i].gameObject.SetActive(false);
         }
 
-        GameManager.Instance.numberOfSeatedGuests -= _numberOfGuestsThisOrder; // _mainDishesOrdered = number of guests
+        GameManager.Instance.numberOfNowSeatedGuests -= _numberOfGuestsThisOrder; // _mainDishesOrdered = number of guests
         _numberOfGuestsThisOrder = 0;
         isEmptyWithNoGuests = true;
         onPlateGameObjects.Clear(); // list of GameObjects

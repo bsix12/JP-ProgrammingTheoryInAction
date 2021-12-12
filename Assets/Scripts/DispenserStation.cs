@@ -40,6 +40,32 @@ public class DispenserStation : MonoBehaviour
             
             Instantiate(stationMaterial, spawnLoc);
             audioSource.PlayOneShot(dispenserSound, .3f);
+            StatsTracker.Instance.foodDispensedTotal += 1;
+
+            if(stationMaterial.name == "Beef") // these strings must match prefab.name
+            {
+                StatsTracker.Instance.beefDispensedTotal += 1;
+            }
+
+            else if(stationMaterial.name == "Chicken")
+            {
+                StatsTracker.Instance.chickenDispensedTotal += 1;
+            }
+
+            else if (stationMaterial.name == "Broccoli")
+            {
+                StatsTracker.Instance.broccoliDispensedTotal += 1;
+            }
+
+            else if (stationMaterial.name == "Carrot")
+            {
+                StatsTracker.Instance.carrotsDispensedTotal += 1;
+            }
+
+            else if (stationMaterial.name == "Salad")
+            {
+                StatsTracker.Instance.saladsDispensedTotal += 1;
+            }
         }
     }
 
