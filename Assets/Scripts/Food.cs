@@ -17,6 +17,7 @@ public class Food : MonoBehaviour
     ////////////////////////////
 
     public bool hasBeenMovedToPlate = false; // work around.  prevent double move in ServeFood/ServeFoodToTable()/_transferFoodVector.  have not found way to prevent
+    public bool hasBeenOnFloor = false;
 
     protected Rigidbody myRb;
     protected Collider myBoxCollider;
@@ -26,8 +27,7 @@ public class Food : MonoBehaviour
     [SerializeField] protected bool isCooking = false;
     [SerializeField] protected bool isCooked = false;
     [SerializeField] protected bool isRuined = false;
-    [SerializeField] protected bool isOnFloor = false;
-    [SerializeField] protected bool hasBeenOnFloor = false;
+    [SerializeField] protected bool isOnFloor = false;    
     [SerializeField] protected bool isSmashed = false;
     
     protected Color32 myRawColor;
@@ -145,7 +145,7 @@ public class Food : MonoBehaviour
         {
             isSmashed = true;
             ReplaceFoodWithSmashed();
-            StatsTracker.Instance.foodSmashedTotal += 1;
+            StatsTracker.Instance.foodSmashedSession += 1;
             GameManager.Instance.ApplySmashedFoodPenalty();
         }
 

@@ -53,6 +53,8 @@ public class ServeFood : MonoBehaviour
 
     }
 
+
+
     private void ProcessFoodGameObjects()
     {
             MoveFoodGameObjectsToTable(); // visual only.  scoring based on FoodDeliveredNames<string> list
@@ -62,6 +64,7 @@ public class ServeFood : MonoBehaviour
             GameManager.Instance.readyToServeGameObjects.Clear();
             GameManager.Instance.foodServedNames.Clear(); // this cannot clear before score is calculated.  if issue, need to store working copy
     }
+
 
     private void MoveFoodGameObjectsToTable()
     {

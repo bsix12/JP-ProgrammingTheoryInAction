@@ -21,7 +21,7 @@ public class WasteStation : MonoBehaviour
                                         // looked like object was removed but it was instead reset and falling
                                         // need destroy the gameObject the script is attached to
             GameManager.Instance.ApplyWastedFoodPenalty();
-            StatsTracker.Instance.foodWasteBinTotal += 1;
+            StatsTracker.Instance.foodWasteBinSession += 1;
         }
     }
 }

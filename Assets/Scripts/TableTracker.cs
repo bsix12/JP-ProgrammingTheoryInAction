@@ -109,7 +109,7 @@ public class TableTracker : MonoBehaviour
     private void SeatGuests()
     {
         GameManager.Instance.numberOfNowSeatedGuests += _numberOfGuestsThisOrder;
-        StatsTracker.Instance.guestsSeatedTotal += _numberOfGuestsThisOrder;
+        StatsTracker.Instance.guestsSeatedSession += _numberOfGuestsThisOrder;
 
         _guestsIndexList = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
         isEmptyWithNoGuests = false;
@@ -126,7 +126,7 @@ public class TableTracker : MonoBehaviour
 
     private void PublishOrder()
     {
-        StatsTracker.Instance.ordersReceivedTotal += 1;
+        StatsTracker.Instance.ordersReceivedSession += 1;
         orderText.text = ""; // clear the 'waiting for new order'
         orderTicketBackground.gameObject.SetActive(true);
         orderTicket.gameObject.SetActive(true);
@@ -157,7 +157,7 @@ public class TableTracker : MonoBehaviour
                 timeElapsedTextUI.color = Color.red;
                 isLate = true;
                 GameManager.Instance.isLateNowTableCount += 1;
-                StatsTracker.Instance.wasLateTableCountTotal += 1;
+                StatsTracker.Instance.wasLateTableCountSession += 1;
             }
         }
     }
@@ -188,9 +188,10 @@ public class TableTracker : MonoBehaviour
 
     public void AfterFoodIsServedActions()
     {
+        GameManager.Instance.CheckIfAnyHasBeenOnFloor();
         GameManager.Instance.DetermineWhichTableWasServed();
-        StatsTracker.Instance.deliveriesMadeTotal += 1;
-        StatsTracker.Instance.elapsedTimeToServeOrder += timeElapsed;
+        StatsTracker.Instance.deliveriesMadeSession += 1;
+        StatsTracker.Instance.elapsedWaitTimeTableSession += timeElapsed;
         EvaluateDeliveryBeforeStartingNextOrder();   
         ResetTicket();
     }

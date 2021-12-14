@@ -64,6 +64,8 @@ public class GameManager : MonoBehaviour
     public int saladsOrdered;
     public int smashedFoodPenalty = 100; // play test value, should vary for mains versus sides
     public int wastedFoodPenalty = 50; // play test value, should vary for mains versus sides
+    public int wasOnFloorAndServedPenalty = 150;
+    
 
     public bool isGameStarted;
     public bool isActiveTable1 = false;
@@ -132,6 +134,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _broccoliRuinedServed;
     [SerializeField] private int _saladsGoodServed;
     [SerializeField] private int _saladsRuinedServed;
+    private int _rawFoodServedCount = 0;
+    private int _ruinedFoodServedCount = 0;
+    private int _wasOnFloorAndServedCount = 0;
     [SerializeField] private int _orderScore;
     [SerializeField] private int _totalScore;
 
@@ -143,12 +148,13 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         Instance = this;
-
+        
         _table1 = GameObject.Find("TablesManager").GetComponent<Table1>();
         _table2 = GameObject.Find("TablesManager").GetComponent<Table2>();
         _table3 = GameObject.Find("TablesManager").GetComponent<Table3>();
-
+        
         _orderScore = 0;
+        isGameStarted = true;
         canDispense = true;
         
         LoadFoodMenu();
@@ -267,11 +273,11 @@ public class GameManager : MonoBehaviour
         int mainSelectedIndex;
         
         
-        if(StatsTracker.Instance.ordersReceivedTotal < 5)
+        if(StatsTracker.Instance.ordersReceivedSession < 5)
         {
-            mains = StatsTracker.Instance.ordersReceivedTotal + 1;
-            sides = StatsTracker.Instance.ordersReceivedTotal + 1;
-            salads = StatsTracker.Instance.ordersReceivedTotal + 0;
+            mains = StatsTracker.Instance.ordersReceivedSession + 1;
+            sides = StatsTracker.Instance.ordersReceivedSession + 1;
+            salads = StatsTracker.Instance.ordersReceivedSession + 0;
         }
 
         else
@@ -279,12 +285,12 @@ public class GameManager : MonoBehaviour
             mains = Random.Range(minMains, maxMains);
         }
 
-        if (mains <= 4 && StatsTracker.Instance.ordersReceivedTotal >= 5)
+        if (mains <= 4 && StatsTracker.Instance.ordersReceivedSession >= 5)
         {
             sides = Random.Range(mains - 1, mains + 2);
             salads = Random.Range(mains - 2, mains);
         }
-        else if (mains > 4 && StatsTracker.Instance.ordersReceivedTotal >= 5)
+        else if (mains > 4 && StatsTracker.Instance.ordersReceivedSession >= 5)
         {
             sides = Random.Range(mains - 2, mains + 4);
             salads = Random.Range(mains - 4, mains);
@@ -307,42 +313,42 @@ public class GameManager : MonoBehaviour
             if (_includesNoneFoodOrderedNames[i] == "Chicken")
             {
                 chickenOrdered += 1;
-                StatsTracker.Instance.chickenCookedOrderedTotal += 1;
+                StatsTracker.Instance.chickenCookedOrderedSession += 1;
             }
 
             if (_includesNoneFoodOrderedNames[i] == "Beef: Rare")
             {
                 beefRareOrdered += 1;
-                StatsTracker.Instance.beefRareOrderedTotal += 1;
+                StatsTracker.Instance.beefRareOrderedSession += 1;
             }
 
             if (_includesNoneFoodOrderedNames[i] == "Beef: Medium")
             {
                 beefMediumOrdered += 1;
-                StatsTracker.Instance.beefMediumOrderedTotal += 1;
+                StatsTracker.Instance.beefMediumOrderedSession += 1;
             }
 
             if (_includesNoneFoodOrderedNames[i] == "Beef: Well-Done")
             {
                 beefWellDoneOrdered += 1;
-                StatsTracker.Instance.beefWellDoneOrderedTotal += 1;
+                StatsTracker.Instance.beefWellDoneOrderedSession += 1;
             }
 
             if (_includesNoneFoodOrderedNames[i] == "Steamed Carrots")
             {
                 carrotsSteamedOrdered += 1;
-                StatsTracker.Instance.carrotsSteamedOrderedTotal += 1;
+                StatsTracker.Instance.carrotsSteamedOrderedSession += 1;
             }
 
             if (_includesNoneFoodOrderedNames[i] == "Steamed Broccoli")
             {
                 broccoliSteamedOrdered += 1;
-                StatsTracker.Instance.broccoliSteamedOrderedTotal += 1;
+                StatsTracker.Instance.broccoliSteamedOrderedSession += 1;
             }
         }
         
         saladsOrdered = salads; // salads are not randomly selected; base on quantity of Mains ordered
-        StatsTracker.Instance.saladsOrderedTotal += saladsOrdered;
+        StatsTracker.Instance.saladsOrderedSession += saladsOrdered;
     }
 
 
@@ -458,6 +464,10 @@ public class GameManager : MonoBehaviour
         _broccoliRuinedServed = 0;
         _saladsGoodServed = 0;
         _saladsRuinedServed = 0;
+
+        _rawFoodServedCount = 0;
+        _ruinedFoodServedCount = 0;
+        _wasOnFloorAndServedCount = 0;
     }
 
 
@@ -554,8 +564,8 @@ public class GameManager : MonoBehaviour
             _oncePerSecond = 1f; // reset 1 second timer
         }
     }
+       
 
-    
     private void MonitorSmashedFoodContainer()
     {
         if (smashedFoodContainer.transform.childCount > 20 && !_mustClean)
@@ -585,6 +595,8 @@ public class GameManager : MonoBehaviour
         CountFoodServed();
         CheckIfPerfectDelivery();
         CalculateScore();
+        _orderScore -= _wasOnFloorAndServedCount* wasOnFloorAndServedPenalty;    // tacked on, probably should have a category like 'ruined' for food names.
+                                                                                // needs to be outside of calculate score.  
         UpdateScore();
         ResetOrderReportText();
         PostToKitchenReportCard();
@@ -620,105 +632,110 @@ public class GameManager : MonoBehaviour
 
     private void CountFoodServed()
     {
+
+        StatsTracker.Instance.foodServedSession += foodServedNames.Count;
+
         //Debug.Log("CountFoodServed() has been called");
         for (int i = 0; i < foodServedNames.Count; i++)
         {
             if (foodServedNames[i] == "Raw Chicken")
             {
                 _chickenRawServed += 1;
-                StatsTracker.Instance.chickenRawServedTotal += 1;
+                StatsTracker.Instance.chickenRawServedSession += 1;
             }
 
             if (foodServedNames[i] == "Cooked Chicken")
             {
                 _chickenCookedServed += 1;
-                StatsTracker.Instance.chickenCookedServedTotal += 1;
+                StatsTracker.Instance.chickenCookedServedSession += 1;
             }
 
             if (foodServedNames[i] == "Ruined Chicken")
             {
                 _chickenRuinedServed += 1;
-                StatsTracker.Instance.chickenRuinedServedTotal += 1;
+                StatsTracker.Instance.chickenRuinedServedSession += 1;
             }
 
             if (foodServedNames[i] == "Raw Beef")
             {
                 _beefRawServed += 1;
-                StatsTracker.Instance.beefRawServedTotal += 1;
+                StatsTracker.Instance.beefRawServedSession += 1;
             }
 
             if (foodServedNames[i] == "Beef: Rare")
             {
                 _beefRareServed += 1;
-                StatsTracker.Instance.beefRareServedTotal += 1;
+                StatsTracker.Instance.beefRareServedSession += 1;
             }
 
             if (foodServedNames[i] == "Beef: Medium")
             {
                 _beefMediumServed += 1;
-                StatsTracker.Instance.beefMediumServedTotal += 1;
+                StatsTracker.Instance.beefMediumServedSession += 1;
             }
 
             if (foodServedNames[i] == "Beef: Well-Done")
             {
                 _beefWellDoneServed += 1;
-                StatsTracker.Instance.beefWellDoneServedTotal += 1;
+                StatsTracker.Instance.beefWellDoneServedSession += 1;
             }
 
             if (foodServedNames[i] == "Ruined Beef")
             {
                 _beefRuinedServed += 1;
-                StatsTracker.Instance.beefRuinedServedTotal += 1;
+                StatsTracker.Instance.beefRuinedServedSession += 1;
             }
 
             if (foodServedNames[i] == "Raw Carrots")
             {
                 _carrotsRawServed += 1;
-                StatsTracker.Instance.carrotsRawServedTotal += 1;
+                StatsTracker.Instance.carrotsRawServedSession += 1;
             }
 
             if (foodServedNames[i] == "Steamed Carrots")
             {
                 _carrotsSteamedServed += 1;
-                StatsTracker.Instance.carrotsSteamedServedTotal += 1;
+                StatsTracker.Instance.carrotsSteamedServedSession += 1;
             }
 
             if (foodServedNames[i] == "Ruined Carrots")
             {
                 _carrotsRuinedServed += 1;
-                StatsTracker.Instance.carrotsRuinedServedTotal += 1;
+                StatsTracker.Instance.carrotsRuinedServedSession += 1;
             }
 
             if (foodServedNames[i] == "Raw Broccoli")
             {
                 _broccoliRawServed += 1;
-                StatsTracker.Instance.broccoliRawServedTotal += 1;
+                StatsTracker.Instance.broccoliRawServedSession += 1;
             }
 
             if (foodServedNames[i] == "Steamed Broccoli")
             {
                 _broccoliSteamedServed += 1;
-                StatsTracker.Instance.broccoliSteamedServedTotal += 1;
+                StatsTracker.Instance.broccoliSteamedServedSession += 1;
             }
 
             if (foodServedNames[i] == "Ruined Broccoli")
             {
                 _broccoliRuinedServed += 1;
-                StatsTracker.Instance.broccoliRuinedServedTotal += 1;
+                StatsTracker.Instance.broccoliRuinedServedSession += 1;
             }
 
             if (foodServedNames[i] == "Salad")
             {
                 _saladsGoodServed += 1;
-                StatsTracker.Instance.saladsGoodServedTotal += 1;
+                StatsTracker.Instance.saladsGoodServedSession += 1;
             }
 
             if (foodServedNames[i] == "Ruined Salad")
             {
                 _saladsRuinedServed += 1;
-                StatsTracker.Instance.saladsRuinedServedTotal += 1;
+                StatsTracker.Instance.saladsRuinedServedSession += 1;
             }
         }
+        _rawFoodServedCount = _beefRawServed + _chickenRawServed + _broccoliRawServed + _carrotsRawServed;
+        _ruinedFoodServedCount = _beefRuinedServed + _chickenRuinedServed + _broccoliRuinedServed + _carrotsRuinedServed + _saladsRuinedServed;
     }
 
     private void CheckIfPerfectDelivery()
@@ -729,11 +746,28 @@ public class GameManager : MonoBehaviour
             && _beefWellDoneServed == beefWellDoneOrdered
             && _carrotsSteamedServed == carrotsSteamedOrdered
             && _broccoliSteamedServed == broccoliSteamedOrdered 
-            && _saladsGoodServed == saladsOrdered)
+            && _saladsGoodServed == saladsOrdered
+            && _rawFoodServedCount == 0
+            && _ruinedFoodServedCount == 0
+            && _wasOnFloorAndServedCount == 0) // can't be perfect if served food off the floor
         {
-            StatsTracker.Instance.perfectDeliveriesMadeTotal += 1;
+            StatsTracker.Instance.perfectDeliveriesMadeSession += 1;
         }
     }
+
+
+    public void CheckIfAnyHasBeenOnFloor()
+    {
+        for (int i = 0; i < readyToServeGameObjects.Count; i++)
+        {
+            if (readyToServeGameObjects[i].GetComponent<Food>().hasBeenOnFloor == true)
+            {
+                StatsTracker.Instance.wasOnFloorAndServedSession += 1;
+                _wasOnFloorAndServedCount += 1;
+            }
+        }
+    }
+
 
     private void PostToKitchenReportCard()
     {
@@ -810,6 +844,11 @@ public class GameManager : MonoBehaviour
             reportCardToPost.Add("Beef: Well-Done - Fail\n");
         }
 
+        if (_wasOnFloorAndServedCount > 0)
+        {
+            reportCardToPost.Add("You just served food that touched the floor!\n");
+        }
+
         for (int i = 0; i < reportCardToPost.Count; i++)
         {
             reportCardText.text += reportCardToPost[i] + "\n";
@@ -824,7 +863,7 @@ public class GameManager : MonoBehaviour
         CalculateScoreForChickenServed();    // 
         CalculateScoreForCarrotsServed();    // ABSTRACTION - method names indicate actions, details in separate methods
         CalculateScoreForBroccoliServed();   // 
-        CalculateScoreForSaladsServed();     // 
+        CalculateScoreForSaladsServed();     //
     }
 
 
