@@ -21,6 +21,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI buttonTable3Text;
     public TextMeshPro reportCardText;
 
+    public TextMeshProUGUI scoreFlyUpToCorner;
+    public TextMeshProUGUI perfectFlyUp;
+
     public Button foodGuideButton;
     public Button notesButton;
 
@@ -35,6 +38,11 @@ public class GameManager : MonoBehaviour
     public GameObject smashedFoodContainer;
     public GameObject diningTablesUI;
     public GameObject foodGuide;
+
+    public AudioSource playerAudioSource;
+    public AudioClip perfectDeliveryAudio;
+    public AudioClip positiveDeliveryAudio;
+    public AudioClip negativeDeliveryAudio;
 
     ////////////////////////////
 
@@ -114,6 +122,7 @@ public class GameManager : MonoBehaviour
     private bool _isActiveNotes = false;
     private bool _isActiveFoodGuide = false;
     private bool _mustClean = false;
+    private bool _wasPerfectDelivery = false;
 
     private int _perSecondPenaltyIfLate = 5; // play test value
     private float _oncePerSecond = 1f;
@@ -258,7 +267,7 @@ public class GameManager : MonoBehaviour
         PickMenuItemsAndQuantities();
         SummarizeOnlyFoodOrdered();
         CalculateMaximumOrderScorePossible();
-        UpdateScore();
+        //UpdateScore();
     }
     
 
@@ -598,12 +607,14 @@ public class GameManager : MonoBehaviour
         _orderScore -= _wasOnFloorAndServedCount* wasOnFloorAndServedPenalty;    // tacked on, probably should have a category like 'ruined' for food names.
                                                                                 // needs to be outside of calculate score.  
         UpdateScore();
+        StartCoroutine(ScoreFlyUp());       
         ResetOrderReportText();
         PostToKitchenReportCard();
         PostCustomerComments();  // future
 
         foodServedNames.Clear();
         ResetStoredInts();
+        _wasPerfectDelivery = false;
         isCalculatingScore = false;
     }
 
@@ -752,6 +763,8 @@ public class GameManager : MonoBehaviour
             && _wasOnFloorAndServedCount == 0) // can't be perfect if served food off the floor
         {
             StatsTracker.Instance.perfectDeliveriesMadeSession += 1;
+            _wasPerfectDelivery = true;
+            StartCoroutine(PerfectFlyUp());
         }
     }
 
@@ -1231,9 +1244,42 @@ public class GameManager : MonoBehaviour
     private void UpdateScore()
     {
         _totalScore += _orderScore; // after any score, hold a copy of the total score
-        scoreText.text = "Score: " + _totalScore.ToString();
+        scoreText.text = "Score: " + _totalScore.ToString();        
     }
 
+
+    IEnumerator ScoreFlyUp()
+    {
+        if(_orderScore < 0)
+        {
+            scoreFlyUpToCorner.color = Color.red;
+            playerAudioSource.PlayOneShot(negativeDeliveryAudio, .2f);
+        }
+        else if (_orderScore > 0)
+        {
+            scoreFlyUpToCorner.color = new Color32(75, 200, 50, 255);
+            if (!_wasPerfectDelivery)
+            {
+                playerAudioSource.PlayOneShot(positiveDeliveryAudio, .5f);
+            }
+            
+        }
+        scoreFlyUpToCorner.text = _orderScore.ToString();
+        scoreFlyUpToCorner.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2);
+        scoreFlyUpToCorner.gameObject.SetActive(false);
+        scoreFlyUpToCorner.GetComponent<Animator>().Rebind(); 
+    }
+
+
+    IEnumerator PerfectFlyUp()
+    {
+        perfectFlyUp.gameObject.SetActive(true);
+        playerAudioSource.PlayOneShot(perfectDeliveryAudio);
+        yield return new WaitForSeconds(2);
+        perfectFlyUp.gameObject.SetActive(false);
+        perfectFlyUp.GetComponent<Animator>().Rebind();
+    }
 
     //////////////////////////////////////////////////////////////////////////
     /// WIP Customer Comments

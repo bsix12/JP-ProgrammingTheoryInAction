@@ -32,6 +32,7 @@ public class CreditsAndNotes : MonoBehaviour
             "qubodupFireLoop\n" +
             "Sizzling-sound-effect\n" +
             "wood01\n" +
+            "Win sound\n" +
             "\n" +
             "Thank you to my family for play testing and feedback!";
     }
