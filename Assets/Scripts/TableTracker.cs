@@ -49,7 +49,7 @@ public class TableTracker : MonoBehaviour
     [SerializeField] private int _saladsOrdered;
 
     private int _maximumOrderScorePossible;
-    private int _numberOfGuestsThisOrder;
+    [SerializeField] private int _numberOfGuestsThisOrder;
 
     private float _timeGuestsStay;
 
@@ -71,7 +71,11 @@ public class TableTracker : MonoBehaviour
     {
         _timeRemainingUntilNextOrder = Random.Range(5f, 15f); // debug timing ////////////////////////////////////////////////////////////////////
         _timeGuestsStay = _timeRemainingUntilNextOrder * .8f; // this is percent of delay that diners and food will remain at table before being cleared
-        Invoke("GuestsLeaveAndClearTable", _timeGuestsStay);
+        
+        if (!isEmptyWithNoGuests)
+        {
+            Invoke("GuestsLeaveAndClearTable", _timeGuestsStay);
+        }        
     }
 
 

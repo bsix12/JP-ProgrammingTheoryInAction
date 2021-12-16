@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class GameManager : MonoBehaviour
 {
@@ -23,12 +26,14 @@ public class GameManager : MonoBehaviour
 
     public TextMeshProUGUI scoreFlyUpToCorner;
     public TextMeshProUGUI perfectFlyUp;
+    public TextMeshProUGUI penaltyFlyUp;
+    public GameObject TablesUICanvas;
 
     public Button foodGuideButton;
     public Button notesButton;
 
-    public Image diningTablesUIBackground;
-    public Image foodGuidBackground;
+    //public Image diningTablesUIBackground;
+    public Image foodGuideBackground;
     public Image creditsNotesBackground;
 
     public GameObject kitchenDoor;
@@ -36,13 +41,14 @@ public class GameManager : MonoBehaviour
     public GameObject reservedTable2;
     public GameObject reservedTable3;
     public GameObject smashedFoodContainer;
-    public GameObject diningTablesUI;
+    public GameObject underlineTable1;
     public GameObject foodGuide;
 
     public AudioSource playerAudioSource;
     public AudioClip perfectDeliveryAudio;
     public AudioClip positiveDeliveryAudio;
     public AudioClip negativeDeliveryAudio;
+    public AudioClip buttonClick;
 
     ////////////////////////////
 
@@ -188,8 +194,8 @@ public class GameManager : MonoBehaviour
 
     public void EnableDiningTablesUI()
     {
-        diningTablesUIBackground.gameObject.SetActive(true);
-        Instance.diningTablesUI.gameObject.SetActive(true);
+        //diningTablesUIBackground.gameObject.SetActive(true);
+        TablesUICanvas.gameObject.SetActive(true);
         
         buttonTable1Text = GameObject.Find("OpenTable1ButtonText").GetComponent<TextMeshProUGUI>();
         buttonTable2Text = GameObject.Find("OpenTable2ButtonText").GetComponent<TextMeshProUGUI>();
@@ -211,12 +217,16 @@ public class GameManager : MonoBehaviour
     public void ApplySmashedFoodPenalty()
     {
         _totalScore -= smashedFoodPenalty;
+        penaltyFlyUp.text = smashedFoodPenalty.ToString() + ", Mess";
+        StartCoroutine(PenaltyFlyUp());
         UpdateScore();
     }
 
     public void ApplyWastedFoodPenalty()
     {
         _totalScore -= wastedFoodPenalty;
+        penaltyFlyUp.text = wastedFoodPenalty.ToString() + ", Waste";
+        StartCoroutine(PenaltyFlyUp());
         UpdateScore();
     }
 
@@ -1281,6 +1291,16 @@ public class GameManager : MonoBehaviour
         perfectFlyUp.GetComponent<Animator>().Rebind();
     }
 
+    IEnumerator PenaltyFlyUp()
+    {
+        penaltyFlyUp.gameObject.SetActive(true);
+        playerAudioSource.PlayOneShot(negativeDeliveryAudio, .1f);
+        yield return new WaitForSeconds(1);
+        penaltyFlyUp.gameObject.SetActive(false);
+        penaltyFlyUp.GetComponent<Animator>().Rebind();
+    }
+
+
     //////////////////////////////////////////////////////////////////////////
     /// WIP Customer Comments
     ///     add feedback to kitchen based on performance, many potential things to evaluate
@@ -1369,7 +1389,8 @@ public class GameManager : MonoBehaviour
             reservedTable1.gameObject.SetActive(false);
             isReadyForNewOrderTable1 = true;
             messageText.text = "";
-            GameObject.Find("TablesManager").GetComponent<Table1>().BeginNewOrder();
+            GameObject.Find("TablesManager").GetComponent<Table1>().BeginNewOrder();            
+            underlineTable1.gameObject.SetActive(false);
         }
 
         else if (isActiveTable1) // note to future self, need to do 'else if' for these 'one or the other' otherwise cycles
@@ -1392,6 +1413,7 @@ public class GameManager : MonoBehaviour
             }            
         }
 
+        playerAudioSource.PlayOneShot(buttonClick, .05f);
         KitchenDoorControl();
     }
 
@@ -1430,12 +1452,13 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        playerAudioSource.PlayOneShot(buttonClick, .05f);
         KitchenDoorControl();
     }
 
 
     public void ActivateTable3()
-    {
+    { 
         if (!isActiveTable3 && isDoneServingTable3)
         {
             isActiveTable3 = true;
@@ -1467,7 +1490,8 @@ public class GameManager : MonoBehaviour
                 buttonTable3Text.text = "To Close";
             }
         }
-
+        
+        playerAudioSource.PlayOneShot(buttonClick, .05f);
         KitchenDoorControl();
     }
 
@@ -1487,7 +1511,7 @@ public class GameManager : MonoBehaviour
     {
         if(_isActiveFoodGuide == true)
         {
-            foodGuidBackground.gameObject.SetActive(false);
+            foodGuideBackground.gameObject.SetActive(false);
             foodGuide.gameObject.SetActive(false);
             _buttonFoodGuideText.text = "Food Guide";
             _isActiveFoodGuide = false;
@@ -1495,11 +1519,13 @@ public class GameManager : MonoBehaviour
 
         else if(_isActiveFoodGuide == false)
         {
-            foodGuidBackground.gameObject.SetActive(true);
+            foodGuideBackground.gameObject.SetActive(true);
             foodGuide.gameObject.SetActive(true);
             _buttonFoodGuideText.text = "Hide Guide";
             _isActiveFoodGuide = true;
         }
+
+        playerAudioSource.PlayOneShot(buttonClick, .05f);
     }
     
 
@@ -1522,6 +1548,8 @@ public class GameManager : MonoBehaviour
             _isActiveCredits = true;
             notesButton.gameObject.SetActive(true);
         }
+
+        playerAudioSource.PlayOneShot(buttonClick, .05f);
     }
 
 
@@ -1538,11 +1566,21 @@ public class GameManager : MonoBehaviour
             notes.gameObject.SetActive(true);            
             _isActiveNotes = true;
         }
+
+        playerAudioSource.PlayOneShot(buttonClick, .05f);
     }
 
 
     public void QuitGame()
     {
+        StatsTracker.Instance.AddLastStoredAndSessionValuesSendToDataStorage();
+        DataStorage.Instance.SaveDataToDisk();
+        playerAudioSource.PlayOneShot(buttonClick, .05f);
+
+#if UNITY_EDITOR
+        EditorApplication.ExitPlaymode();
+#else
         Application.Quit();
+#endif
     }
 }

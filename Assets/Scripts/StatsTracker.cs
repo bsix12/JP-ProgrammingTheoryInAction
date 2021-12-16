@@ -12,7 +12,7 @@ public class StatsTracker : MonoBehaviour
     public TextMeshProUGUI sessionStatSummaryValues2;
     public TextMeshProUGUI allTimeStatSummaryValues1;
     public TextMeshProUGUI allTimeStatSummaryValues2;
-    public Image statsBackground;
+    public GameObject statsCanvas;
 
 
 
@@ -122,8 +122,8 @@ public class StatsTracker : MonoBehaviour
     void Start()
     {
         Instance = this;
-        statSummaryLabels1.text = "";
-        statSummaryLabels2.text = "";
+        //statSummaryLabels1.text = "";
+        //statSummaryLabels2.text = "";
     }
 
     
@@ -246,31 +246,21 @@ public class StatsTracker : MonoBehaviour
             StatsSummaryNames();
             StatsSummaryValuesSession();
             StatsSummaryValuesAllTime();
-            statSummaryLabels1.gameObject.SetActive(true);
-            statSummaryLabels2.gameObject.SetActive(true);
-            sessionStatSummaryValues1.gameObject.SetActive(true);
-            sessionStatSummaryValues2.gameObject.SetActive(true);
-            allTimeStatSummaryValues1.gameObject.SetActive(true);
-            allTimeStatSummaryValues2.gameObject.SetActive(true);
-            statsBackground.gameObject.SetActive(true); // need to move this to closer canvas, cant set active false food guide button
-            
+            statsCanvas.gameObject.SetActive(true);
+             
             Time.timeScale = 0; // pause
             isStatsActive = true;
         }
 
         else if (isStatsActive)
         {
-            statSummaryLabels1.gameObject.SetActive(false);
-            statSummaryLabels2.gameObject.SetActive(false);
-            sessionStatSummaryValues1.gameObject.SetActive(false);
-            sessionStatSummaryValues2.gameObject.SetActive(false);
-            allTimeStatSummaryValues1.gameObject.SetActive(false);
-            allTimeStatSummaryValues2.gameObject.SetActive(false);
-            statsBackground.gameObject.SetActive(false);
-            
+            statsCanvas.gameObject.SetActive(false);
+             
             Time.timeScale = 1; // unpause
             isStatsActive = false;
         }
+
+        GameManager.Instance.playerAudioSource.PlayOneShot(GameManager.Instance.buttonClick, .05f);
     }
 
 
@@ -503,7 +493,7 @@ public class StatsTracker : MonoBehaviour
             (DataStorage.Instance.saladsRuinedServedAllTimeLastStored + saladsRuinedServedSession);
     }
 
-    private void AddLastStoredAndSessionValuesSendToDataStorage()
+    public void AddLastStoredAndSessionValuesSendToDataStorage()
     {
         DataStorage.Instance.elapsedGameTimeAllTimeLastStored += elapsedGameTimeSession;
         DataStorage.Instance.diningRoomOpenTimeAllTimeLastStored += diningRoomOpenTimeSession;

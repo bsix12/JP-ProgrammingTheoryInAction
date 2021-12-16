@@ -124,6 +124,7 @@ public class PlayerController : MonoBehaviour
             if (_isFirstTimePickingUpPlatter)
             {
 				_isFirstTimePickingUpPlatter = false;
+				GameManager.Instance.playerAudioSource.PlayOneShot(GameManager.Instance.positiveDeliveryAudio, 0.1f);
 				GameManager.Instance.messageText.text = "To begin seating guests, select dining room tables to open.";
 				GameManager.Instance.EnableDiningTablesUI();
 			}
