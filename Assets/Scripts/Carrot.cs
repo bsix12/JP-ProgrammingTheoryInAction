@@ -24,4 +24,24 @@ public class Carrot : Food  // INHERITANCE - Carrot inherits from the Food class
         myCookedName = "Steamed Carrots";
         myRuinedName = "Ruined Carrots";
     }
+
+    protected override void OnTriggerEnter(Collider other) // POLYMORPHISM - override method.  
+    {
+        if (other.gameObject.CompareTag("Grill"))
+        {
+            isOnWrongCookStation = true;
+        }
+
+        base.OnTriggerEnter(other);
+    }
+
+    protected override void OnTriggerExit(Collider other) // POLYMORPHISM - override method.  
+    {
+        if (other.gameObject.CompareTag("Grill"))
+        {
+            isOnWrongCookStation = false;
+        }
+
+        base.OnTriggerExit(other);
+    }
 }

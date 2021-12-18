@@ -217,7 +217,8 @@ public class TableTracker : MonoBehaviour
         timeElapsed = 0;
         _maximumOrderScorePossible = 0;
 
-        orderText.text = "Next Order Soon";
+        
+        //orderText.text = "Next Order Soon";
         orderTicketTextUI.text = "";
         maximumOrderScorePossibleTextUI.text = "----";
     }

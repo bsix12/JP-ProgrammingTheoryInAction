@@ -11,6 +11,7 @@ public class Food : MonoBehaviour
     public GameObject isSmashedPrefab;
     public GameObject indicatorGrillPrefab;
     public GameObject indicatorSteamerPrefab;
+    public GameObject indicatorRuinedPrefab;
     public AudioClip cookConditionIndicator; // rings each time food is cooked or next stage of isCooked
     public string iAm;
 
@@ -34,7 +35,9 @@ public class Food : MonoBehaviour
     protected Color32 myCookedColor;
     protected Color32 myCurrentColor;
     protected Color32 isRuinedColor = new Color32(25, 25, 0, 255);
-    
+
+    protected bool isOnWrongCookStation = false;
+
     protected float myTemp {get{ return _myTemp;} set{_myTemp = value;}} // ENCAPSULATION - accessible property
     protected float myStartTemp;
     protected float myIsRuinedTemp;
@@ -104,19 +107,27 @@ public class Food : MonoBehaviour
             iAm = myRawName;
         }
 
-        if (isCooked && iAm != myCookedName && !isRuined)
+        if (isCooked && iAm != myCookedName && !isRuined && !isOnWrongCookStation)
         {
             myRenderer.material.color = myCookedColor;
             myCurrentColor = myCookedColor;
-            myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
+            myAudioSource.PlayOneShot(cookConditionIndicator, 3f);
             iAm = myCookedName;
+        }
+
+        if (isCooked && iAm != myCookedName && !isRuined && isOnWrongCookStation)
+        {
+            isRuined = true;
         }
 
         if (isRuined && iAm != myRuinedName)
         {
             myRenderer.material.color = isRuinedColor;
             myCurrentColor = isRuinedColor;
-            iAm = myRuinedName;
+            myAudioSource.PlayOneShot(GameManager.Instance.negativeDeliveryAudio, .2f);
+            ClearCookIndicators();
+            Instantiate(indicatorRuinedPrefab, transform);
+            iAm = myRuinedName;            
         }
     }
 
@@ -158,6 +169,11 @@ public class Food : MonoBehaviour
         }
     }
    
+    protected void ClearCookIndicators()
+    {
+        foreach (Transform child in transform)
+            Destroy(child.gameObject);
+    }
 
     protected void ReplaceFoodWithSmashed()
     {
@@ -169,25 +185,37 @@ public class Food : MonoBehaviour
     protected virtual void OnTriggerEnter(Collider other)
     {
         // provide OnHeat indicator when food touching cook surface
-        if (other.gameObject.CompareTag("Grill"))
-        {
-            Instantiate(indicatorGrillPrefab, transform);
-            
-            if (GameManager.Instance.isFirstTimeAtCookStation)
-            {
-                GameManager.Instance.isFirstTimeAtCookStation = false;
-                GameManager.Instance.EnableFoodGuide();               
-            }            
-        }
 
-        if (other.gameObject.CompareTag("Steamer"))
+        if (other.gameObject.CompareTag("Grill") || other.gameObject.CompareTag("Steamer"))
         {
-            Instantiate(indicatorSteamerPrefab, transform);
-            
             if (GameManager.Instance.isFirstTimeAtCookStation)
             {
                 GameManager.Instance.isFirstTimeAtCookStation = false;
                 GameManager.Instance.EnableFoodGuide();
+            }
+        }
+
+        if (other.gameObject.CompareTag("Grill"))
+        {
+            if (isRuined) 
+            {
+                Instantiate(indicatorRuinedPrefab, transform);
+            }
+            else
+            {
+                Instantiate(indicatorGrillPrefab, transform);
+            }  
+        }
+
+        if (other.gameObject.CompareTag("Steamer"))
+        {
+            if (isRuined)
+            {
+                Instantiate(indicatorRuinedPrefab, transform);
+            }
+            else
+            {
+                Instantiate(indicatorSteamerPrefab, transform);
             }
         }
 
@@ -220,8 +248,7 @@ public class Food : MonoBehaviour
         if (other.gameObject.CompareTag("Grill") || other.gameObject.CompareTag("Steamer"))
         {
             isCooking = false;
-            foreach (Transform child in transform)
-                Destroy(child.gameObject);
+            ClearCookIndicators();
         } 
 
         if (other.gameObject.CompareTag("CollectFoodTrigger"))

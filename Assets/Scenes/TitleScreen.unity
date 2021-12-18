@@ -2535,6 +2535,59 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   highScoreData: 0
   playerNameInputData: 
+  elapsedGameTimeAllTimeLastStored: 0
+  diningRoomOpenTimeAllTimeLastStored: 0
+  tableOpenTimeAllTimeLastStored: 0
+  isUsingScrubbiTimeAllTimeLastStored: 0
+  isLateTimeAllTimeLastStored: 0
+  elapsedWaitTimeTableAllTimeLastStored: 0
+  averageWaitTimePerGuestAllTimeLastStored: 0
+  averageWaitTimePerTableAllTimeLastStored: 0
+  ordersReceivedAllTimeLastStored: 0
+  guestsSeatedAllTimeLastStored: 0
+  deliveriesMadeAllTimeLastStored: 0
+  perfectDeliveriesMadeAllTimeLastStored: 0
+  wasLateTableCountAllTimeLastStored: 0
+  foodDispensedAllTimeLastStored: 0
+  beefDispensedAllTimeLastStored: 0
+  chickenDispensedAllTimeLastStored: 0
+  carrotsDispensedAllTimeLastStored: 0
+  broccoliDispensedAllTimeLastStored: 0
+  saladsDispensedAllTimeLastStored: 0
+  foodServedAllTimeLastStored: 0
+  beefServedAllTimeLastStored: 0
+  beefRawServedAllTimeLastStored: 0
+  beefRareServedAllTimeLastStored: 0
+  beefMediumServedAllTimeLastStored: 0
+  beefWellDoneServedAllTimeLastStored: 0
+  beefRuinedServedAllTimeLastStored: 0
+  chickenServedAllTimeLastStored: 0
+  chickenRawServedAllTimeLastStored: 0
+  chickenCookedServedAllTimeLastStored: 0
+  chickenRuinedServedAllTimeLastStored: 0
+  carrotsServedAllTimeLastStored: 0
+  carrotsRawServedAllTimeLastStored: 0
+  carrotsSteamedServedAllTimeLastStored: 0
+  carrotsRuinedServedAllTimeLastStored: 0
+  broccoliServedAllTimeLastStored: 0
+  broccoliRawServedAllTimeLastStored: 0
+  broccoliSteamedServedAllTimeLastStored: 0
+  broccoliRuinedServedAllTimeLastStored: 0
+  saladsServedAllTimeLastStored: 0
+  saladsGoodServedAllTimeLastStored: 0
+  saladsRuinedServedAllTimeLastStored: 0
+  foodOrderedAllTimeLastStored: 0
+  beefOrderedAllTimeLastStored: 0
+  beefRareOrderedAllTimeLastStored: 0
+  beefMediumOrderedAllTimeLastStored: 0
+  beefWellDoneOrderedAllTimeLastStored: 0
+  chickenCookedOrderedAllTimeLastStored: 0
+  carrotsSteamedOrderedAllTimeLastStored: 0
+  broccoliSteamedOrderedAllTimeLastStored: 0
+  saladsOrderedAllTimeLastStored: 0
+  foodSmashedAllTimeLastStored: 0
+  foodWasteBinAllTimeLastStored: 0
+  wasOnFloorAndServedAllTimeLastStored: 0
 --- !u!4 &1696289668
 Transform:
   m_ObjectHideFlags: 0

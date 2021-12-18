@@ -27,23 +27,34 @@ public class Chicken : Food  // INHERITANCE - Chicken inherits from the Food cla
     }
 
 
-    protected override void OnTriggerEnter(Collider other) // POLYMORPHISM - override method.  Meats sizzle on grill.
+    protected override void OnTriggerEnter(Collider other) // POLYMORPHISM - override method.  
     {
+        if (other.gameObject.CompareTag("Steamer"))
+        {
+            isOnWrongCookStation = true;
+        }
+
         if (other.gameObject.CompareTag("Grill"))
         {
             myAudioSource.Play(); // Apply 'sizzleSound' for meats only && on grill only
         }
-                
-        base.OnTriggerEnter(other);       
+
+        base.OnTriggerEnter(other);
     }
 
     protected override void OnTriggerExit(Collider other) // POLYMORPHISM - override method.
     {
+        if (other.gameObject.CompareTag("Steamer"))
+        {
+            isOnWrongCookStation = false;
+        }
+
         if (other.gameObject.CompareTag("Grill"))
         {
             myAudioSource.Stop(); // Apply 'sizzleSound' for meats only && on grill only
         }
-        
+
         base.OnTriggerExit(other);
     }
 }
+

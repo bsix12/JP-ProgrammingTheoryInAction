@@ -22,17 +22,15 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI buttonTable1Text;
     public TextMeshProUGUI buttonTable2Text;
     public TextMeshProUGUI buttonTable3Text;
-    public TextMeshPro reportCardText;
-
     public TextMeshProUGUI scoreFlyUpToCorner;
     public TextMeshProUGUI perfectFlyUp;
     public TextMeshProUGUI penaltyFlyUp;
-    public GameObject TablesUICanvas;
+    public TextMeshPro reportCardText;
+    public TextMeshPro guestChefName;
 
     public Button foodGuideButton;
     public Button notesButton;
 
-    //public Image diningTablesUIBackground;
     public Image foodGuideBackground;
     public Image creditsNotesBackground;
 
@@ -40,9 +38,14 @@ public class GameManager : MonoBehaviour
     public GameObject reservedTable1;
     public GameObject reservedTable2;
     public GameObject reservedTable3;
+    public GameObject orderBoardClosedTable1;
+    public GameObject orderBoardClosedTable2;
+    public GameObject orderBoardClosedTable3;
     public GameObject smashedFoodContainer;
+    public GameObject TablesUICanvas;
     public GameObject underlineTable1;
     public GameObject foodGuide;
+    public GameObject statsButton;
 
     public AudioSource playerAudioSource;
     public AudioClip perfectDeliveryAudio;
@@ -167,7 +170,7 @@ public class GameManager : MonoBehaviour
         _table1 = GameObject.Find("TablesManager").GetComponent<Table1>();
         _table2 = GameObject.Find("TablesManager").GetComponent<Table2>();
         _table3 = GameObject.Find("TablesManager").GetComponent<Table3>();
-        
+        guestChefName.text = DataStorage.Instance.playerNameInputData;
         _orderScore = 0;
         isGameStarted = true;
         canDispense = true;
@@ -186,7 +189,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator BeginTutorial()
     {
-        messageText.text = "Welcome to your kitchen!";
+        messageText.text = "Welcome to our kitchen!";
         yield return new WaitForSeconds(1.5f);
         isMoveWithADUnlocked = true;
         messageText.text = "Use <u>A</u> or <u>D</u> to rotate around.";
@@ -511,8 +514,8 @@ public class GameManager : MonoBehaviour
             
             if (_isFirstTimeOpeningDiningRoom)
             {
-                messageText.text = "Guests will arrive soon and begin placing orders.";
-                StartCoroutine(ClearMessage(2.5f));
+                messageText.text = "Guests will arrive soon and begin placing orders.\n\nOpen and close tables as needed, it's your kitchen today.";
+                StartCoroutine(ClearMessage(5f));
                 _isFirstTimeOpeningDiningRoom = false;
             }
       /*      else
@@ -539,6 +542,7 @@ public class GameManager : MonoBehaviour
         if (!isActiveTable1 && isWaitingToCloseTable1 && lastTableServedName == "Table1")
         {
             reservedTable1.gameObject.SetActive(true);
+            orderBoardClosedTable1.gameObject.SetActive(true);
             isWaitingToCloseTable1 = false;
             isOpenNowTableCount -= 1;
             buttonTable1Text.text = "Closed";
@@ -547,6 +551,7 @@ public class GameManager : MonoBehaviour
         else if (!isActiveTable2 && isWaitingToCloseTable2 && lastTableServedName == "Table2")
         {
             reservedTable2.gameObject.SetActive(true);
+            orderBoardClosedTable2.gameObject.SetActive(true);
             isWaitingToCloseTable2 = false;
             isOpenNowTableCount -= 1;
             buttonTable2Text.text = "Closed";
@@ -555,6 +560,7 @@ public class GameManager : MonoBehaviour
         else if (!isActiveTable3 && isWaitingToCloseTable3 && lastTableServedName == "Table3")
         {
             reservedTable3.gameObject.SetActive(true);
+            orderBoardClosedTable3.gameObject.SetActive(true);
             isWaitingToCloseTable3 = false;
             isOpenNowTableCount -= 1;
             buttonTable3Text.text = "Closed";
@@ -1295,7 +1301,7 @@ public class GameManager : MonoBehaviour
     {
         penaltyFlyUp.gameObject.SetActive(true);
         playerAudioSource.PlayOneShot(negativeDeliveryAudio, .1f);
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1.5f);
         penaltyFlyUp.gameObject.SetActive(false);
         penaltyFlyUp.GetComponent<Animator>().Rebind();
     }
@@ -1387,6 +1393,7 @@ public class GameManager : MonoBehaviour
             buttonTable1Text.color = new Color32(75, 200, 50, 255);
             buttonTable1Text.text = "Open";
             reservedTable1.gameObject.SetActive(false);
+            orderBoardClosedTable1.gameObject.SetActive(false);
             isReadyForNewOrderTable1 = true;
             messageText.text = "";
             GameObject.Find("TablesManager").GetComponent<Table1>().BeginNewOrder();            
@@ -1400,7 +1407,8 @@ public class GameManager : MonoBehaviour
             
             if (_table1.isEmptyWithNoGuests)
             {
-                reservedTable1.gameObject.SetActive(true);
+                reservedTable1.gameObject.SetActive(true); 
+                orderBoardClosedTable1.gameObject.SetActive(true);
                 isOpenNowTableCount -= 1;
                 buttonTable1Text.text = "Closed";
             }
@@ -1427,6 +1435,7 @@ public class GameManager : MonoBehaviour
             buttonTable2Text.color = new Color32(75, 200, 50, 255);
             buttonTable2Text.text = "Open";
             reservedTable2.gameObject.SetActive(false);
+            orderBoardClosedTable2.gameObject.SetActive(false);
             isReadyForNewOrderTable2 = true;
             messageText.text = "";
             GameObject.Find("TablesManager").GetComponent<Table2>().BeginNewOrder();
@@ -1440,6 +1449,7 @@ public class GameManager : MonoBehaviour
             if (_table2.isEmptyWithNoGuests)
             {
                 reservedTable2.gameObject.SetActive(true);
+                orderBoardClosedTable2.gameObject.SetActive(true);
                 isOpenNowTableCount -= 1;
                 buttonTable2Text.text = "Closed";
             }
@@ -1466,6 +1476,7 @@ public class GameManager : MonoBehaviour
             buttonTable3Text.color = new Color32(75, 200, 50, 255);
             buttonTable3Text.text = "Open";
             reservedTable3.gameObject.SetActive(false);
+            orderBoardClosedTable3.gameObject.SetActive(false);
             isReadyForNewOrderTable3 = true;
             messageText.text = "";
             GameObject.Find("TablesManager").GetComponent<Table3>().BeginNewOrder();            
@@ -1479,6 +1490,7 @@ public class GameManager : MonoBehaviour
             if (_table3.isEmptyWithNoGuests)
             {
                 reservedTable3.gameObject.SetActive(true);
+                orderBoardClosedTable3.gameObject.SetActive(true);
                 isOpenNowTableCount -= 1;
                 buttonTable3Text.text = "Closed";
             }

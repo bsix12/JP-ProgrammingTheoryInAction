@@ -5,6 +5,7 @@ using UnityEngine;
 public class Broccoli : Food  // INHERITANCE - Broccoli inherits from the Food class
 {
 
+
     private void Awake()
     {
         myRenderer = GetComponent<Renderer>();
@@ -23,6 +24,27 @@ public class Broccoli : Food  // INHERITANCE - Broccoli inherits from the Food c
         myRawName = "Raw Broccoli";
         myCookedName = "Steamed Broccoli";
         myRuinedName = "Ruined Broccoli";
+    }
+
+
+    protected override void OnTriggerEnter(Collider other) // POLYMORPHISM - override method.  
+    {
+        if (other.gameObject.CompareTag("Grill"))
+        {
+            isOnWrongCookStation = true;
+        }
+
+        base.OnTriggerEnter(other);
+    }
+
+    protected override void OnTriggerExit(Collider other) // POLYMORPHISM - override method.  
+    {
+        if (other.gameObject.CompareTag("Grill"))
+        {
+            isOnWrongCookStation = false;
+        }
+
+        base.OnTriggerExit(other);
     }
 }
 

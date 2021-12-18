@@ -14,12 +14,7 @@ public class ServeFood : MonoBehaviour
     {                                               
         if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && GameManager.Instance.atTableName == "Table1" && !GameManager.Instance.isDoneServingTable1)
         {
-            if (GameManager.Instance.isFirstTimeServingCustomers)
-            {
-                GameManager.Instance.isFirstTimeServingCustomers = false;
-                GameManager.Instance.messageText.text = "";
-            }
-
+            IfFirstTimeServingCustomers();
             GameManager.Instance.lastTableServedName = GameManager.Instance.atTableName;
             GameObject.Find("TablesManager").GetComponent<Table1>().AfterFoodIsServedActions();
             ProcessFoodGameObjects();
@@ -27,12 +22,7 @@ public class ServeFood : MonoBehaviour
         
         else if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && GameManager.Instance.atTableName == "Table2" && !GameManager.Instance.isDoneServingTable2)
         {
-            if (GameManager.Instance.isFirstTimeServingCustomers)
-            {
-                GameManager.Instance.isFirstTimeServingCustomers = false;
-                GameManager.Instance.messageText.text = "";
-            }
-
+            IfFirstTimeServingCustomers();
             GameManager.Instance.lastTableServedName = GameManager.Instance.atTableName;
             GameObject.Find("TablesManager").GetComponent<Table2>().AfterFoodIsServedActions();
             ProcessFoodGameObjects();
@@ -40,12 +30,7 @@ public class ServeFood : MonoBehaviour
 
         else if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.isInServiceArea && GameManager.Instance.atTableName == "Table3" && !GameManager.Instance.isDoneServingTable3)
         {
-            if (GameManager.Instance.isFirstTimeServingCustomers)
-            {
-                GameManager.Instance.isFirstTimeServingCustomers = false;
-                GameManager.Instance.messageText.text = "";
-            }
-
+            IfFirstTimeServingCustomers();
             GameManager.Instance.lastTableServedName = GameManager.Instance.atTableName;
             GameObject.Find("TablesManager").GetComponent<Table3>().AfterFoodIsServedActions();
             ProcessFoodGameObjects();
@@ -53,6 +38,18 @@ public class ServeFood : MonoBehaviour
 
     }
 
+
+    private void IfFirstTimeServingCustomers()
+    {
+        Debug.Log("1");
+        if (GameManager.Instance.isFirstTimeServingCustomers)
+        {
+            Debug.Log("2");
+            GameManager.Instance.isFirstTimeServingCustomers = false;
+            GameManager.Instance.statsButton.gameObject.SetActive(true);
+            GameManager.Instance.messageText.text = "";
+        }
+    }
 
 
     private void ProcessFoodGameObjects()

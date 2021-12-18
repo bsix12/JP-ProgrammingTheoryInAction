@@ -36,7 +36,7 @@ public class TitlePage : MonoBehaviour
 
     private void ShowTitleScreen()
     {
-        subTitleAddChefName.text = "with Chef " + enterNameInputField.text;
+        subTitleAddChefName.text = "with guest, Chef " + enterNameInputField.text;
         enterNameCanvas.gameObject.SetActive(false);
     }
 

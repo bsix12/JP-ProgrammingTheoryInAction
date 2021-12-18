@@ -101,10 +101,8 @@ public class DataStorage : MonoBehaviour
         public float tableOpenTimeAllTimeLastStored = 0; // StatsTracker/TrackDiningRoomServiceTimeTotal().  1 table open for one minute = 1 = 0; 3 tables open for one minute = 3.
         public float isUsingScrubbiTimeAllTimeLastStored = 0; // StatsTracker/TrackScrubbiTimeTotal()
         public float isLateTimeAllTimeLastStored = 0; // StatsTracker/TrackLateTimeTotal()
-        public float elapsedTimeToServeOrderAllTimeLastStored = 0; // TableTracker/AfterFoodIsServedActions()
-        public float averageWaitTimePerGuestAllTimeLastStored = 0; // (elapsedTimeToServeOrder/guestsSeatedTotal)
-        public float averageWaitTimePerTableAllTimeLastStored = 0; // (elapsedTimeToServeOrder/deliveriesMadeTotal)
-
+        public float elapsedWaitTimeTableAllTimeLastStored = 0; // TableTracker/AfterFoodIsServedActions()
+        
         ////////////////////////////
 
         public int ordersReceivedAllTimeLastStored = 0; // TableTracker/PublishOrder()
@@ -158,16 +156,15 @@ public class DataStorage : MonoBehaviour
 
     public void SaveDataToDisk()
     {
+        Debug.Log(Application.persistentDataPath);
         SaveData data = new SaveData();
         data.elapsedGameTimeAllTimeLastStored = elapsedGameTimeAllTimeLastStored;
         data.diningRoomOpenTimeAllTimeLastStored = diningRoomOpenTimeAllTimeLastStored;
         data.tableOpenTimeAllTimeLastStored = tableOpenTimeAllTimeLastStored;
         data.isUsingScrubbiTimeAllTimeLastStored = isUsingScrubbiTimeAllTimeLastStored;
         data.isLateTimeAllTimeLastStored = isLateTimeAllTimeLastStored;
-        data.elapsedTimeToServeOrderAllTimeLastStored = elapsedWaitTimeTableAllTimeLastStored;
-        data.averageWaitTimePerGuestAllTimeLastStored = averageWaitTimePerGuestAllTimeLastStored;
-        data.averageWaitTimePerTableAllTimeLastStored = averageWaitTimePerTableAllTimeLastStored;
-
+        data.elapsedWaitTimeTableAllTimeLastStored = elapsedWaitTimeTableAllTimeLastStored;
+        
         ////////////////////////////
 
         data.ordersReceivedAllTimeLastStored = ordersReceivedAllTimeLastStored;
@@ -238,10 +235,8 @@ public class DataStorage : MonoBehaviour
             tableOpenTimeAllTimeLastStored = data.tableOpenTimeAllTimeLastStored;
             isUsingScrubbiTimeAllTimeLastStored = data.isUsingScrubbiTimeAllTimeLastStored;
             isLateTimeAllTimeLastStored = data.isLateTimeAllTimeLastStored;
-            elapsedWaitTimeTableAllTimeLastStored = data.elapsedTimeToServeOrderAllTimeLastStored;
-            averageWaitTimePerGuestAllTimeLastStored = data.averageWaitTimePerGuestAllTimeLastStored;
-            averageWaitTimePerTableAllTimeLastStored = data.averageWaitTimePerTableAllTimeLastStored;
-
+            elapsedWaitTimeTableAllTimeLastStored = data.elapsedWaitTimeTableAllTimeLastStored;
+            
             ////////////////////////////
 
             ordersReceivedAllTimeLastStored = data.ordersReceivedAllTimeLastStored;

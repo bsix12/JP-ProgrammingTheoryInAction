@@ -103,6 +103,11 @@ public class StatsTracker : MonoBehaviour
     /// ALL TIME, LAST STORED
     ////////////////////////////
 
+    //public float elapsedWaitTimeTableAllTimeLastStored = 0; // TableTracker/AfterFoodIsServedActions()
+
+    //public int guestsSeatedAllTimeLastStored = 0; // TableTracker/SeatGuests()
+    //public int deliveriesMadeAllTimeLastStored = 0; // TableTracker/AfterFoodIsServedActions()
+
     private string _roundElapsedGameTimeAllTime;
     private string _roundDiningRoomOpenTimeAllTime;
     private string _roundTableOpenTimeAllTime;
@@ -115,9 +120,14 @@ public class StatsTracker : MonoBehaviour
     
     private bool isStatsActive = false;
 
+    ////////////////////////////
+    /// ALL TIME, ALL Time
+    ////////////////////////////
+
+    public float averageWaitTimePerGuestAllTime = 0; // (elapsedTimeToServeOrder/guestsSeatedTotal)
+    public float averageWaitTimePerTableAllTime = 0; // (elapsedTimeToServeOrder/deliveriesMadeTotal)
 
 
-  
     // Start is called before the first frame update
     void Start()
     {
@@ -135,6 +145,8 @@ public class StatsTracker : MonoBehaviour
         TrackLateTimeSession();
         averageWaitTimePerGuestSession = elapsedWaitTimeTableSession / guestsSeatedSession;
         averageWaitTimePerTableSession = elapsedWaitTimeTableSession / deliveriesMadeSession;
+        averageWaitTimePerGuestAllTime = (elapsedWaitTimeTableSession + DataStorage.Instance.elapsedWaitTimeTableAllTimeLastStored) / (guestsSeatedSession + DataStorage.Instance.guestsSeatedAllTimeLastStored);
+        averageWaitTimePerTableAllTime = (elapsedWaitTimeTableSession + DataStorage.Instance.elapsedWaitTimeTableAllTimeLastStored) / (deliveriesMadeSession + DataStorage.Instance.deliveriesMadeAllTimeLastStored);
         foodOrderedSession = beefRareOrderedSession + beefMediumOrderedSession + beefWellDoneOrderedSession + chickenCookedOrderedSession + carrotsSteamedOrderedSession + broccoliSteamedOrderedSession + saladsOrderedSession;
         beefOrderedSession = beefRareOrderedSession + beefMediumOrderedSession + beefWellDoneOrderedSession;
         beefServedSession = beefRawServedSession + beefRareServedSession + beefMediumServedSession + beefWellDoneServedSession + beefRuinedServedSession;
@@ -224,16 +236,20 @@ public class StatsTracker : MonoBehaviour
  
         if(DataStorage.Instance.deliveriesMadeAllTimeLastStored == 0)
         {
+            Debug.Log("no stored deliveries");
             _roundAverageWaitTimePerGuestAllTime = _roundAverageWaitTimePerGuestSession;
             _roundAverageWaitTimePerTableAllTime = _roundAverageWaitTimePerTableSession;            
         }
 
         else
         {
-            _roundAverageWaitTimePerGuestAllTime = Mathf.Floor((DataStorage.Instance.averageWaitTimePerGuestAllTimeLastStored + averageWaitTimePerGuestSession) / 60).ToString("0") + ":" + 
-                Mathf.FloorToInt((DataStorage.Instance.averageWaitTimePerGuestAllTimeLastStored + averageWaitTimePerGuestSession) % 60).ToString("00");
-            _roundAverageWaitTimePerTableAllTime = Mathf.Floor((DataStorage.Instance.averageWaitTimePerTableAllTimeLastStored + averageWaitTimePerTableSession) / 60).ToString("0") + ":" + 
-                Mathf.FloorToInt((DataStorage.Instance.averageWaitTimePerTableAllTimeLastStored + averageWaitTimePerTableSession) % 60).ToString("00");
+            _roundAverageWaitTimePerGuestAllTime = Mathf.Floor((averageWaitTimePerGuestAllTime) / 60).ToString("0") + ":" + 
+                Mathf.FloorToInt((averageWaitTimePerGuestAllTime) % 60).ToString("00");
+            _roundAverageWaitTimePerTableAllTime = Mathf.Floor((averageWaitTimePerTableAllTime) / 60).ToString("0") + ":" + 
+                Mathf.FloorToInt((averageWaitTimePerTableAllTime) % 60).ToString("00");
+            Debug.Log("Elapsed Wait Time Stored: " + DataStorage.Instance.elapsedWaitTimeTableAllTimeLastStored);
+            Debug.Log("Guests Seated Stored: " + DataStorage.Instance.guestsSeatedAllTimeLastStored);
+            Debug.Log("Deliveries Made: " + DataStorage.Instance.deliveriesMadeAllTimeLastStored);
         } 
     }
 

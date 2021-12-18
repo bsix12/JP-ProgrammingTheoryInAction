@@ -125,7 +125,7 @@ public class PlayerController : MonoBehaviour
             {
 				_isFirstTimePickingUpPlatter = false;
 				GameManager.Instance.playerAudioSource.PlayOneShot(GameManager.Instance.positiveDeliveryAudio, 0.1f);
-				GameManager.Instance.messageText.text = "To begin seating guests, select dining room tables to open.";
+				GameManager.Instance.messageText.text = "Open Table 1 to begin seating guests.";
 				GameManager.Instance.EnableDiningTablesUI();
 			}
 
@@ -161,11 +161,6 @@ public class PlayerController : MonoBehaviour
 				GameManager.Instance.messageText.text = "Approach table and press <u>spacebar</u> to serve food to guests.";
 			}			
         }
-
-		//if (other.gameObject.CompareTag("Dispenser") && GameManager.Instance.isFirstTimeTriggeringDispenser)
-        //{
-		//	GameManager.Instance.messageText.text = "Press <u>spacebar</u> to dispense food.";
-		//}
     }
 
 
@@ -181,13 +176,6 @@ public class PlayerController : MonoBehaviour
 				GameManager.Instance.messageText.text = "";
 			}
 		}
-
-		//if(other.gameObject.CompareTag("Dispenser") && GameManager.Instance.isFirstTimeTriggeringDispenser)
-        //{
-		//	GameManager.Instance.messageText.text = "";
-		//}
-
-
 	}
 }
 

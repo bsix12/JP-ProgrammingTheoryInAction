@@ -66,40 +66,63 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
             iAm = "Raw Beef";
         }
 
-        if (isCookedRare && iAm != "Beef: Rare" && !isCookedMedium && !isCookedWellDone && !isRuined)
+        if (isCookedRare && iAm != "Beef: Rare" && !isCookedMedium && !isCookedWellDone && !isRuined && !isOnWrongCookStation)
         {
             myRenderer.material.color = myRareColor;
             myCurrentColor = myRareColor;
-            myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
+            myAudioSource.PlayOneShot(cookConditionIndicator, 3f);
             iAm = "Beef: Rare";
         }
 
-        if (isCookedMedium && iAm != "Beef: Medium" && !isCookedRare && !isCookedWellDone && !isRuined)
+        if (isCookedMedium && iAm != "Beef: Medium" && !isCookedRare && !isCookedWellDone && !isRuined && !isOnWrongCookStation)
         {
             myRenderer.material.color = myMediumColor;
             myCurrentColor = myMediumColor;
-            myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
+            myAudioSource.PlayOneShot(cookConditionIndicator, 3f);
             iAm = "Beef: Medium";
         }
 
-        if (isCookedWellDone && iAm != "Beef: Well-Done" && !isCookedRare && !isCookedMedium && !isRuined)
+        if (isCookedWellDone && iAm != "Beef: Well-Done" && !isCookedRare && !isCookedMedium && !isRuined && !isOnWrongCookStation)
         {
             myRenderer.material.color = myWellDoneColor;
             myCurrentColor = myWellDoneColor;
-            myAudioSource.PlayOneShot(cookConditionIndicator, 5f);
+            myAudioSource.PlayOneShot(cookConditionIndicator, 3f);
             iAm = "Beef: Well-Done";
+        }
+
+        if (isCookedRare && iAm != "Beef: Rare" && !isCookedMedium && !isCookedWellDone && !isRuined && isOnWrongCookStation)
+        {
+            isRuined = true;
+        }
+
+        if (isCookedMedium && iAm != "Beef: Medium" && !isCookedRare && !isCookedWellDone && !isRuined && isOnWrongCookStation)
+        {
+            isRuined = true;
+        }
+
+        if (isCookedWellDone && iAm != "Beef: Well-Done" && !isCookedRare && !isCookedMedium && !isRuined && isOnWrongCookStation)
+        {
+            isRuined = true;
         }
 
         if (isRuined && iAm != "Ruined Beef")
         {
             myRenderer.material.color = isRuinedColor;
             myCurrentColor = isRuinedColor;
+            myAudioSource.PlayOneShot(GameManager.Instance.negativeDeliveryAudio, .2f);
+            ClearCookIndicators();
+            Instantiate(indicatorRuinedPrefab, transform);
             iAm = "Ruined Beef";
         }
     }
 
     protected override void OnTriggerEnter(Collider other) // POLYMORPHISM - override method.  
     {
+        if (other.gameObject.CompareTag("Steamer"))
+        {
+            isOnWrongCookStation = true;
+        }
+
         if (other.gameObject.CompareTag("Grill"))
         {
             myAudioSource.Play(); // Apply 'sizzleSound' for meats only && on grill only
@@ -110,6 +133,11 @@ public class Beef : Food  // INHERITANCE - Beef inherits from the Food class
 
     protected override void OnTriggerExit(Collider other) // POLYMORPHISM - override method.
     {
+        if (other.gameObject.CompareTag("Steamer"))
+        {
+            isOnWrongCookStation = false;
+        }
+
         if (other.gameObject.CompareTag("Grill"))
         {
             myAudioSource.Stop(); // Apply 'sizzleSound' for meats only && on grill only

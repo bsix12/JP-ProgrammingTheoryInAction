@@ -129,14 +129,15 @@ MonoBehaviour:
   isSmashedPrefab: {fileID: 4715782599534251606, guid: 16205df31d9eb8c47b2f99c9bbb4f5ce, type: 3}
   indicatorGrillPrefab: {fileID: 6787215316302648940, guid: 55e2878145cbe784db5e2aa51f095a94, type: 3}
   indicatorSteamerPrefab: {fileID: 1305866793593120617, guid: 21dd648336e40b0459df04379ee9a026, type: 3}
+  indicatorRuinedPrefab: {fileID: 92828845376267120, guid: 347f7ea6f592cca439ff8ef0f7167d1d, type: 3}
   cookConditionIndicator: {fileID: 8300000, guid: ccff8717db9572e4ea6c202a58361d06, type: 3}
   iAm: 
   hasBeenMovedToPlate: 0
+  hasBeenOnFloor: 0
   isCooking: 0
   isCooked: 0
-  isBurned: 0
+  isRuined: 0
   isOnFloor: 0
-  hasBeenOnFloor: 0
   isSmashed: 0
   _myTemp: 0
 --- !u!82 &7314858176272896398
