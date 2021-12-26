@@ -158,7 +158,7 @@ public class DataStorage : MonoBehaviour
 
     public void SaveDataToDisk()
     {
-        Debug.Log(Application.persistentDataPath);
+        //Debug.Log(Application.persistentDataPath);
         SaveData data = new SaveData();
         data.highScoreData = highScoreData;
         data.bestPlayerData = bestPlayerData;

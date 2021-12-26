@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
     public string atTableName; // reference to which table player is at
     public string lastTableServedName;
     
-    public float secondsOfPrepAllowedPerMain = 90;
+    public float secondsOfPrepAllowedPerMain = 120;
     public float secondsToWaitBeforeClearMessage;
 
     public int isOpenNowTableCount = 0;
@@ -529,7 +529,7 @@ public class GameManager : MonoBehaviour
             if (_isFirstTimeOpeningDiningRoom)
             {
                 messageText.text = "Guests will arrive soon and begin placing orders.\n\nOpen and close tables as needed, it's your kitchen today.";
-                StartCoroutine(ClearMessage(5f));
+                StartCoroutine(ClearMessage(7f));
                 _isFirstTimeOpeningDiningRoom = false;
             }
       /*      else
@@ -630,7 +630,6 @@ public class GameManager : MonoBehaviour
     public void AfterFoodIsServedActions()
     {
         //Debug.Log("after food is served has been called");
-        //DetermineWhichTableWasServed();
         CountFoodServed();
         CheckIfPerfectDelivery();
         CalculateScore();
@@ -1033,7 +1032,7 @@ public class GameManager : MonoBehaviour
         {
             if (beefRareOrdered > 0 && _beefRareServed > 0)
             {
-                Debug.Log("correct number portions, partial correct, rare");
+                //Debug.Log("correct number portions, partial correct, rare");
                 if (_allPortionsOrdered >= _largeOrder)
                 {
                     _orderScore += _goodEdibleCountPartialCorrectLarge;
@@ -1045,7 +1044,7 @@ public class GameManager : MonoBehaviour
 
             if (beefMediumOrdered > 0 && _beefMediumServed > 0)
             {
-                Debug.Log("correct number portions, partial correct, medium");
+                //Debug.Log("correct number portions, partial correct, medium");
                 if (_allPortionsOrdered >= _largeOrder)
                 {
                     _orderScore += _goodEdibleCountPartialCorrectLarge;
@@ -1068,7 +1067,7 @@ public class GameManager : MonoBehaviour
             }
 
             _orderScore += _goodTryMitigation;
-            Debug.Log("correct number portions, all wrong");
+            //Debug.Log("correct number portions, all wrong");
         }
     }
 
@@ -1652,7 +1651,7 @@ public class GameManager : MonoBehaviour
         {
             _page = 0;
             notesRightArrow.gameObject.SetActive(true);
-            Debug.Log(_page);
+            //Debug.Log(_page);
             notesPagesListObjects[0].gameObject.SetActive(true);
             notesBackground.gameObject.SetActive(true);
             _isActiveNotes = true;

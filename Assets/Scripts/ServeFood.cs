@@ -41,10 +41,8 @@ public class ServeFood : MonoBehaviour
 
     private void IfFirstTimeServingCustomers()
     {
-        Debug.Log("1");
         if (GameManager.Instance.isFirstTimeServingCustomers)
         {
-            Debug.Log("2");
             GameManager.Instance.isFirstTimeServingCustomers = false;
             GameManager.Instance.statsButton.gameObject.SetActive(true);
             GameManager.Instance.messageText.text = "";
@@ -86,7 +84,7 @@ public class ServeFood : MonoBehaviour
    IEnumerator ClearFoodGameObjectsStrandedByDoubleMove()
     {
         yield return new WaitForSeconds(.1f);
-        Debug.Log("count to destroy: " + transform.GetChild(2).childCount);
+        //Debug.Log("count to destroy: " + transform.GetChild(2).childCount);
         foreach (Transform child in transform.GetChild(2))
         {
             Destroy(child.gameObject);
