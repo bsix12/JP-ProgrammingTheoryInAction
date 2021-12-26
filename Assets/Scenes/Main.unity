@@ -21262,7 +21262,7 @@ MonoBehaviour:
   serveTableLocation: {x: 0, y: 0, z: 0}
   atTableName: 
   lastTableServedName: 
-  secondsOfPrepAllowedPerMain: 90
+  secondsOfPrepAllowedPerMain: 120
   secondsToWaitBeforeClearMessage: 0
   isOpenNowTableCount: 0
   isLateNowTableCount: 0

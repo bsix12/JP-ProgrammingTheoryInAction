@@ -184,7 +184,17 @@ public class GameManager : MonoBehaviour
         _table2 = GameObject.Find("TablesManager").GetComponent<Table2>();
         _table3 = GameObject.Find("TablesManager").GetComponent<Table3>();
         guestChefName.text = DataStorage.Instance.playerNameInputData;
-        highScoreText.text = DataStorage.Instance.bestPlayerData + "\n\n with score of:\n" + DataStorage.Instance.highScoreData;
+        
+        if(DataStorage.Instance.highScoreData == 0)
+        {
+            highScoreText.text = "Awaiting a new Master Chef";
+        }
+
+        else
+        {
+            highScoreText.text = DataStorage.Instance.bestPlayerData + "\n\n with score of:\n" + DataStorage.Instance.highScoreData;
+        }
+                
         _orderScore = 0;
         isGameStarted = true;
         canDispense = true;
@@ -201,13 +211,15 @@ public class GameManager : MonoBehaviour
         MonitorSmashedFoodContainer();
     }
 
+
     IEnumerator BeginTutorial()
     {
-        messageText.text = "Welcome to our kitchen!";
+        messageText.text = "Welcome to Three Tables kitchen!";
         yield return new WaitForSeconds(1.5f);
         isMoveWithADUnlocked = true;
         messageText.text = "Use <u>A</u> or <u>D</u> to rotate around.";
     }
+
 
     public void EnableDiningTablesUI()
     {
@@ -221,6 +233,7 @@ public class GameManager : MonoBehaviour
         buttonTable2Text.color = Color.red;
         buttonTable3Text.color = Color.red;
     }
+
 
     public void EnableFoodGuide()
     {
@@ -239,6 +252,7 @@ public class GameManager : MonoBehaviour
         UpdateScore();
     }
 
+
     public void ApplyWastedFoodPenalty()
     {
         _totalScore -= wastedFoodPenalty;
@@ -246,6 +260,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(PenaltyFlyUp());
         UpdateScore();
     }
+
 
     private void LoadFoodMenu()
     {
@@ -509,7 +524,6 @@ public class GameManager : MonoBehaviour
 
     private void ResetOrderReportText() // this will get moved to OrderManager when reports for each table are implemented
     {
-        
         reportCardText.text = "";
     }
 
@@ -532,11 +546,6 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(ClearMessage(7f));
                 _isFirstTimeOpeningDiningRoom = false;
             }
-      /*      else
-            {
-                messageText.text = "";
-            }
-      */
         }
 
         else if (isOpenNowTableCount == 0 && !playerInDiningRoom)
@@ -1556,6 +1565,16 @@ public class GameManager : MonoBehaviour
 
     public void Stats()
     {
+        if (_isActiveNotes)
+        {
+            HideNotes();
+        }
+
+        if (_isActiveCredits)
+        {
+            HideCredits();
+        }
+
         if (_isActiveStats)
         {
             HideStats();
