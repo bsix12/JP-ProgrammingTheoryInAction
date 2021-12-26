@@ -12,7 +12,7 @@ public class StatsTracker : MonoBehaviour
     public TextMeshProUGUI sessionStatSummaryValues2;
     public TextMeshProUGUI allTimeStatSummaryValues1;
     public TextMeshProUGUI allTimeStatSummaryValues2;
-    public GameObject statsCanvas;
+
 
 
 
@@ -118,7 +118,7 @@ public class StatsTracker : MonoBehaviour
     private string _roundAverageWaitTimePerTableAllTime;
 
     
-    private bool isStatsActive = false;
+    //private bool isStatsActive = false;
 
     ////////////////////////////
     /// ALL TIME, ALL Time
@@ -247,36 +247,15 @@ public class StatsTracker : MonoBehaviour
                 Mathf.FloorToInt((averageWaitTimePerGuestAllTime) % 60).ToString("00");
             _roundAverageWaitTimePerTableAllTime = Mathf.Floor((averageWaitTimePerTableAllTime) / 60).ToString("0") + ":" + 
                 Mathf.FloorToInt((averageWaitTimePerTableAllTime) % 60).ToString("00");
-            Debug.Log("Elapsed Wait Time Stored: " + DataStorage.Instance.elapsedWaitTimeTableAllTimeLastStored);
-            Debug.Log("Guests Seated Stored: " + DataStorage.Instance.guestsSeatedAllTimeLastStored);
-            Debug.Log("Deliveries Made: " + DataStorage.Instance.deliveriesMadeAllTimeLastStored);
         } 
     }
 
-
     public void FillStatsText()
     {
-        if (!isStatsActive)
-        {
-            FormatTimesForDisplay();
-            StatsSummaryNames();
-            StatsSummaryValuesSession();
-            StatsSummaryValuesAllTime();
-            statsCanvas.gameObject.SetActive(true);
-             
-            Time.timeScale = 0; // pause
-            isStatsActive = true;
-        }
-
-        else if (isStatsActive)
-        {
-            statsCanvas.gameObject.SetActive(false);
-             
-            Time.timeScale = 1; // unpause
-            isStatsActive = false;
-        }
-
-        GameManager.Instance.playerAudioSource.PlayOneShot(GameManager.Instance.buttonClick, .05f);
+        FormatTimesForDisplay();
+        StatsSummaryNames();
+        StatsSummaryValuesSession();
+        StatsSummaryValuesAllTime();
     }
 
 

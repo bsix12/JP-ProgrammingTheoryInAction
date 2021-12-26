@@ -9,6 +9,7 @@ public class DataStorage : MonoBehaviour
 
     public int highScoreData;
     public string playerNameInputData;
+    public string bestPlayerData;
 
     public float elapsedGameTimeAllTimeLastStored;
     public float diningRoomOpenTimeAllTimeLastStored; // StatsTracker/TrackDiningRoomServiceTimeTotal()
@@ -95,6 +96,7 @@ public class DataStorage : MonoBehaviour
     {
         public int highScoreData = 0;
         public string playerNameInputData;
+        public string bestPlayerData;
 
         public float elapsedGameTimeAllTimeLastStored = 0;
         public float diningRoomOpenTimeAllTimeLastStored = 0; // StatsTracker/TrackDiningRoomServiceTimeTotal()
@@ -158,6 +160,8 @@ public class DataStorage : MonoBehaviour
     {
         Debug.Log(Application.persistentDataPath);
         SaveData data = new SaveData();
+        data.highScoreData = highScoreData;
+        data.bestPlayerData = bestPlayerData;
         data.elapsedGameTimeAllTimeLastStored = elapsedGameTimeAllTimeLastStored;
         data.diningRoomOpenTimeAllTimeLastStored = diningRoomOpenTimeAllTimeLastStored;
         data.tableOpenTimeAllTimeLastStored = tableOpenTimeAllTimeLastStored;
@@ -230,6 +234,8 @@ public class DataStorage : MonoBehaviour
             string json = File.ReadAllText(path);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
+            highScoreData = data.highScoreData;
+            bestPlayerData = data.bestPlayerData;
             elapsedGameTimeAllTimeLastStored = data.elapsedGameTimeAllTimeLastStored;
             diningRoomOpenTimeAllTimeLastStored = data.diningRoomOpenTimeAllTimeLastStored;
             tableOpenTimeAllTimeLastStored = data.tableOpenTimeAllTimeLastStored;

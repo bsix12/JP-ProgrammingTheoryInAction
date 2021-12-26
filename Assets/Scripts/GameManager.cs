@@ -16,15 +16,17 @@ public class GameManager : MonoBehaviour
     ////////////////////////////
     
     public TextMeshProUGUI scoreText;
+    
     public TextMeshProUGUI messageText;
     public TextMeshProUGUI credits;
-    public TextMeshProUGUI notes;
+    //public TextMeshProUGUI notes;
     public TextMeshProUGUI buttonTable1Text;
     public TextMeshProUGUI buttonTable2Text;
     public TextMeshProUGUI buttonTable3Text;
     public TextMeshProUGUI scoreFlyUpToCorner;
     public TextMeshProUGUI perfectFlyUp;
     public TextMeshProUGUI penaltyFlyUp;
+    public TextMeshPro highScoreText;
     public TextMeshPro reportCardText;
     public TextMeshPro guestChefName;
 
@@ -32,8 +34,10 @@ public class GameManager : MonoBehaviour
     public Button notesButton;
 
     public Image foodGuideBackground;
-    public Image creditsNotesBackground;
-
+    public Image creditsBackground;
+    public Image notesBackground;
+    public Image notesImage;
+ 
     public GameObject kitchenDoor;
     public GameObject reservedTable1;
     public GameObject reservedTable2;
@@ -46,6 +50,10 @@ public class GameManager : MonoBehaviour
     public GameObject underlineTable1;
     public GameObject foodGuide;
     public GameObject statsButton;
+    public GameObject statsCanvas;
+    public GameObject notesLeftArrow;
+    public GameObject notesRightArrow;
+
 
     public AudioSource playerAudioSource;
     public AudioClip perfectDeliveryAudio;
@@ -56,6 +64,7 @@ public class GameManager : MonoBehaviour
     ////////////////////////////
 
     public List<GameObject> readyToServeGameObjects = new List<GameObject>();
+    public List<GameObject> notesPagesListObjects = new List<GameObject>();
     public List<string> onlyFoodOrderedNames = new List<string>();
     public List<string> foodServedNames = new List<string>();
     public List<string> reportCardToPost = new List<string>();
@@ -83,6 +92,7 @@ public class GameManager : MonoBehaviour
     public int wastedFoodPenalty = 50; // play test value, should vary for mains versus sides
     public int wasOnFloorAndServedPenalty = 150;
     
+
 
     public bool isGameStarted;
     public bool isActiveTable1 = false;
@@ -117,8 +127,7 @@ public class GameManager : MonoBehaviour
     public bool isUsingScrubbi = false;
 
     ////////////////////////////
-
-
+ 
     private TextMeshProUGUI _buttonFoodGuideText;
 
     private List<string> _menuMainsNames = new List<string>();
@@ -127,13 +136,17 @@ public class GameManager : MonoBehaviour
 
     private bool _isFirstTimeOpeningDiningRoom = true;
     private bool _isFirstTimeClosingTableWithGuestsSeated = true;
+    private bool _isActiveStats = false;
     private bool _isActiveCredits = false;
     private bool _isActiveNotes = false;
     private bool _isActiveFoodGuide = false;
     private bool _mustClean = false;
     private bool _wasPerfectDelivery = false;
-
+    private bool _isNotesImageActive = false;
+   
+    private int _page;
     private int _perSecondPenaltyIfLate = 5; // play test value
+    
     private float _oncePerSecond = 1f;
 
     [SerializeField] private int _chickenRawServed;
@@ -171,6 +184,7 @@ public class GameManager : MonoBehaviour
         _table2 = GameObject.Find("TablesManager").GetComponent<Table2>();
         _table3 = GameObject.Find("TablesManager").GetComponent<Table3>();
         guestChefName.text = DataStorage.Instance.playerNameInputData;
+        highScoreText.text = DataStorage.Instance.bestPlayerData + "\n\n with score of:\n" + DataStorage.Instance.highScoreData;
         _orderScore = 0;
         isGameStarted = true;
         canDispense = true;
@@ -1260,7 +1274,8 @@ public class GameManager : MonoBehaviour
     private void UpdateScore()
     {
         _totalScore += _orderScore; // after any score, hold a copy of the total score
-        scoreText.text = "Score: " + _totalScore.ToString();        
+        scoreText.text = "Score: " + _totalScore.ToString();
+        CheckIfHighScore();
     }
 
 
@@ -1314,8 +1329,7 @@ public class GameManager : MonoBehaviour
 
     private void PostCustomerComments()
     {
-        Debug.Log("WIP, post customer comments");
-        /*
+    /*
         int _deltaSteamedCarrots =  _carrotsSteamedServed - _carrotsSteamedOrdered;
         int _deltaSteamedBroccoli = _broccoliSteamedServed - _broccoliSteamedOrdered;
         int _deltaSalads = _saladsGoodServed - _saladsOrdered;
@@ -1376,7 +1390,7 @@ public class GameManager : MonoBehaviour
         {
             _resultsToPost.Add("These carrots are Ruined!  This is disgraceful!\n");
         }
-        */
+    */
     }
 
 
@@ -1521,7 +1535,7 @@ public class GameManager : MonoBehaviour
     
     public void FoodGuide()
     {
-        if(_isActiveFoodGuide == true)
+        if(_isActiveFoodGuide)
         {
             foodGuideBackground.gameObject.SetActive(false);
             foodGuide.gameObject.SetActive(false);
@@ -1529,7 +1543,7 @@ public class GameManager : MonoBehaviour
             _isActiveFoodGuide = false;
         }
 
-        else if(_isActiveFoodGuide == false)
+        else if(!_isActiveFoodGuide)
         {
             foodGuideBackground.gameObject.SetActive(true);
             foodGuide.gameObject.SetActive(true);
@@ -1541,45 +1555,209 @@ public class GameManager : MonoBehaviour
     }
     
 
+    public void Stats()
+    {
+        if (_isActiveStats)
+        {
+            HideStats();
+        }
+
+        else if (!_isActiveStats)
+        {
+            StatsTracker.Instance.FillStatsText();
+            statsCanvas.gameObject.SetActive(true);
+            _isActiveStats = true;
+            GamePause();
+        }
+
+        playerAudioSource.PlayOneShot(buttonClick, .05f);
+    }
+
+    private void HideStats()
+    {
+        statsCanvas.gameObject.SetActive(false);
+        _isActiveStats = false;
+        GameUnpause();
+    }
+
+
+    private void CheckIfHighScore()
+    {
+        if(_totalScore > DataStorage.Instance.highScoreData)
+        {
+            highScoreText.text = DataStorage.Instance.playerNameInputData + "\n\n with score of:\n" + _totalScore;
+            DataStorage.Instance.bestPlayerData = DataStorage.Instance.playerNameInputData;
+            DataStorage.Instance.highScoreData = _totalScore;
+        }
+    }
+
+
+
     public void Credits()
     {
-        if(_isActiveCredits == true)
+        if (_isActiveNotes)
         {
-            credits.gameObject.SetActive(false);
-            creditsNotesBackground.gameObject.SetActive(false);
-            _isActiveCredits = false;
-            notesButton.gameObject.SetActive(false);
-            notes.gameObject.SetActive(false);
-            _isActiveNotes = false;
+            HideNotes();
         }
-        
-        else if(_isActiveCredits == false) // needs to be 'else if' or does not work
+
+        if (_isActiveStats)
         {
-            creditsNotesBackground.gameObject.SetActive(true);
+            HideStats();
+        }
+
+        if (_isActiveCredits)
+        {
+            HideCredits();
+        }
+
+        else if (!_isActiveCredits) // needs to be 'else if' of does not work
+        {
             credits.gameObject.SetActive(true);
+            creditsBackground.gameObject.SetActive(true);
             _isActiveCredits = true;
-            notesButton.gameObject.SetActive(true);
+            GamePause();
         }
 
         playerAudioSource.PlayOneShot(buttonClick, .05f);
     }
 
 
+    private void HideCredits()
+    {
+        credits.gameObject.SetActive(false);
+        creditsBackground.gameObject.SetActive(false);
+        _isActiveCredits = false;
+        GameUnpause();
+    }
+
+
     public void Notes()
     {
-        if(_isActiveNotes == true)
+        if (_isActiveCredits)
         {
-            notes.gameObject.SetActive(false);            
-            _isActiveNotes = false;
+            HideCredits();
         }
 
-        else if(_isActiveNotes == false) // needs to be 'else if' of does not work
+        if (_isActiveStats)
         {
-            notes.gameObject.SetActive(true);            
+            HideStats();
+        }
+
+        if (_isActiveNotes)
+        {
+            HideNotes();
+        }
+
+        else if(!_isActiveNotes) // needs to be 'else if' of does not work
+        {
+            _page = 0;
+            notesRightArrow.gameObject.SetActive(true);
+            Debug.Log(_page);
+            notesPagesListObjects[0].gameObject.SetActive(true);
+            notesBackground.gameObject.SetActive(true);
             _isActiveNotes = true;
+            GamePause();
         }
 
         playerAudioSource.PlayOneShot(buttonClick, .05f);
+    }
+
+
+    private void HideNotes()
+    {
+        notesPagesListObjects[_page].gameObject.SetActive(false);
+        notesBackground.gameObject.SetActive(false);
+        notesLeftArrow.gameObject.SetActive(false);
+        notesRightArrow.gameObject.SetActive(false);
+        HideNotesImage();
+        _isActiveNotes = false;
+        GameUnpause();
+    }
+
+
+    public void NotesRightArrow()
+    {
+        if (_isNotesImageActive)
+        {
+            HideNotesImage();
+        }
+
+        if (_page < notesPagesListObjects.Count)
+        {
+            notesPagesListObjects[_page].gameObject.SetActive(false);
+            _page += 1;
+            notesPagesListObjects[_page].gameObject.SetActive(true);
+
+            if (_page > 0)
+            {
+                notesLeftArrow.gameObject.SetActive(true);
+            }
+
+            if (_page == notesPagesListObjects.Count-1)
+            {
+                notesRightArrow.gameObject.SetActive(false);
+            }
+        }
+    }
+
+
+    public void NotesLeftArrow()
+    {
+        if (_isNotesImageActive)
+        {
+            HideNotesImage();
+        }
+
+        if (_page > 0)
+        {
+            notesPagesListObjects[_page].gameObject.SetActive(false);
+            _page -= 1;
+            notesPagesListObjects[_page].gameObject.SetActive(true);
+            
+            if (_page < notesPagesListObjects.Count)
+            {
+                notesRightArrow.gameObject.SetActive(true);
+            }      
+            
+            if(_page == 0)
+            {
+                notesLeftArrow.gameObject.SetActive(false);
+            }
+        }
+    }
+
+
+    public void ShowNotesImage()
+    {
+        if (_isNotesImageActive)
+        {
+            HideNotesImage();
+        }
+
+        else if (!_isNotesImageActive)
+        {
+            notesImage.gameObject.SetActive(true);
+            _isNotesImageActive = true;
+        }
+    }
+
+
+    public void HideNotesImage()
+    {
+        notesImage.gameObject.SetActive(false);
+        _isNotesImageActive = false;
+    }
+
+
+    private void GamePause()
+    {
+        Time.timeScale = 0; // pause
+    }
+
+
+    private void GameUnpause()
+    {
+        Time.timeScale = 1; // unpause
     }
 
 

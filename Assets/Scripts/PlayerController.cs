@@ -10,8 +10,8 @@ public class PlayerController : MonoBehaviour
 
 	public GameObject pickupScrubbi;
 	public GameObject pickupTopPlate;
-	
-	public AudioClip footstepsKitchen;
+
+	public AudioSource scrubbiAudioSource;
 
 	////////////////////////////
 
@@ -131,7 +131,7 @@ public class PlayerController : MonoBehaviour
 
 			else if (!_isFirstTimePickingUpPlatter)
             {
-				pickupScrubbi.gameObject.SetActive(true);				
+				pickupScrubbi.gameObject.SetActive(true);
 			}
 			
 			pickupTopPlate.gameObject.SetActive(false);
